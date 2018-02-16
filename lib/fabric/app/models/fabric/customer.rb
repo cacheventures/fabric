@@ -14,6 +14,10 @@ module Fabric
       inverse_of: :customer,
       dependent: :destroy
     has_many :discounts, class_name: 'Fabric::Discount', dependent: :destroy
+    has_many :charges, class_name: 'Fabric::Charge', dependent: :destroy
+    has_many :invoice_items,
+             class_name: 'Fabric::InvoiceItem',
+             dependent: :destroy
 
     field :stripe_id, type: String
     field :created, type: Time

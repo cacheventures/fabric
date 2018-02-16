@@ -17,6 +17,7 @@ module Fabric
       saved = customer.save
       Fabric.config.logger.info "CreateCustomerOperation: Completed. saved: "\
         "#{saved}"
+      customer
     end
   end
 end

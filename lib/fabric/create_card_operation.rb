@@ -19,7 +19,7 @@ module Fabric
         stripe_customer.default_source = stripe_card.id
         stripe_customer.save
       end
-      
+
       card = Fabric::Card.new(customer: @customer)
       card.sync_with(stripe_card)
       card_saved = card.save

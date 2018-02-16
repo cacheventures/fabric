@@ -26,10 +26,8 @@ module Fabric
           return
         end
 
-        account = customer.account
         invoice = Fabric::Invoice.new(
-          customer: customer,
-          account: account
+          customer: customer
         )
         invoice.sync_with(event.data.object)
         saved = invoice.save

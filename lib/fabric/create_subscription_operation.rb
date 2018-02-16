@@ -19,6 +19,7 @@ module Fabric
       saved = subscription.save
       Fabric.config.logger.info "CreateSubscriptionOperation: Completed. "\
         "saved: #{saved}"
+      subscription
     end
   end
 end

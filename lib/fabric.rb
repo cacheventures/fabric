@@ -5,8 +5,6 @@ require 'mongoid'
 require 'env_helper'
 require 'sidekiq'
 
-require 'fabric/railtie' if defined?(Rails)
-
 require 'fabric/billing_policy'
 require 'fabric/cancel_subscription_operation'
 require 'fabric/create_card_for_subscription_operation'
@@ -46,7 +44,6 @@ require 'fabric/webhooks/subscription_updated'
 require 'fabric/app/workers/worker.rb'
 
 module Fabric
-
   autoload :Card, 'fabric/app/models/fabric/card'
   autoload :Charge, 'fabric/app/models/fabric/charge'
   autoload :Coupon, 'fabric/app/models/fabric/coupon'

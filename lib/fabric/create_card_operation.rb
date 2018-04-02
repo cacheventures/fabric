@@ -29,6 +29,7 @@ module Fabric
       customer_saved = @customer.save
       Fabric.config.logger.info "CreateCardOperation: Completed. card saved: "\
         "#{card_saved} customer saved: #{customer_saved}"
+      card
     end
   end
 end

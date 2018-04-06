@@ -7,6 +7,7 @@ module Fabric
     has_many :subscriptions, class_name: 'Fabric::Subscription'
 
     field :stripe_id, type: String
+    field :object, type: String
     field :amount, type: Integer
     field :created, type: Time
     field :currency, type: String
@@ -15,15 +16,16 @@ module Fabric
     field :interval_count, type: Integer, default: 1
     field :livemode, type: Boolean
     field :metadata, type: Hash
-    field :name, type: String
-    field :statement_descriptor, type: String
+    field :nickname, type: String
     field :trial_period_days, type: Integer
+    field :product, type: String
 
-    validates :stripe_id, :amount, :currency, :interval, :created, :name,
+    validates :stripe_id, :amount, :currency, :interval, :created, :product,
       presence: true
 
     def sync_with(plan)
       self.stripe_id = Fabric.stripe_id_for plan
+      self.object = plan.object
       self.amount = plan.amount
       self.created = plan.created
       self.currency = plan.currency
@@ -32,8 +34,8 @@ module Fabric
       self.livemode = plan.livemode
       self.metadata = plan.metadata.to_hash
       self.name = plan.name
-      self.statement_descriptor = plan.statement_descriptor
       self.trial_period_days = plan.trial_period_days
+      self.product = plan.product
       self
     end
   end

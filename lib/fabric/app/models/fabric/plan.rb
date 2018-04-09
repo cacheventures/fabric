@@ -20,9 +20,12 @@ module Fabric
     field :nickname, type: String
     field :trial_period_days, type: Integer
     field :product, type: String
+    field :billing_scheme, type: String
+    field :transform_usage, type: Hash
+    field :usage_type, type: String
 
     validates :stripe_id, :amount, :currency, :interval, :created, :product,
-      presence: true
+              presence: true
 
     def sync_with(plan)
       self.stripe_id = Fabric.stripe_id_for plan
@@ -37,6 +40,11 @@ module Fabric
       self.nickname = plan.nickname
       self.trial_period_days = plan.trial_period_days
       self.product = plan.product
+      self.billing_scheme = plan.billing_scheme
+      if plan.transform_usage.present?
+        self.transform_usage = plan.transform_usage.to_hash
+      end
+      self.usage_type = plan.usage_type
       self
     end
   end

@@ -54,6 +54,7 @@ module Fabric
   autoload :InvoiceItem, 'fabric/app/models/fabric/invoice_item'
   autoload :Plan, 'fabric/app/models/fabric/plan'
   autoload :Subscription, 'fabric/app/models/fabric/subscription'
+  autoload :SubscriptionItem, 'fabric/app/models/fabric/subscription_item'
 
   class << self
     def config

@@ -11,11 +11,14 @@ module Fabric
 
     def call
       stripe_customer = Stripe::Customer.retrieve(@customer.stripe_id)
-
       stripe_subscription = stripe_customer.subscriptions.create @attributes
-
       subscription = @customer.subscriptions.build
       subscription.sync_with(stripe_subscription)
+      stripe_subscription.items.data.each do |sub_item|
+        item = subscription.subscription_items.build
+        item.sync_with(sub_item)
+        item.save
+      end
       saved = subscription.save
       Fabric.config.logger.info "CreateSubscriptionOperation: Completed. "\
         "saved: #{saved}"

@@ -4,7 +4,8 @@ module Fabric
     include Mongoid::Timestamps
     extend Enumerize
 
-    has_many :subscriptions, class_name: 'Fabric::Subscription'
+    has_many :subscription_items, class_name: 'Fabric::SubscriptionItem',
+                                  inverse_of: :plan
 
     field :stripe_id, type: String
     field :object, type: String

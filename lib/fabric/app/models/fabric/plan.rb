@@ -34,7 +34,7 @@ module Fabric
       self.interval_count = plan.interval_count
       self.livemode = plan.livemode
       self.metadata = plan.metadata.to_hash
-      self.name = plan.name
+      self.nickname = plan.nickname
       self.trial_period_days = plan.trial_period_days
       self.product = plan.product
       self

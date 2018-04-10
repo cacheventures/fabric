@@ -14,6 +14,7 @@ require 'fabric/create_customer_operation'
 require 'fabric/create_invoice_operation'
 require 'fabric/create_invoice_item_operation'
 require 'fabric/create_subscription_operation'
+require 'fabric/create_usage_record_operation'
 require 'fabric/plan_policy'
 require 'fabric/resume_subscription_operation'
 require 'fabric/sync_coupons_operation'
@@ -55,6 +56,7 @@ module Fabric
   autoload :Plan, 'fabric/app/models/fabric/plan'
   autoload :Subscription, 'fabric/app/models/fabric/subscription'
   autoload :SubscriptionItem, 'fabric/app/models/fabric/subscription_item'
+  autoload :UsageRecord, 'fabric/app/models/fabric/usage_record'
 
   class << self
     def config

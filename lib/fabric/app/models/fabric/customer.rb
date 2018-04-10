@@ -18,6 +18,7 @@ module Fabric
     has_many :invoice_items,
              class_name: 'Fabric::InvoiceItem',
              dependent: :destroy
+    has_many :usage_records, class_name: 'Fabric::UsageRecord'
 
     field :stripe_id, type: String
     field :created, type: Time

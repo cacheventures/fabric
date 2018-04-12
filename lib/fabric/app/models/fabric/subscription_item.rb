@@ -12,7 +12,7 @@ module Fabric
     field :metadata, type: Hash
     field :quantity, type: Integer
 
-    validates_presence_of :stripe_id, :quantity
+    validates_presence_of :stripe_id
 
     def sync_with(sub_item)
       self.stripe_id = Fabric.stripe_id_for sub_item

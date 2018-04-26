@@ -11,7 +11,9 @@ module Fabric
 
     def call
       stripe_record = Stripe::UsageRecord.create(@attributes)
-      usage_record = @customer.usage_records.build
+      usage_record = @customer.usage_records.find_or_initialize_by(
+        stripe_id: stripe_record.id
+      )
       usage_record.sync_with(stripe_record)
       saved = usage_record.save
       Fabric.config.logger.info "CreateUsageRecordOperation: Completed. "\

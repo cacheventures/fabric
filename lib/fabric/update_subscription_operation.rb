@@ -21,9 +21,8 @@ module Fabric
 
       @subscription.sync_with(stripe_subscription)
       stripe_subscription.items.data.each do |sub_item|
-        item = @subscription.subscription_items.find_by(
-          stripe_id: sub_item.id
-        )
+        sub_items = @subscription.subscription_items
+        item = sub_items.find_by(stripe_id: sub_item.id) || sub_items.build
         item.sync_with(sub_item)
         item.save
       end

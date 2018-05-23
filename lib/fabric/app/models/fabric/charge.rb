@@ -16,7 +16,7 @@ module Fabric
       self.amount = charge.amount
       self.created = charge.created
       self.currency = charge.currency
-      self.metadata = charge.metadata
+      self.metadata = charge.metadata.to_hash
     end
   end
 end

@@ -8,6 +8,7 @@ PATH
   remote: .
   specs:
     fabric (0.3.1)
+      colorize
       enumerize
       mongoid
       sidekiq
@@ -27,6 +28,7 @@ GEM
     awesome_print (1.7.0)
     bson (4.3.0)
     coderay (1.1.1)
+    colorize (0.8.1)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.2)
     enumerize (2.2.2)

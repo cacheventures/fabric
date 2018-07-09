@@ -33,7 +33,13 @@ module Fabric
     validates :default_source, presence: true,
       if: proc { |c| c.sources.present? }
 
-    before_destroy { Stripe::Customer.retrieve(stripe_id).delete }
+    before_destroy :delete_from_stripe
+
+    def delete_from_stripe
+      Stripe::Customer.retrieve(stripe_id).delete
+    rescue Stripe::InvalidRequestError => e
+      puts e.red
+    end
 
     def sync_with(cust)
       self.stripe_id = Fabric.stripe_id_for cust

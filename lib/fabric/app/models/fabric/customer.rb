@@ -38,7 +38,7 @@ module Fabric
     def delete_from_stripe
       Stripe::Customer.retrieve(stripe_id).delete
     rescue Stripe::InvalidRequestError => e
-      puts e.red
+      puts e.inspect.red
     end
 
     def sync_with(cust)

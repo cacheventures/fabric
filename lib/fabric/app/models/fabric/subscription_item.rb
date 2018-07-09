@@ -5,8 +5,9 @@ module Fabric
 
     belongs_to :subscription, class_name: 'Fabric::Subscription'
     belongs_to :plan, class_name: 'Fabric::Plan',
-                      inverse_of: :subscription_items
-    has_many :usage_records, class_name: 'Fabric::UsageRecord'
+      inverse_of: :subscription_items
+    has_many :usage_records, class_name: 'Fabric::UsageRecord',
+      dependent: :destroy
 
     field :stripe_id, type: String
     field :metadata, type: Hash

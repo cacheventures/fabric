@@ -4,20 +4,16 @@ module Fabric
     include Mongoid::Timestamps
     extend Enumerize
 
-    has_many :subscriptions,
-      class_name: 'Fabric::Subscription',
-      dependent: :restrict
+    has_many :subscriptions, class_name: 'Fabric::Subscription',
+      dependent: :destroy
     has_many :sources, class_name: 'Fabric::Card', dependent: :destroy
     has_many :invoices, class_name: 'Fabric::Invoice', dependent: :destroy
-    has_many :events,
-      class_name: 'Fabric::Event',
-      inverse_of: :customer,
+    has_many :events, class_name: 'Fabric::Event', inverse_of: :customer,
       dependent: :destroy
     has_many :discounts, class_name: 'Fabric::Discount', dependent: :destroy
     has_many :charges, class_name: 'Fabric::Charge', dependent: :destroy
-    has_many :invoice_items,
-             class_name: 'Fabric::InvoiceItem',
-             dependent: :destroy
+    has_many :invoice_items, class_name: 'Fabric::InvoiceItem',
+      dependent: :destroy
     has_many :usage_records, class_name: 'Fabric::UsageRecord'
 
     field :stripe_id, type: String
@@ -36,6 +32,8 @@ module Fabric
     validates :stripe_id, :created, presence: true
     validates :default_source, presence: true,
       if: proc { |c| c.sources.present? }
+
+    before_destroy { Stripe::Customer.retrieve(stripe_id).delete }
 
     def sync_with(cust)
       self.stripe_id = Fabric.stripe_id_for cust

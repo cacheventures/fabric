@@ -7,6 +7,8 @@ module Fabric
 
     field :stripe_id, type: String
     field :amount_due, type: Integer
+    field :amount_paid, type: Integer
+    field :amount_remaining, type: Integer
     field :application_fee, type: Integer
     field :attempt_count, type: Integer
     field :attempted, type: Boolean
@@ -16,12 +18,14 @@ module Fabric
     field :date, type: Time
     field :description, type: String
     field :discount, type: Hash
+    field :due_date, type: Time
     field :ending_balance, type: Integer
     field :forgiven, type: Boolean
     field :lines, type: Array
     field :livemode, type: Boolean
     field :metadata, type: Hash
     field :next_payment_attempt, type: Time
+    field :number, type: String
     field :paid, type: Boolean
     field :period_end, type: Time
     field :period_start, type: Time
@@ -44,6 +48,8 @@ module Fabric
     def sync_with(invoice)
       self.stripe_id = Fabric.stripe_id_for invoice
       self.amount_due = invoice.amount_due
+      self.amount_paid = invoice.amount_paid
+      self.amount_remaining = invoice.amount_remaining
       self.application_fee = invoice.application_fee
       self.attempt_count = invoice.attempt_count
       self.attempted = invoice.attempted
@@ -53,12 +59,14 @@ module Fabric
       self.date = invoice.date
       self.description = invoice.description
       self.discount = invoice.try(:discount).try(:to_hash) # could be nil
+      self.due_date = invoice.due_date
       self.ending_balance = invoice.ending_balance
       self.forgiven = invoice.forgiven
       self.lines = invoice.lines.to_hash.try(:[], :data)
       self.livemode = invoice.livemode
       self.metadata = invoice.metadata.to_hash
       self.next_payment_attempt = invoice.next_payment_attempt
+      self.number = invoice.number
       self.paid = invoice.paid
       self.period_end = invoice.period_end
       self.period_start = invoice.period_start

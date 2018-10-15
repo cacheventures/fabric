@@ -26,6 +26,7 @@ module Fabric
     field :trial_end, type: Time
     field :trial_start, type: Time
 
+    validates_uniqueness_of :stripe_id
     validates :stripe_id, :cancel_at_period_end, :customer, :start, :status,
               :current_period_end, :current_period_start, presence: true
 
@@ -36,6 +37,7 @@ module Fabric
     }
     scope :unpaid, -> { where(:status.in => %w(unpaid past_due)) }
 
+    index({ stripe_id: 1 }, { background: true, unique: true })
     index({ status: 1 }, background: true)
 
     def sync_with(sub)

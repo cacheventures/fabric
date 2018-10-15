@@ -10,6 +10,7 @@ module Fabric
         webhook: event[:type],
         customer_id: customer_id
       )
+      event.api_version = event[:api_version]
       previously_existed = event.persisted?
       event.save unless previously_existed
       [event, previously_existed]

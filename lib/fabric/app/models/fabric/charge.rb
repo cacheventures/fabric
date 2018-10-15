@@ -46,6 +46,11 @@ module Fabric
     scope :pending, -> { where(status: 'pending') }
     scope :failed, -> { where(status: 'failed') }
 
+    validates_uniqueness_of :stripe_id
+    validates :stripe_id, presence: true
+
+    index({ stripe_id: 1 }, { background: true, unique: true })
+
     def sync_with(charge)
       self.stripe_id = Fabric.stripe_id_for charge
       self.amount = charge.amount

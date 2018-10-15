@@ -21,7 +21,10 @@ module Fabric
     field :times_redeemed, type: Integer
     field :coupon_valid, type: Boolean
 
+    validates_uniqueness_of :stripe_id
     validates :stripe_id, :duration, presence: true
+
+    index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(coupon)
       self.stripe_id = Fabric.stripe_id_for coupon

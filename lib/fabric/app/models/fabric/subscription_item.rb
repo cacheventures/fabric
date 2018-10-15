@@ -13,7 +13,10 @@ module Fabric
     field :metadata, type: Hash
     field :quantity, type: Integer
 
+    validates_uniqueness_of :stripe_id
     validates_presence_of :stripe_id
+
+    index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(sub_item)
       self.stripe_id = Fabric.stripe_id_for sub_item

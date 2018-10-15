@@ -10,7 +10,10 @@ module Fabric
     field :quantity, type: Integer
     field :timestamp, type: Time
 
+    validates_uniqueness_of :stripe_id
     validates_presence_of :stripe_id, :quantity, :timestamp
+
+    index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(usage_record)
       self.stripe_id = Fabric.stripe_id_for(usage_record)

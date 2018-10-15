@@ -76,18 +76,23 @@ module Fabric
   # define Config class, to be used as
   #   Fabric.configure do |c|
   #     c.store_events = false
+  #     c.persist_models = :all
+  #     # c.persist_models = %i[charge coupon customer]
   #   end
   class Config
     attr_accessor :store_events
     attr_accessor :logger
     attr_accessor :worker_callback
-    attr_accessor :persist_models
 
     def initialize
       @store_events = true
       @logger = ActiveSupport::Logger.new($stdout)
       @worker_callback = Proc.new {}
-      @persist_models = true # TODO: change to false by default
+      @persist_models = :all
+    end
+
+    def persist?(document)
+      @persist_models == :all || @persist_models[document].present?
     end
   end
 

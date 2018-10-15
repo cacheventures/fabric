@@ -24,8 +24,11 @@ module Fabric
     field :transform_usage, type: Hash
     field :usage_type, type: String
 
+    validates_uniqueness_of :stripe_id
     validates :stripe_id, :amount, :currency, :interval, :created, :product,
               presence: true
+
+    index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(plan)
       self.stripe_id = Fabric.stripe_id_for plan

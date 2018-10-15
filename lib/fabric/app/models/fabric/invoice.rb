@@ -4,7 +4,7 @@ module Fabric
     include Mongoid::Timestamps
 
     belongs_to :customer, class_name: 'Fabric::Customer'
-    has_many :charges, class_name: 'Fabric::Charge', dependent: :destroy
+    has_one :charge, class_name: 'Fabric::Charge', dependent: :destroy
 
     field :stripe_id, type: String
     field :amount_due, type: Integer
@@ -41,10 +41,11 @@ module Fabric
     field :total, type: Integer
     field :webhooks_delivered_at, type: Time
 
+    validates_uniqueness_of :stripe_id
     validates :customer_id, :stripe_id, presence: true
 
+    index({ stripe_id: 1 }, { background: true, unique: true })
     index({ customer_id: 1, subscription: 1 }, background: true)
-    index({ stripe_id: 1 }, background: true)
 
     def sync_with(invoice)
       self.stripe_id = Fabric.stripe_id_for invoice
@@ -54,7 +55,9 @@ module Fabric
       self.application_fee = invoice.application_fee
       self.attempt_count = invoice.attempt_count
       self.attempted = invoice.attempted
-      self.charge = invoice.charge
+      self.charge = Fabric::Charge.find_by(
+        stripe_id: invoice.charge
+      ) if invoice.charge.present?
       self.closed = invoice.closed
       self.currency = invoice.currency
       self.date = invoice.date

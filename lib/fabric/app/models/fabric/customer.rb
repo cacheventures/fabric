@@ -27,11 +27,12 @@ module Fabric
     field :livemode, type: Boolean
     field :metadata, type: Hash
 
-    index({ stripe_id: 1 }, background: true)
-
+    validates_uniqueness_of :stripe_id
     validates :stripe_id, :created, presence: true
     validates :default_source, presence: true,
       if: proc { |c| c.sources.present? }
+
+    index({ stripe_id: 1 }, { background: true, unique: true })
 
     before_destroy :delete_from_stripe
 

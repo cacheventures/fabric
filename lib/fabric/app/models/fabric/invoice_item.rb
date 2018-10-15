@@ -10,6 +10,10 @@ module Fabric
     field :invoice, type: String
     field :currency, type: String
 
+    validates_uniqueness_of :stripe_id
+
+    index({ stripe_id: 1 }, { background: true, unique: true })
+
     def sync_with(invoice_item)
       self.stripe_id = Fabric.stripe_id_for invoice_item
       self.amount = invoice_item.amount

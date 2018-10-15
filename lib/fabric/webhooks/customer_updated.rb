@@ -8,7 +8,7 @@ module Fabric
           check_idempotency(event) or return
         end
 
-        persist_model(event) if Fabric.config.persist_models
+        persist_model(event) if Fabric.config.persist?(:customer)
 
         handle(event)
       end

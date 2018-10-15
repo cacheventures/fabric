@@ -1,6 +1,6 @@
 module Fabric
   module Webhooks
-    class ChargeSucceeded
+    class ChargeFailed
       include Fabric::Webhook
 
       def call(event)
@@ -18,11 +18,11 @@ module Fabric
         if customer_id.present?
           customer = Fabric::Customer.find_by(stripe_id: customer_id)
           unless customer.present?
-            Fabric.config.logger.info 'ChargeSucceed: No matching customer.'
+            Fabric.config.logger.info 'ChargeFailed: No matching customer.'
             return
           end
         else
-          Fabric.config.logger.info 'ChargeSucceed: ERROR: No customer.'
+          Fabric.config.logger.info 'ChargeFailed: ERROR: No customer.'
           return
         end
 
@@ -31,7 +31,7 @@ module Fabric
         )
         charge.sync_with(event.data.object)
         saved = charge.save
-        Fabric.config.logger.info "ChargeSucceed: Created charge: "\
+        Fabric.config.logger.info "ChargeFailed: Created charge: "\
           "#{charge.stripe_id} saved: #{saved}"
       end
     end

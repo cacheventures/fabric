@@ -26,7 +26,7 @@ module Fabric
           return
         end
 
-        source = Fabric::Source.new(
+        source = Fabric::Card.new(
           customer: customer
         )
         source.sync_with(event.data.object)

@@ -15,7 +15,7 @@ module Fabric
 
       def persist_model(event)
         stripe_source = event.data.object
-        source = Fabric::Source.find_by(
+        source = Fabric::Card.find_by(
           stripe_id: stripe_source.id
         )
         if source.present?

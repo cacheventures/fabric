@@ -15,14 +15,14 @@ module Fabric
 
       def persist_model(event)
         coupon = Fabric::Coupon.find_by(stripe_id: event.data.object.id)
-        unless coupon.present?
+        if coupon.present?
+          coupon.sync_with(event.data.object)
+          saved = coupon.save
+          Fabric.config.logger.info "CouponUpdated: Updated coupon: "\
+            "#{coupon.stripe_id} saved: #{saved}"
+        else
           Fabric.config.logger.info 'CouponUpdated: No matching coupon.'
-          return
         end
-        coupon.sync_with(event.data.object)
-        saved = coupon.save
-        Fabric.config.logger.info "CouponUpdated: Updated coupon: "\
-          "#{coupon.stripe_id} saved: #{saved}"
       end
 
     end

@@ -33,15 +33,14 @@ module Fabric
         stripe_card = event.data.object
         card_id = stripe_card.try(:id)
         card = Fabric::Source.find_by(stripe_id: card_id)
-        unless card.present?
+        if card.present?
+          card.sync_with stripe_card
+          saved = card.save
+          Fabric.config.logger.info "SourceUpdated: Updated card: "\
+            "#{stripe_card.id} saved: #{saved}"
+        else
           Fabric.config.logger.info "SourceUpdated: No such card: #{card_id}"
-          return
         end
-
-        card.sync_with stripe_card
-        saved = card.save
-        Fabric.config.logger.info "SourceUpdated: Updated card: "\
-          "#{stripe_card.id} saved: #{saved}"
       end
 
     end

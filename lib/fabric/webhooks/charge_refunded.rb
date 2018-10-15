@@ -1,21 +1,5 @@
 module Fabric
   module Webhooks
-    class ChargeRefunded
-      include Fabric::Webhook
-
-      def call(event)
-        if Fabric.config.store_events
-          check_idempotency(event) or return
-        end
-
-        persist_model(event) if Fabric.config.persist?(:charge)
-
-        handle(event)
-      end
-
-      def persist_model(event)
-        # TODO
-      end
-    end
+    class ChargeRefunded < ChargeUpdated; end
   end
 end

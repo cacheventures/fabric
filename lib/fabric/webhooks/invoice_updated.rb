@@ -26,7 +26,6 @@ module Fabric
         else
           Fabric.config.logger.info "InvoiceUpdated: Unable to locate "\
             "invoice. invoice: #{stripe_invoice.id}"
-          Fabric::Webhooks::InvoiceCreated.new.call event
         end
       end
 

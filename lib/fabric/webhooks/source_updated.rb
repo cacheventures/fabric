@@ -32,7 +32,7 @@ module Fabric
 
         stripe_card = event.data.object
         card_id = stripe_card.try(:id)
-        card = Fabric::Source.find_by(stripe_id: card_id)
+        card = Fabric::Card.find_by(stripe_id: card_id)
         if card.present?
           card.sync_with stripe_card
           saved = card.save

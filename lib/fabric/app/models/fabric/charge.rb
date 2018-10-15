@@ -37,8 +37,13 @@ module Fabric
     field :source_transfer, type: String
     field :statement_descriptor, type: String
     field :status, type: String
+    enumerize :status, in: %w[succeeded pending failed]
     field :transfer, type: String
     field :transfer_group, type: String
+
+    scope :succeeded, -> { where(status: 'succeeded') }
+    scope :pending, -> { where(status: 'pending') }
+    scope :failed, -> { where(status: 'failed') }
 
     def sync_with(charge)
       self.stripe_id = Fabric.stripe_id_for charge

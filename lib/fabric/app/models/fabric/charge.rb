@@ -2,6 +2,7 @@ module Fabric
   class Charge
     include Mongoid::Document
     include Mongoid::Timestamps
+    extend Enumerize
 
     belongs_to :customer, class_name: 'Fabric::Customer', touch: true
     belongs_to :invoice, class_name: 'Fabric::Invoice'

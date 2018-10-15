@@ -32,7 +32,7 @@ module Fabric
 
         stripe_card = event.data.object
         card_id = stripe_card.try(:id)
-        card = Fabric::Card.find_by(stripe_id: card_id)
+        card = Fabric::Source.find_by(stripe_id: card_id)
         unless card.present?
           Fabric.config.logger.info "SourceUpdated: No such card: #{card_id}"
           return

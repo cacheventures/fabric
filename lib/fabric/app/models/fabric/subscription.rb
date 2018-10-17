@@ -18,7 +18,7 @@ module Fabric
     field :current_period_start, type: Time
     field :start, type: Time
     field :status, type: String
-    enumerize :status, in: %w(trialing active past_due canceled unpaid)
+    enumerize :status, in: %w[trialing active past_due canceled unpaid]
     field :ended_at, type: Time
     field :livemode, type: Boolean
     field :metadata, type: Hash
@@ -31,11 +31,11 @@ module Fabric
               :current_period_end, :current_period_start, presence: true
 
     scope :active, -> { where(status: 'active') }
-    scope :billing, -> { where(:status.in => %w(trialing active past_due)) }
+    scope :billing, -> { where(:status.in => %w[trialing active past_due]) }
     scope :non_canceled, lambda {
-      where(:status.in => %w(trialing active past_due unpaid))
+      where(:status.in => %w[trialing active past_due unpaid])
     }
-    scope :unpaid, -> { where(:status.in => %w(unpaid past_due)) }
+    scope :unpaid, -> { where(:status.in => %w[unpaid past_due]) }
 
     index({ stripe_id: 1 }, { background: true, unique: true })
     index({ status: 1 }, background: true)

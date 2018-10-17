@@ -11,11 +11,10 @@ module Fabric
 
     def call
       stripe_customer = Stripe::Customer.retrieve @customer.stripe_id
-
       stripe_card = stripe_customer.sources.create(card: @card)
 
-      stripe_customer.refresh
-      unless stripe_customer.default_source == stripe_card.id
+      default_source = stripe_customer.default_source
+      if default_source.present? && default_source != stripe_card.id
         stripe_customer.default_source = stripe_card.id
         stripe_customer.save
       end

@@ -6,13 +6,11 @@ module Fabric
       Fabric.config.logger.info "UpdateSubscriptionOperation: Started with "\
         "#{subscription} #{attributes}"
       @subscription = get_document(Fabric::Subscription, subscription)
-      @customer = @subscription.customer
       @attributes = attributes
     end
 
     def call
-      stripe_customer = Stripe::Customer.retrieve @customer.stripe_id
-      stripe_subscription = stripe_customer.subscriptions.retrieve(
+      stripe_subscription = Stripe::Subscription.retrieve(
         @subscription.stripe_id
       )
 
@@ -20,8 +18,8 @@ module Fabric
       stripe_subscription.save
 
       @subscription.sync_with(stripe_subscription)
+      sub_items = @subscription.subscription_items
       stripe_subscription.items.data.each do |sub_item|
-        sub_items = @subscription.subscription_items
         item = sub_items.find_by(stripe_id: sub_item.id) || sub_items.build
         item.sync_with(sub_item)
         item.save

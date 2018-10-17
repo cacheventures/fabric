@@ -14,19 +14,15 @@ module Fabric
         customer = retrieve_local(:customer, stripe_discount.customer)
         subscription = retrieve_local(
           :subscription, stripe_discount.subscription
-        )
-        coupon = retrieve_local(:coupon, stripe_discount.coupon.id)
-        return unless coupon
-        if customer
-          discount = Fabric::Discount.find_by(customer: customer)
-        elsif subscription
-          discount = Fabric::Discount.find_by(subscription: subscription)
-        end
-        return unless discount
+        ) if stripe_discount.subscription
+        return unless customer
 
-        discount.destroy
-        Fabric.config.logger.info "DiscountDeleted: Destroyed discount: "\
-          "#{discount.id}"
+        parent = subscription.present ? subscription : customer
+        parent.discount = nil
+        saved = parent.save
+
+        Fabric.config.logger.info "DiscountDeleted: Destroyed discount on "\
+          "parent: #{parent.stripe_id} saved: #{saved}"
       end
 
     end

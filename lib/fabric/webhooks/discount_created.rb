@@ -10,11 +10,20 @@ module Fabric
       end
 
       def persist_model(event)
-        discount = Fabric::Discount.new
-        discount.sync_with(event.data.object)
+        stripe_discount = event.data.object
+        customer = retrieve_local(:customer, stripe_discount.customer)
+        subscription = retrieve_local(
+          :subscription, stripe_discount.subscription
+        ) if stripe_discount.subscription
+        return unless customer
+
+        parent = subscription.present ? subscription : customer
+        parent.discount = stripe_discount.to_hash
+        parent.save
+
         saved = discount.save
-        Fabric.config.logger.info "DiscountCreated: Created discount: "\
-          "#{discount.id} saved: #{saved}"
+        Fabric.config.logger.info "DiscountCreated: Created discount on "\
+          "parent: #{parent.stripe_id} saved: #{saved}"
       end
 
     end

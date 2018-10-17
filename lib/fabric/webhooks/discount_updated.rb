@@ -14,21 +14,16 @@ module Fabric
         customer = retrieve_local(:customer, stripe_discount.customer)
         subscription = retrieve_local(
           :subscription, stripe_discount.subscription
-        )
-        coupon = retrieve_local(:coupon, stripe_discount.coupon.id)
-        return unless coupon
-        if customer
-          discount = Fabric::Discount.find_by(customer: customer)
-        elsif subscription
-          discount = Fabric::Discount.find_by(subscription: subscription)
-        end
-        return unless discount
-        return unless most_recent_update?(discount, event)
+        ) if stripe_discount.subscription
+        return unless customer
 
-        discount.sync_with(stripe_discount)
-        saved = discount.save
-        Fabric.config.logger.info "DiscountUpdated: Created discount: "\
-          "#{discount.id} saved: #{saved}"
+        parent = subscription.present ? subscription : customer
+        return unless most_recent_update?(parent, event)
+        parent.discount = stripe_discount.to_hash
+        saved = parent.save
+
+        Fabric.config.logger.info "DiscountUpdated: Created discount on "\
+          "parent: #{parent.stripe_id} saved: #{saved}"
       end
 
     end

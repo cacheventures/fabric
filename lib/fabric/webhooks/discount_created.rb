@@ -14,7 +14,7 @@ module Fabric
         discount.sync_with(event.data.object)
         saved = discount.save
         Fabric.config.logger.info "DiscountCreated: Created discount: "\
-          "#{discount.stripe_id} saved: #{saved}"
+          "#{discount.id} saved: #{saved}"
       end
 
     end

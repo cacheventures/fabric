@@ -26,7 +26,7 @@ module Fabric
 
         discount.destroy
         Fabric.config.logger.info "DiscountDeleted: Destroyed discount: "\
-          "#{discount.stripe_id}"
+          "#{discount.id}"
       end
 
     end

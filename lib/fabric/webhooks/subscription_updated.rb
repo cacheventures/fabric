@@ -4,29 +4,21 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        if Fabric.config.store_events
-          check_idempotency(event) or return
-        end
-
+        check_idempotency(event) or return if Fabric.config.store_events
         persist_model(event) if Fabric.config.persist?(:subscription)
-
         handle(event)
       end
 
       def persist_model(event)
         stripe_subscription = event.data.object
-        subscription = Fabric::Subscription.find_by(
-          stripe_id: stripe_subscription.id
-        )
-        if subscription.present?
-          subscription.sync_with(stripe_subscription)
-          saved = subscription.save
-          Fabric.config.logger.info "SubscriptionUpdated: Updated subscription: "\
-            "#{stripe_subscription.id} saved: #{saved}"
-        else
-          Fabric.config.logger.info "SubscriptionUpdated: Unable to locate "\
-            "subscription. subscription: #{stripe_subscription.id}"
-        end
+        subscription = retrieve_local(:subscription, stripe_subscription.id)
+        return unless subscription
+        return unless most_recent_update?(subscription, event)
+
+        subscription.sync_with(stripe_subscription)
+        saved = subscription.save
+        Fabric.config.logger.info "SubscriptionUpdated: Updated subscription: "\
+          "#{subscription.id} saved: #{saved}"
       end
 
     end

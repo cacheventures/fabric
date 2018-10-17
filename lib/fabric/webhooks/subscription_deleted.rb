@@ -4,28 +4,19 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        if Fabric.config.store_events
-          check_idempotency(event) or return
-        end
-
+        check_idempotency(event) or return if Fabric.config.store_events
         persist_model(event) if Fabric.config.persist?(:subscription)
-
         handle(event)
       end
 
       def persist_model(event)
         stripe_subscription = event.data.object
-        subscription = Fabric::Subscription.find_by(
-          stripe_id: stripe_subscription.id
-        )
-        if subscription.present?
-          Fabric.config.logger.info "SubscriptionDeleted: Deleting subscription: "\
-            "#{stripe_subscription.id}"
-          subscription.destroy
-        else
-          Fabric.config.logger.info "SubscriptionDeleted: Unable to locate "\
-            "subscription: #{stripe_subscription.id}"
-        end
+        subscription = retrieve_local(:subscription, stripe_subscription.id)
+        return unless subscription
+
+        subscription.destroy
+        Fabric.config.logger.info "SubscriptionDeleted: Deleting subscription: "\
+          "#{subscription.id}"
       end
 
     end

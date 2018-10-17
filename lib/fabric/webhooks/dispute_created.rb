@@ -4,12 +4,8 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        if Fabric.config.store_events
-          check_idempotency(event) or return
-        end
-
+        check_idempotency(event) or return if Fabric.config.store_events
         persist_model(event) if Fabric.config.persist?(:dispute)
-
         handle(event)
       end
 

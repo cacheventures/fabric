@@ -5,7 +5,6 @@ module Fabric
     extend Enumerize
 
     belongs_to :customer, class_name: 'Fabric::Customer', touch: true
-    has_one :discount, class_name: 'Fabric::Discount', dependent: :destroy
     has_many :subscription_items, class_name: 'Fabric::SubscriptionItem',
                                   dependent: :destroy
 
@@ -25,6 +24,7 @@ module Fabric
     field :tax_percent, type: Float
     field :trial_end, type: Time
     field :trial_start, type: Time
+    field :discount, type: Hash
 
     validates_uniqueness_of :stripe_id
     validates :stripe_id, :cancel_at_period_end, :customer, :start, :status,
@@ -59,6 +59,7 @@ module Fabric
       self.customer = Fabric::Customer.find_by(
         stripe_id: sub.customer
       ) unless customer.present?
+      self.discount = sub.discount.try(:to_hash)
       self
     end
 

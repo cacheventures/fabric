@@ -26,6 +26,7 @@ module Fabric
     field :email, type: String
     field :livemode, type: Boolean
     field :metadata, type: Hash
+    field :discount, type: Hash
 
     validates_uniqueness_of :stripe_id
     validates :stripe_id, :created, presence: true
@@ -51,10 +52,10 @@ module Fabric
       # self.sources = cust.sources
       self.delinquent = cust.delinquent
       self.description = cust.description
-      # self.discount = cust.discount
       self.email = cust.email
       self.livemode = cust.livemode
       self.metadata = cust.metadata.to_hash
+      self.discount = cust.discount.try(:to_hash)
       self
     end
 

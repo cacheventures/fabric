@@ -4,27 +4,14 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        if Fabric.config.store_events
-          check_idempotency(event) or return
-        end
-
+        check_idempotency(event) or return if Fabric.config.store_events
         persist_model(event) if Fabric.config.persist?(:subscription)
-
         handle(event)
       end
 
       def persist_model(event)
-        customer_id = event.try(:data).try(:object).try(:customer)
-        if customer_id.present?
-          customer = Fabric::Customer.find_by(stripe_id: customer_id)
-          unless customer.present?
-            Fabric.config.logger.info 'SubscriptionCreated: No matching customer.'
-            return
-          end
-        else
-          Fabric.config.logger.info 'SubscriptionCreated: ERROR: No customer.'
-          return
-        end
+        stripe_subscription = event.data.object
+        customer = retrieve_local(:customer, stripe_subscription.customer)
 
         subscription = Fabric::Subscription.new(customer: customer)
         subscription.sync_with(event.data.object)

@@ -31,6 +31,33 @@ module Fabric
       true
     end
 
+    # retrieves the local resource if it exists.
+    #
+    # @param resource_name name of local model
+    # @param remote_id a Stripe ID for the resource
+    # @return [Fabric::resource] the local resource if exists
+    def retrieve_local(resource_name, remote_id)
+      resource = "Fabric::#{resource_name}".constantize.find_by(
+        stripe_id: remote_id
+      )
+      unless resource.present?
+        Fabric.config.logger.info(
+          "#{resource_name} not found. resource: #{remote_id}"
+        )
+        return
+      end
+      resource
+    end
+
+    # check if the event is more up to date then the local resource
+    #
+    # @param resource the local resource
+    # @param event the incoming event
+    # @return [Boolean] true if the event is most recent update
+    def most_recent_update?(resource, event)
+      Time.at(event.created) >= resource.updated_at
+    end
+
     # handle an event with custom user code.
     # stub method, override on a per-class basis if custom behavior is desired.
     # @param event a Stripe event from a webhook

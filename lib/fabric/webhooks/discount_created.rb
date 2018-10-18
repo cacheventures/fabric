@@ -17,7 +17,7 @@ module Fabric
         ) if stripe_discount.subscription
         return unless customer
 
-        parent = subscription.present ? subscription : customer
+        parent = subscription.present? ? subscription : customer
         parent.discount = stripe_discount.to_hash
         parent.save
 

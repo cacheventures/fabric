@@ -22,10 +22,10 @@ module Fabric
       card = Fabric::Card.new(customer: @customer)
       card.sync_with(stripe_card)
       card_saved = card.save
-
+      @customer.reload unless card_saved
       @customer.sync_with(stripe_customer)
-
       customer_saved = @customer.save
+
       Fabric.config.logger.info "CreateCardOperation: Completed. card saved: "\
         "#{card_saved} customer saved: #{customer_saved}"
       card

@@ -41,9 +41,8 @@ module Fabric
         stripe_id: remote_id
       )
       unless resource.present?
-        Fabric.config.logger.info(
-          "#{resource_name} not found. resource: #{remote_id}"
-        )
+        log_data = { name: resource_name, remote_id: remote_id }
+        Fabric.config.logger.info("resource not found #{log_data.to_json}")
         return
       end
       resource
@@ -55,7 +54,10 @@ module Fabric
     # @param event the incoming event
     # @return [Boolean] true if the event is most recent update
     def most_recent_update?(resource, event)
-      Time.at(event.created) >= resource.updated_at
+      x = Time.at(event.created) >= resource.updated_at
+      log_data = { id: resource.id.to_s, name: resource.class.name }
+      Fabric.config.logger.info("skipping update #{log_data.to_json}") unless x
+      x
     end
 
     # handle an event with custom user code.

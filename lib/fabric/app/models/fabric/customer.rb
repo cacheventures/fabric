@@ -54,7 +54,7 @@ module Fabric
       self.description = cust.description
       self.email = cust.email
       self.livemode = cust.livemode
-      self.metadata = convert_metadata(cust.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(cust.metadata.to_hash)
       self.discount = cust.discount.try(:to_hash)
       self
     end

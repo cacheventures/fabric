@@ -71,7 +71,7 @@ module Fabric
         stripe_id: charge.invoice
       ) unless invoice.present?
       self.livemode = charge.livemode
-      self.metadata = convert_metadata(charge.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(charge.metadata.to_hash)
       self.on_behalf_of = charge.on_behalf_of
       self.order = charge.order
       self.outcome = charge.outcome.to_hash

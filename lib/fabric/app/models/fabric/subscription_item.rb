@@ -20,7 +20,7 @@ module Fabric
 
     def sync_with(sub_item)
       self.stripe_id = Fabric.stripe_id_for sub_item
-      self.metadata = convert_metadata(sub_item.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(sub_item.metadata.to_hash)
       self.quantity = sub_item.quantity if sub_item.try(:quantity).present?
       self.plan = Fabric::Plan.find_by(
         stripe_id: Fabric.stripe_id_for(sub_item.plan)

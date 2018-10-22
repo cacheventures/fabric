@@ -35,7 +35,7 @@ module Fabric
       self.duration_in_months = coupon.duration_in_months
       self.livemode = coupon.livemode
       self.max_redemptions = coupon.max_redemptions
-      self.metadata = convert_metadata(coupon.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(coupon.metadata.to_hash)
       self.percent_off = coupon.percent_off
       self.redeem_by = coupon.redeem_by
       self.times_redeemed = coupon.times_redeemed

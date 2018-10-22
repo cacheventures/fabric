@@ -59,7 +59,7 @@ module Fabric
       self.address_line1_check = card.address_line1_check
       self.address_zip_check = card.address_zip_check
       self.dynamic_last4 = card.dynamic_last4
-      self.metadata = convert_metadata(card.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(card.metadata.to_hash)
       self.tokenization_method = card.tokenization_method
       unless customer.present?
         self.customer = Fabric::Customer.find_by(

@@ -69,7 +69,7 @@ module Fabric
       self.forgiven = invoice.forgiven
       self.lines = invoice.lines.to_hash.try(:[], :data)
       self.livemode = invoice.livemode
-      self.metadata = convert_metadata(invoice.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(invoice.metadata.to_hash)
       self.next_payment_attempt = invoice.next_payment_attempt
       self.number = invoice.number
       self.paid = invoice.paid

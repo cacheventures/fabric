@@ -134,6 +134,16 @@ module Fabric
     end
   end
 
+  def convert_metadata(hash)
+    nh = {}
+    hash.each do |k, v|
+      nh[k] = v.to_i if v.to_i.to_s == v
+      nh[k] = v.to_f if v.to_f.to_s == v
+      nh[k] = v == 'true' ? true : false if v.in? %w[true false]
+    end
+    nh
+  end
+
   class Error < StandardError; end
   class InvalidResourceError < Error; end
   class SubscriptionAlreadyExistsError < Error; end

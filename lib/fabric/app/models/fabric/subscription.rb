@@ -52,7 +52,7 @@ module Fabric
       self.status = sub.status
       self.ended_at = sub.ended_at
       self.livemode = sub.livemode
-      self.metadata = sub.metadata.to_hash
+      self.metadata = convert_metadata(sub.metadata.to_hash)
       self.tax_percent = sub.tax_percent
       self.trial_end = sub.trial_end
       self.trial_start = sub.trial_start

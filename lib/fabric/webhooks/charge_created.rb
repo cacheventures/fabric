@@ -11,7 +11,7 @@ module Fabric
 
       def persist_model(event)
         stripe_charge = event.data.object
-        customer = retrieve_resource(:customer, stripe_charge.customer)
+        customer = retrieve_local(:customer, stripe_charge.customer)
         return unless customer
 
         charge = Fabric::Charge.new(customer: customer)

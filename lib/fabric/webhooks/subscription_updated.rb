@@ -16,6 +16,12 @@ module Fabric
         return unless most_recent_update?(subscription, event)
 
         subscription.sync_with(stripe_subscription)
+        sub_items = subscription.subscription_items
+        stripe_subscription.items.data.each do |sub_item|
+          item = sub_items.find_by(stripe_id: sub_item.id) || sub_items.build
+          item.sync_with(sub_item)
+          item.save
+        end
         saved = subscription.save
         Fabric.config.logger.info "SubscriptionUpdated: Updated subscription: "\
           "#{subscription.id} saved: #{saved}"

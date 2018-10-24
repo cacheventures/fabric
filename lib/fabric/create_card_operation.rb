@@ -14,7 +14,7 @@ module Fabric
       stripe_card = stripe_customer.sources.create(card: @card)
 
       default_source = stripe_customer.default_source
-      if default_source.present? && default_source != stripe_card.id
+      if default_source != stripe_card.id
         stripe_customer.default_source = stripe_card.id
         stripe_customer.save
       end

@@ -134,6 +134,24 @@ module Fabric
     end
   end
 
+  def sync_and_save_subscription_and_items(subscription, stripe_subscription)
+    subscription.sync_with(stripe_subscription)
+    sub_items = subscription.subscription_items
+
+    item_ids = sub_items.map(&:stripe_id)
+    stripe_item_ids = stripe_subscription.items.data.map(&:id)
+    removed_item_ids = item_ids - stripe_item_ids
+
+    sub_items.where(:stripe_id.in => removed_item_ids).destroy_all
+    stripe_subscription.items.data.each do |sub_item|
+      item = sub_items.find_by(stripe_id: sub_item.id) || sub_items.build
+      item.sync_with(sub_item)
+      item.save
+    end
+
+    subscription.save
+  end
+
   def convert_metadata(hash)
     nh = {}
     hash.each do |k, v|

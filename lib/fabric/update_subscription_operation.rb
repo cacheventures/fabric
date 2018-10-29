@@ -17,14 +17,10 @@ module Fabric
       @attributes.each { |k, v| stripe_subscription.send("#{k}=", v) }
       stripe_subscription.save
 
-      @subscription.sync_with(stripe_subscription)
-      sub_items = @subscription.subscription_items
-      stripe_subscription.items.data.each do |sub_item|
-        item = sub_items.find_by(stripe_id: sub_item.id) || sub_items.build
-        item.sync_with(sub_item)
-        item.save
-      end
-      saved = @subscription.save
+      saved = Fabric.sync_and_save_subscription_and_items(
+        @subscription, stripe_subscription
+      )
+
       Fabric.config.logger.info "UpdateSubscriptionOperation: Completed. "\
         "saved: #{saved}"
     end

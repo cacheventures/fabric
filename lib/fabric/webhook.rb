@@ -5,15 +5,15 @@ module Fabric
     # @return [Array<Fabric::Event, Boolean>] whether it existed,
     #   for idempotency checking
     def create_event(event, customer_id)
-      event = Fabric::Event.find_or_initialize_by(
+      fabric_event = Fabric::Event.find_or_initialize_by(
         stripe_id: event[:id],
         webhook: event[:type],
         customer_id: customer_id
       )
-      event.api_version = event[:api_version]
-      previously_existed = event.persisted?
-      event.save unless previously_existed
-      [event, previously_existed]
+      fabric_event.api_version = event[:api_version]
+      previously_existed = fabric_event.persisted?
+      fabric_event.save unless previously_existed
+      [fabric_event, previously_existed]
     end
 
     # check idempotency of an event, returning false if we already processed

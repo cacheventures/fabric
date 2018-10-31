@@ -5,18 +5,18 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        persist_model(event) if Fabric.config.persist?(:plan)
-        handle(event)
+        stripe_plan = Stripe::Plan.retrieve(event['data']['object']['id'])
+        handle(event, stripe_plan)
+        persist_model(stripe_plan) if Fabric.config.persist?(:plan)
       end
 
-      def persist_model(event)
+      def persist_model(stripe_plan)
         plan = Fabric::Plan.new
-        plan.sync_with(event.data.object)
+        plan.sync_with(stripe_plan)
         saved = plan.save
         Fabric.config.logger.info "PlanCreated: Created plan: "\
           "#{plan.stripe_id} saved: #{saved}"
       end
-
     end
   end
 end

@@ -5,12 +5,12 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        persist_model(event) if Fabric.config.persist?(:charge)
-        handle(event)
+        stripe_charge = Stripe::Charge.retrieve(event['data']['object']['id'])
+        handle(event, stripe_charge)
+        persist_model(stripe_charge) if Fabric.config.persist?(:charge)
       end
 
-      def persist_model(event)
-        stripe_charge = event.data.object
+      def persist_model(stripe_charge)
         customer = retrieve_local(:customer, stripe_charge.customer)
         return unless customer
 

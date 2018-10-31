@@ -5,15 +5,18 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        persist_model(event) if Fabric.config.persist?(:customer)
-        handle(event)
+        stripe_customer = Stripe::Customer.retrieve(
+          event['data']['object']['id']
+        )
+        handle(event, stripe_customer)
+        if Fabric.config.persist?(:customer)
+          persist_model(stripe_customer)
+        end
       end
 
-      def persist_model(event)
-        stripe_customer = event.data.object
+      def persist_model(stripe_customer)
         customer = retrieve_local(:customer, stripe_customer.id)
         return unless customer
-        return unless most_recent_update?(customer, event)
 
         customer.sync_with(stripe_customer)
         saved = customer.save

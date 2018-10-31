@@ -5,12 +5,12 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        persist_model(event) if Fabric.config.persist?(:plan)
         handle(event)
+        persist_model(event) if Fabric.config.persist?(:plan)
       end
 
       def persist_model(event)
-        plan = retrieve_local(:plan, event.data.object.id)
+        plan = retrieve_local(:plan, event['data']['object']['id'])
         return unless plan
 
         plan.destroy

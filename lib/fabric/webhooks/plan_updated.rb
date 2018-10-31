@@ -5,15 +5,14 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        persist_model(event) if Fabric.config.persist?(:plan)
-        handle(event)
+        stripe_plan = Stripe::Plan.retrieve(event['data']['object']['id'])
+        handle(event, stripe_plan)
+        persist_model(stripe_plan) if Fabric.config.persist?(:plan)
       end
 
-      def persist_model(event)
-        stripe_plan = event.data.object
+      def persist_model(stripe_plan)
         plan = retrieve_local(:plan, stripe_plan.id)
         return unless plan
-        return unless most_recent_update?(plan, event)
 
         plan.sync_with(stripe_plan)
         saved = plan.save

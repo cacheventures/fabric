@@ -5,12 +5,14 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        persist_model(event) if Fabric.config.persist?(:source)
-        handle(event)
+        stripe_source = Stripe::Customer.retrieve(
+          event['data']['object']['customer']
+        ).sources.retrieve(event['data']['object']['id'])
+        handle(event, stripe_source)
+        persist_model(stripe_source) if Fabric.config.persist?(:source)
       end
 
-      def persist_model(event)
-        stripe_source = event.data.object
+      def persist_model(stripe_source)
         customer = retrieve_local(:customer, stripe_source.customer)
         return unless customer
 

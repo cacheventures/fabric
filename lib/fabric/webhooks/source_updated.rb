@@ -6,28 +6,26 @@ module Fabric
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
 
-        stripe_card = event.data.object
-        unless stripe_card.object == 'card'
+        unless event['data']['object']['object'] == 'card'
           Fabric.config.logger.info 'SourceUpdated: Not a card object'
           return
         end
 
-        persist_model(event) if Fabric.config.persist?(:source)
-        handle(event)
+        stripe_source = Stripe::Customer.retrieve(
+          event['data']['object']['customer']
+        ).sources.retrieve(event['data']['object']['id'])
+        handle(event, stripe_source)
+        persist_model(stripe_source) if Fabric.config.persist?(:source)
       end
 
-      def persist_model(event)
-        stripe_card = event.data.object
-        card = retrieve_local(:card, stripe_card.id)
+      def persist_model(stripe_source)
+        card = retrieve_local(:card, stripe_source.id)
         return unless card
-        return unless most_recent_update?(card, event)
-
-        card.sync_with stripe_card
+        card.sync_with(stripe_source)
         saved = card.save
         Fabric.config.logger.info "SourceUpdated: Updated card: "\
           "#{card.stripe_id} saved: #{saved}"
       end
-
     end
   end
 end

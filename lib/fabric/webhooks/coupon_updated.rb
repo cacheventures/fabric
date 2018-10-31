@@ -5,15 +5,14 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        persist_model(event) if Fabric.config.persist?(:coupon)
-        handle(event)
+        stripe_coupon = Stripe::Coupon.retrieve(event['data']['object']['id'])
+        handle(event, stripe_coupon)
+        persist_model(stripe_coupon) if Fabric.config.persist?(:coupon)
       end
 
-      def persist_model(event)
-        stripe_coupon = event.data.object
+      def persist_model(stripe_coupon)
         coupon = retrieve_local(:coupon, stripe_coupon.id)
         return unless coupon
-        return unless most_recent_update?(coupon, event)
 
         coupon.sync_with(stripe_coupon)
         saved = coupon.save

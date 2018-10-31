@@ -5,12 +5,14 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        persist_model(event) if Fabric.config.persist?(:invoice)
-        handle(event)
+        stripe_invoice = Stripe::Invoice.retrieve(
+          event['data']['object']['id']
+        )
+        handle(event, stripe_invoice)
+        persist_model(stripe_invoice) if Fabric.config.persist?(:invoice)
       end
 
-      def persist_model(event)
-        stripe_invoice = event.data.object
+      def persist_model(stripe_invoice)
         customer = retrieve_local(:customer, stripe_invoice.customer)
         return unless customer
 
@@ -20,7 +22,6 @@ module Fabric
         Fabric.config.logger.info "InvoiceCreated: Created invoice: "\
           "#{invoice.stripe_id} saved: #{saved}"
       end
-
     end
   end
 end

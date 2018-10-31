@@ -5,15 +5,14 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        persist_model(event) if Fabric.config.persist?(:charge)
-        handle(event)
+        stripe_charge = Stripe::Charge.retrieve(event['data']['object']['id'])
+        handle(event, stripe_charge)
+        persist_model(stripe_charge) if Fabric.config.persist?(:charge)
       end
 
-      def persist_model(event)
-        stripe_charge = event.data.object
+      def persist_model(stripe_charge)
         charge = retrieve_local(:charge, stripe_charge.id)
         return unless charge
-        return unless most_recent_update?(charge, event)
 
         charge.sync_with(stripe_charge)
         saved = charge.save

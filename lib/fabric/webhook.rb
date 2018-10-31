@@ -6,11 +6,11 @@ module Fabric
     #   for idempotency checking
     def create_event(event, customer_id)
       fabric_event = Fabric::Event.find_or_initialize_by(
-        stripe_id: event[:id],
-        webhook: event[:type],
+        stripe_id: event['id'],
+        webhook: event['type'],
         customer_id: customer_id
       )
-      fabric_event.api_version = event[:api_version]
+      fabric_event.api_version = event['api_version']
       previously_existed = fabric_event.persisted?
       fabric_event.save unless previously_existed
       [fabric_event, previously_existed]
@@ -54,7 +54,7 @@ module Fabric
     # @param event the incoming event
     # @return [Boolean] true if the event is most recent update
     def most_recent_update?(resource, event)
-      x = Time.at(event.created) >= resource.updated_at
+      x = Time.at(event['created']) >= resource.updated_at
       log_data = { id: resource.id.to_s, name: resource.class.name }
       Fabric.config.logger.info("skipping update #{log_data.to_json}") unless x
       x

@@ -5,16 +5,16 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        persist_model(event) if Fabric.config.persist?(:discount)
         handle(event)
+        persist_model(event) if Fabric.config.persist?(:discount)
       end
 
       def persist_model(event)
-        stripe_discount = event.data.object
-        customer = retrieve_local(:customer, stripe_discount.customer)
+        stripe_discount = event['data']['object']
+        customer = retrieve_local(:customer, stripe_discount['customer'])
         subscription = retrieve_local(
-          :subscription, stripe_discount.subscription
-        ) if stripe_discount.subscription
+          :subscription, stripe_discount['subscription']
+        ) if stripe_discount['subscription']
         return unless customer
 
         parent = subscription.present? ? subscription : customer

@@ -14,8 +14,10 @@ module Fabric
         customer = retrieve_local(:customer, stripe_subscription.customer)
 
         subscription = Fabric::Subscription.new(customer: customer)
-        subscription.sync_with(event.data.object)
-        saved = subscription.save
+        saved = Fabric.sync_and_save_subscription_and_items(
+          subscription, stripe_subscription
+        )
+
         Fabric.config.logger.info "SubscriptionCreated: Created subscription: "\
           "#{subscription.stripe_id} saved: #{saved}"
       end

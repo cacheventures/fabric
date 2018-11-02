@@ -5,7 +5,11 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        stripe_plan = Stripe::Plan.retrieve(event['data']['object']['id'])
+        stripe_plan = retrieve_resource(
+          'plan', event['data']['object']['id']
+        )
+        return if stripe_plan.nil?
+
         handle(event, stripe_plan)
         persist_model(stripe_plan) if Fabric.config.persist?(:plan)
       end

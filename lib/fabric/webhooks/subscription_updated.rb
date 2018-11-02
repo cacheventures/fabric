@@ -5,9 +5,11 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        stripe_subscription = Stripe::Subscription.retrieve(
-          event['data']['object']['id']
+        stripe_subscription = retrieve_resource(
+          'subscription', event['data']['object']['id']
         )
+        return if stripe_subscription.nil?
+
         handle(event, stripe_subscription)
         if Fabric.config.persist?(:subscription)
           persist_model(stripe_subscription)

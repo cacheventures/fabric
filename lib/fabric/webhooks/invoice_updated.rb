@@ -5,9 +5,11 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        stripe_invoice = Stripe::Invoice.retrieve(
-          event['data']['object']['id']
+        stripe_invoice = retrieve_resource(
+          'invoice', event['data']['object']['id']
         )
+        return if stripe_invoice.nil?
+
         handle(event, stripe_invoice)
         persist_model(stripe_invoice) if Fabric.config.persist?(:invoice)
       end

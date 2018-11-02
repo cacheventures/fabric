@@ -60,10 +60,25 @@ module Fabric
       x
     end
 
+    # retrieve a resource from Stripe
+    #
+    # @param resource name of Stripe resource
+    # @param resource_id id of resource to retrieve from Stripe
+    # @return [Stripe::APIResource, nil] returns the Stripe::Resource if able and nil otherwise
+    def retrieve_resource(resource, resource_id)
+      log_data = { resource: resource, resource_id: resource_id }
+      "Stripe::#{resource.camelcase}".constantize.retrieve(resource_id)
+    rescue Stripe::InvalidRequestError => e
+      log_data[:error] = e.inspect
+      Fabric.config.logger.info("couldn't retrieve resource"\
+        " #{log_data.to_json}")
+      nil
+    end
+
     # handle an event with custom user code.
     # stub method, override on a per-class basis if custom behavior is desired.
     # @param event a Stripe event from a webhook
-    def handle(event); end
+    def handle(event, stripe_resource); end
 
   end
 end

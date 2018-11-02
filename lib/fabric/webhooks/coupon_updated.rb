@@ -5,7 +5,11 @@ module Fabric
 
       def call(event)
         check_idempotency(event) or return if Fabric.config.store_events
-        stripe_coupon = Stripe::Coupon.retrieve(event['data']['object']['id'])
+        stripe_coupon = retrieve_resource(
+          'coupon', event['data']['object']['id']
+        )
+        return if stripe_coupon.nil?
+
         handle(event, stripe_coupon)
         persist_model(stripe_coupon) if Fabric.config.persist?(:coupon)
       end

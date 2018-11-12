@@ -78,7 +78,7 @@ module Fabric
     # handle an event with custom user code.
     # stub method, override on a per-class basis if custom behavior is desired.
     # @param event a Stripe event from a webhook
-    def handle(event, stripe_resource); end
+    def handle(event, stripe_resource = nil); end
 
   end
 end

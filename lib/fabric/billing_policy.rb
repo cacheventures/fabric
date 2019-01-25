@@ -22,15 +22,6 @@ module Fabric
       @customer.subscriptions.unpaid.present?
     end
 
-    # TODO: remove. this logic had to do with another app's plan handling.
-    # if not removing this, add a test for this method.
-    def plan
-      return @plan if @plan.present?
-
-      @paying ||= billing_subscriptions
-      @plan = @paying.present? ? @paying.first.plan : Fabric.default_plan
-    end
-
     def billing_subscriptions
       @billing_subscriptions ||= @customer.subscriptions.billing
     end

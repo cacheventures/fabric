@@ -13,15 +13,16 @@ module Fabric
     field :application_fee, type: Integer
     field :attempt_count, type: Integer
     field :attempted, type: Boolean
+    field :auto_advance, type: Boolean
+    field :billing, type: String
+    field :billing_reason, type: String
     field :charge, type: String
-    field :closed, type: Boolean
     field :currency, type: String
     field :date, type: Time
     field :description, type: String
     field :discount, type: Hash
     field :due_date, type: Time
     field :ending_balance, type: Integer
-    field :forgiven, type: Boolean
     field :lines, type: Array
     field :livemode, type: Boolean
     field :metadata, type: Hash
@@ -56,17 +57,18 @@ module Fabric
       self.application_fee = invoice.application_fee
       self.attempt_count = invoice.attempt_count
       self.attempted = invoice.attempted
+      self.auto_advance = invoice.auto_advance
+      self.billing = invoice.billing
+      self.billing_reason = invoice.billing_reason
       self.charge = Fabric::Charge.find_by(
         stripe_id: invoice.charge
       ) if invoice.charge.present?
-      self.closed = invoice.closed
       self.currency = invoice.currency
       self.date = invoice.date
       self.description = invoice.description
       self.discount = invoice.try(:discount).try(:to_hash) # could be nil
       self.due_date = invoice.due_date
       self.ending_balance = invoice.ending_balance
-      self.forgiven = invoice.forgiven
       self.lines = invoice.lines.to_hash.try(:[], :data)
       self.livemode = invoice.livemode
       self.metadata = Fabric.convert_metadata(invoice.metadata.to_hash)

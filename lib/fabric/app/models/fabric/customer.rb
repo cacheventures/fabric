@@ -35,14 +35,6 @@ module Fabric
 
     index({ stripe_id: 1 }, { background: true, unique: true })
 
-    before_destroy :delete_from_stripe
-
-    def delete_from_stripe
-      Stripe::Customer.retrieve(stripe_id).delete
-    rescue Stripe::InvalidRequestError => e
-      puts e.inspect.red
-    end
-
     def sync_with(cust)
       self.stripe_id = Fabric.stripe_id_for cust
       self.created = cust.created

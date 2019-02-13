@@ -35,7 +35,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'stripe', '~> 3.13.0'
   gem.add_dependency 'stripe_event'
   gem.add_dependency 'sidekiq' # ?
-  gem.add_dependency 'colorize'
 
   gem.add_development_dependency "bundler", "~> 1.14"
   gem.add_development_dependency "rake", "~> 10.0"

@@ -19,9 +19,8 @@ module Fabric
 
         parent = subscription.present? ? subscription : customer
         parent.discount = stripe_discount.to_hash
-        parent.save
+        saved = parent.save
 
-        saved = discount.save
         Fabric.config.logger.info "DiscountCreated: Created discount on "\
           "parent: #{parent.stripe_id} saved: #{saved}"
       end

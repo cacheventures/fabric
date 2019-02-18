@@ -4,8 +4,6 @@ module Fabric
     include Mongoid::Timestamps
     extend Enumerize
 
-    has_many :discounts, class_name: 'Fabric::Discount'
-
     field :stripe_id, type: String
     field :amount_off, type: Integer
     field :created, type: Time

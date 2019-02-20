@@ -66,7 +66,6 @@ module Fabric
   autoload :Charge, 'fabric/app/models/fabric/charge'
   autoload :Coupon, 'fabric/app/models/fabric/coupon'
   autoload :Customer, 'fabric/app/models/fabric/customer'
-  autoload :Discount, 'fabric/app/models/fabric/discount'
   autoload :Event, 'fabric/app/models/fabric/event'
   autoload :Invoice, 'fabric/app/models/fabric/invoice'
   autoload :InvoiceItem, 'fabric/app/models/fabric/invoice_item'

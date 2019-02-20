@@ -10,7 +10,6 @@ module Fabric
     has_many :invoices, class_name: 'Fabric::Invoice', dependent: :destroy
     has_many :events, class_name: 'Fabric::Event', inverse_of: :customer,
       dependent: :destroy
-    has_many :discounts, class_name: 'Fabric::Discount', dependent: :destroy
     has_many :charges, class_name: 'Fabric::Charge', dependent: :destroy
     has_many :invoice_items, class_name: 'Fabric::InvoiceItem',
       dependent: :destroy
@@ -34,14 +33,6 @@ module Fabric
       if: proc { |c| c.sources.present? }
 
     index({ stripe_id: 1 }, { background: true, unique: true })
-
-    before_destroy :delete_from_stripe
-
-    def delete_from_stripe
-      Stripe::Customer.retrieve(stripe_id).delete
-    rescue Stripe::InvalidRequestError => e
-      puts e.inspect.red
-    end
 
     def sync_with(cust)
       self.stripe_id = Fabric.stripe_id_for cust

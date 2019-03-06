@@ -94,6 +94,7 @@ module Fabric
     attr_accessor :store_events
     attr_accessor :logger
     attr_accessor :worker_callback
+    attr_accessor :persist_models
 
     def initialize
       @store_events = true

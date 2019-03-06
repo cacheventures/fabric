@@ -4,7 +4,7 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        check_idempotency(event) or return if Fabric.config.store_events
+        check_idempotence(event) or return if Fabric.config.store_events
 
         unless event['data']['object']['object'] == 'card'
           Fabric.config.logger.info 'SourceUpdated: Not a card object'

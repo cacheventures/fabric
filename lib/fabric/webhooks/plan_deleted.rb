@@ -4,7 +4,7 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        check_idempotency(event) or return if Fabric.config.store_events
+        check_idempotence(event) or return if Fabric.config.store_events
         handle(event)
         persist_model(event) if Fabric.config.persist?(:plan)
       end

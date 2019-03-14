@@ -37,7 +37,7 @@ module Fabric
     # @param remote_id a Stripe ID for the resource
     # @return [Fabric::resource] the local resource if exists
     def retrieve_local(resource_name, remote_id)
-      resource = "Fabric::#{resource_name.capitalize}".constantize.find_by(
+      resource = "Fabric::#{resource_name.to_s.camelcase}".constantize.find_by(
         stripe_id: remote_id
       )
       unless resource.present?

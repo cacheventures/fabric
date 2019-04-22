@@ -61,6 +61,9 @@ module Fabric
       self.captured = charge.captured
       self.created = charge.created
       self.currency = charge.currency
+      self.customer = Fabric::Customer.find_by(
+        stripe_id: charge.customer
+      ) unless customer.present?
       self.description = charge.description
       self.destination = charge.destination
       self.dispute = charge.dispute
@@ -82,7 +85,7 @@ module Fabric
       self.refunded = charge.refunded
       self.review = charge.review
       self.shipping = charge.shipping.try(:to_hash)
-      self.source = charge.source.to_hash
+      self.source = charge.source.to_hash if charge.source.present?
       self.source_transfer = charge.source_transfer
       self.statement_descriptor = charge.statement_descriptor
       self.status = charge.status

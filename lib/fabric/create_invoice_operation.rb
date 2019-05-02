@@ -10,14 +10,13 @@ module Fabric
     end
 
     def call
-      stripe_customer = Stripe::Customer.retrieve(@customer.stripe_id)
-      stripe_invoice = stripe_customer.invoices.create @attributes
+      stripe_invoice = Stripe::Invoice.create(@attributes)
       invoice = @customer.invoices.build
       invoice.sync_with stripe_invoice
       saved = invoice.save
       Fabric.config.logger.info "CreateInvoiceOperation: Completed. "\
         "saved: #{saved}"
-      invoice
+      [invoice, stripe_invoice]
     end
   end
 end

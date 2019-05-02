@@ -4,8 +4,6 @@ module Fabric
     include Mongoid::Timestamps
     extend Enumerize
 
-    has_many :discounts, class_name: 'Fabric::Discount'
-
     field :stripe_id, type: String
     field :amount_off, type: Integer
     field :created, type: Time
@@ -16,12 +14,16 @@ module Fabric
     field :livemode, type: Boolean
     field :max_redemptions, type: Integer
     field :metadata, type: Hash
+    field :name, type: String
     field :percent_off, type: Integer
     field :redeem_by, type: Time
     field :times_redeemed, type: Integer
     field :coupon_valid, type: Boolean
 
+    validates_uniqueness_of :stripe_id
     validates :stripe_id, :duration, presence: true
+
+    index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(coupon)
       self.stripe_id = Fabric.stripe_id_for coupon
@@ -32,7 +34,8 @@ module Fabric
       self.duration_in_months = coupon.duration_in_months
       self.livemode = coupon.livemode
       self.max_redemptions = coupon.max_redemptions
-      self.metadata = coupon.metadata.to_hash
+      self.metadata = Fabric.convert_metadata(coupon.metadata.to_hash)
+      self.name = coupon.name
       self.percent_off = coupon.percent_off
       self.redeem_by = coupon.redeem_by
       self.times_redeemed = coupon.times_redeemed

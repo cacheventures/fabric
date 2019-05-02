@@ -4,18 +4,19 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        if Fabric.config.store_events
-          check_idempotency(event) or return
-        end
+        check_idempotence(event) or return if Fabric.config.store_events
+        stripe_coupon = retrieve_resource(
+          'coupon', event['data']['object']['id']
+        )
+        return if stripe_coupon.nil?
 
-        persist_model(event) if Fabric.config.persist_models
-
-        handle(event)
+        handle(event, stripe_coupon)
+        persist_model(stripe_coupon) if Fabric.config.persist?(:coupon)
       end
 
-      def persist_model(event)
+      def persist_model(stripe_coupon)
         coupon = Fabric::Coupon.new
-        coupon.sync_with(event.data.object)
+        coupon.sync_with(stripe_coupon)
         saved = coupon.save
         Fabric.config.logger.info "CouponCreated: Created coupon: "\
           "#{coupon.stripe_id} saved: #{saved}"

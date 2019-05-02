@@ -11,8 +11,7 @@ module Fabric
     end
 
     def call
-      customer = Stripe::Customer.retrieve(@customer.stripe_id)
-      initial_subscription = customer.subscriptions.retrieve(
+      initial_subscription = Stripe::Subscription.retrieve(
         @subscription.stripe_id
       )
       stripe_subscription = initial_subscription.delete(

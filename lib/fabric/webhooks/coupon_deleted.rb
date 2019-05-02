@@ -4,21 +4,15 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        if Fabric.config.store_events
-          check_idempotency(event) or return
-        end
-
-        persist_model(event) if Fabric.config.persist_models
-
+        check_idempotence(event) or return if Fabric.config.store_events
         handle(event)
+        persist_model(event) if Fabric.config.persist?(:coupon)
       end
 
       def persist_model(event)
-        coupon = Fabric::Coupon.find_by(stripe_id: event.data.object.id)
-        unless coupon.present?
-          Fabric.config.logger.info 'CouponDeleted: Coupon not found.'
-          return
-        end
+        coupon = retrieve_local(:coupon, event['data']['object']['id'])
+        return unless coupon
+
         coupon.destroy
         Fabric.config.logger.info "CouponDeleted: Destroyed coupon: "\
           "#{coupon.stripe_id}"

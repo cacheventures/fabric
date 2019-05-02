@@ -4,26 +4,39 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        if Fabric.config.store_events
-          check_idempotency(event) or return
-        end
-
-        persist_model(event) if Fabric.config.persist_models
+        check_idempotence(event) or return if Fabric.config.store_events
+        stripe_customer = retrieve_resource(
+          'customer', event['data']['object']['customer']
+        )
+        return if stripe_customer.nil?
+        stripe_subscription = retrieve_resource(
+          'subscription', event['data']['object']['subscription']
+        ) if event['data']['object']['subscription']
 
         handle(event)
+        if Fabric.config.persist?(:discount)
+          persist_model(stripe_customer, stripe_subscription)
+        end
       end
 
-      def persist_model(event)
-        discount = Fabric::Discount.new
-        discount.sync_with(event.data.object)
-        unless discount.customer.present?
-          Fabric.config.logger.info 'DiscountCreated: No matching customer.'
-          return
-        end
+      def persist_model(stripe_customer, stripe_subscription)
+        customer = retrieve_local(:customer, stripe_customer.id)
+        subscription = retrieve_local(
+          :subscription, stripe_subscription.id
+        ) if stripe_subscription
+        return unless customer
 
-        saved = discount.save
-        Fabric.config.logger.info "DiscountCreated: Created discount: "\
-          "#{discount.id} saved: #{saved}"
+        parent = subscription.present? ? subscription : customer
+        stripe_parent = if stripe_subscription.present?
+                          stripe_subscription
+                        else
+                          stripe_customer
+                        end
+        parent.discount = stripe_parent.discount.to_hash
+        saved = parent.save
+
+        Fabric.config.logger.info "DiscountCreated: Created discount on "\
+          "parent: #{parent.stripe_id} saved: #{saved}"
       end
 
     end

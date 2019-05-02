@@ -10,8 +10,7 @@ module Fabric
     end
 
     def call
-      stripe_customer = Stripe::Customer.retrieve(@customer.stripe_id)
-      stripe_charge = stripe_customer.charges.create @attributes
+      stripe_charge = Stripe::Charge.create(@attributes)
       charge = @customer.charges.build
       charge.sync_with stripe_charge
       saved = charge.save

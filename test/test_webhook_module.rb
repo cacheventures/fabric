@@ -40,7 +40,7 @@ class TestWebhookModule < Minitest::Test
 
   end
 
-  class TestCheckIdempotency < TestWebhookModule
+  class TestCheckIdempotence < TestWebhookModule
 
     def setup
       Mongoid.load!("test/config/mongoid.yml", :test)
@@ -52,19 +52,19 @@ class TestWebhookModule < Minitest::Test
       Fabric::Customer.destroy_all
     end
 
-    def test_check_idempotency_exists
+    def test_check_idempotence_exists
       event_model = Fabric::Event.create(
         webhook: 'customer.updated',
         stripe_id: 'evt_0',
         customer: Fabric::Customer.first
       )
       event_data = {id: 'evt_0', type: 'customer.updated'}
-      refute check_idempotency(event_data)
+      refute check_idempotence(event_data)
     end
 
-    def test_check_idempotency_doesnt_exist
+    def test_check_idempotence_doesnt_exist
       event_data = {id: 'evt_0', type: 'customer.updated'}
-      assert check_idempotency(event_data)
+      assert check_idempotence(event_data)
     end
 
   end

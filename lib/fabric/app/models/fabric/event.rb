@@ -6,21 +6,23 @@ module Fabric
     belongs_to :customer, class_name: 'Fabric::Customer', inverse_of: :events,
       touch: true
 
-    field :webhook, type: String
     field :stripe_id, type: String
     field :api_version, type: String
     field :created, type: Integer
     field :data, type: Hash, default: {}
     field :livemode, type: Boolean
     field :request, type: String
+    field :webhook, type: String
 
-    validates_presence_of :webhook
+    validates_uniqueness_of :stripe_id
+    validates_presence_of :api_version, :webhook
 
+    index({ stripe_id: 1 }, { background: true, unique: true })
     index({ webhook: 1, customer_id: 1 }, background: true)
 
     # stripe_id and webhook cannot be obtained from event.data.object, so
     # events must be initialized with them before running #from
-    def from(event)
+    def sync_with(event)
       self.api_version = event[:api_version]
       self.created = event[:created]
       self.data = event[:data]

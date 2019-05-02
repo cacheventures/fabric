@@ -4,43 +4,39 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        if Fabric.config.store_events
-          check_idempotency(event) or return
-        end
-
-        persist_model(event) if Fabric.config.persist_models
+        check_idempotence(event) or return if Fabric.config.store_events
+        stripe_customer = retrieve_resource(
+          'customer', event['data']['object']['customer']
+        )
+        return if stripe_customer.nil?
+        stripe_subscription = retrieve_resource(
+          'subscription', event['data']['object']['subscription']
+        ) if event['data']['object']['subscription']
 
         handle(event)
+        if Fabric.config.persist?(:discount)
+          persist_model(stripe_customer, stripe_subscription)
+        end
       end
 
-      def persist_model(event)
-        customer_id = event.try(:data).try(:object).try(:customer)
-        if customer_id.present?
-          customer = Fabric::Customer.find_by(stripe_id: customer_id)
-          unless customer.present?
-            Fabric.config.logger.info 'DiscountDeleted: No matching customer.'
-            return
-          end
-        else
-          Fabric.config.logger.info 'DiscountDeleted: No customer.'
-          return
-        end
+      def persist_model(stripe_customer, stripe_subscription)
+        customer = retrieve_local(:customer, stripe_customer.id)
+        subscription = retrieve_local(
+          :subscription, stripe_subscription.id
+        ) if stripe_subscription
+        return unless customer
 
-        coupon_id = event.data.object.coupon.id
-        coupon = Fabric::Coupon.find_by(stripe_id: coupon_id)
-        if coupon.present?
-          discount = customer.discounts.find_by(coupon: coupon)
-        else
-          discount = nil
-        end
+        parent = subscription.present? ? subscription : customer
+        stripe_parent = if stripe_subscription.present?
+                          stripe_subscription
+                        else
+                          stripe_customer
+                        end
+        parent.discount = stripe_parent.discount.try(:to_hash)
+        saved = parent.save
 
-        if discount.present?
-          discount.destroy
-          Fabric.config.logger.info "DiscountDeleted: Destroyed discount: "\
-            "#{discount.id}"
-        else
-          Fabric.config.logger.info 'DiscountDeleted: Discount not found.'
-        end
+        Fabric.config.logger.info "DiscountDeleted: Deleted discount on "\
+          "parent: #{parent.stripe_id} saved: #{saved}"
       end
 
     end

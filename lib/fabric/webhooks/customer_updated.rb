@@ -4,31 +4,26 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        if Fabric.config.store_events
-          check_idempotency(event) or return
+        check_idempotence(event) or return if Fabric.config.store_events
+        stripe_customer = retrieve_resource(
+          'customer', event['data']['object']['id']
+        )
+        return if stripe_customer.nil?
+
+        handle(event, stripe_customer)
+        if Fabric.config.persist?(:customer)
+          persist_model(stripe_customer)
         end
-
-        persist_model(event) if Fabric.config.persist_models
-
-        handle(event)
       end
 
-      def persist_model(event)
-        customer_id = event.try(:data).try(:object).try(:id)
-        if customer_id.present?
-          customer = Fabric::Customer.find_by(stripe_id: customer_id)
-        end
+      def persist_model(stripe_customer)
+        customer = retrieve_local(:customer, stripe_customer.id)
+        return unless customer
 
-        stripe_customer = event.data.object
-        if customer.present?
-          customer.sync_with(stripe_customer)
-          saved = customer.save
-          Fabric.config.logger.info "CustomerUpdated: Updated customer: "\
-            "#{stripe_customer.id} saved: #{saved}"
-        else
-          Fabric.config.logger.info "CustomerUpdated: Unable to locate "\
-            "customer. customer: #{stripe_customer.id}"
-        end
+        customer.sync_with(stripe_customer)
+        saved = customer.save
+        Fabric.config.logger.info "CustomerUpdated: Updated customer: "\
+          "#{customer.stripe_id} saved: #{saved}"
       end
 
     end

@@ -12,7 +12,7 @@ module Fabric
     def call
       stripe_customer = Stripe::Customer.retrieve @customer.stripe_id
 
-      @attributes.each { |k,v| stripe_customer.send("#{k}=", v) }
+      @attributes.each { |k, v| stripe_customer.send("#{k}=", v) }
       stripe_customer.save
 
       @customer.sync_with(stripe_customer)

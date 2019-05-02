@@ -4,37 +4,26 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        if Fabric.config.store_events
-          check_idempotency(event) or return
-        end
+        check_idempotence(event) or return if Fabric.config.store_events
+        stripe_invoice = retrieve_resource(
+          'invoice', event['data']['object']['id']
+        )
+        return if stripe_invoice.nil?
 
-        persist_model(event) if Fabric.config.persist_models
-
-        handle(event)
+        handle(event, stripe_invoice)
+        persist_model(stripe_invoice) if Fabric.config.persist?(:invoice)
       end
 
-      def persist_model(event)
-        customer_id = event.try(:data).try(:object).try(:customer)
-        if customer_id.present?
-          customer = Fabric::Customer.find_by(stripe_id: customer_id)
-          unless customer.present?
-            Fabric.config.logger.info 'InvoiceCreated: No matching customer.'
-            return
-          end
-        else
-          Fabric.config.logger.info 'InvoiceCreated: ERROR: No customer.'
-          return
-        end
+      def persist_model(stripe_invoice)
+        customer = retrieve_local(:customer, stripe_invoice.customer)
+        return unless customer
 
-        invoice = Fabric::Invoice.new(
-          customer: customer
-        )
-        invoice.sync_with(event.data.object)
+        invoice = Fabric::Invoice.new(customer: customer)
+        invoice.sync_with(stripe_invoice)
         saved = invoice.save
         Fabric.config.logger.info "InvoiceCreated: Created invoice: "\
           "#{invoice.stripe_id} saved: #{saved}"
       end
-
     end
   end
 end

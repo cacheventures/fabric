@@ -4,32 +4,25 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        if Fabric.config.store_events
-          check_idempotency(event) or return
-        end
-
-        persist_model(event) if Fabric.config.persist_models
-
-        handle(event)
-      end
-
-      def persist_model(event)
-        stripe_invoice = event.data.object
-        invoice = Fabric::Invoice.find_by(
-          stripe_id: stripe_invoice.id
+        check_idempotence(event) or return if Fabric.config.store_events
+        stripe_invoice = retrieve_resource(
+          'invoice', event['data']['object']['id']
         )
-        if invoice.present?
-          invoice.sync_with(stripe_invoice)
-          saved = invoice.save
-          Fabric.config.logger.info "InvoiceUpdated: Updated invoice: "\
-            "#{stripe_invoice.id} saved: #{saved}"
-        else
-          Fabric.config.logger.info "InvoiceUpdated: Unable to locate "\
-            "invoice. invoice: #{stripe_invoice.id}"
-          Fabric::Webhooks::InvoiceCreated.new.call event
-        end
+        return if stripe_invoice.nil?
+
+        handle(event, stripe_invoice)
+        persist_model(stripe_invoice) if Fabric.config.persist?(:invoice)
       end
 
+      def persist_model(stripe_invoice)
+        invoice = retrieve_local(:invoice, stripe_invoice.id)
+        return unless invoice
+
+        invoice.sync_with(stripe_invoice)
+        saved = invoice.save
+        Fabric.config.logger.info "InvoiceUpdated: Updated invoice: "\
+          "#{invoice.stripe_id} saved: #{saved}"
+      end
     end
   end
 end

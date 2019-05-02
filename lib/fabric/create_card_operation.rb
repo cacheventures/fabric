@@ -11,11 +11,10 @@ module Fabric
 
     def call
       stripe_customer = Stripe::Customer.retrieve @customer.stripe_id
-
       stripe_card = stripe_customer.sources.create(card: @card)
 
-      stripe_customer.refresh
-      unless stripe_customer.default_source == stripe_card.id
+      default_source = stripe_customer.default_source
+      if default_source != stripe_card.id
         stripe_customer.default_source = stripe_card.id
         stripe_customer.save
       end
@@ -23,10 +22,10 @@ module Fabric
       card = Fabric::Card.new(customer: @customer)
       card.sync_with(stripe_card)
       card_saved = card.save
-
+      @customer.reload unless card_saved
       @customer.sync_with(stripe_customer)
-
       customer_saved = @customer.save
+
       Fabric.config.logger.info "CreateCardOperation: Completed. card saved: "\
         "#{card_saved} customer saved: #{customer_saved}"
       card

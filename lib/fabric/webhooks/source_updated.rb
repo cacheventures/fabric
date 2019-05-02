@@ -4,46 +4,43 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        stripe_card = event.try(:data).try(:object)
-        unless stripe_card.try(:object) == 'card'
+        check_idempotence(event) or return if Fabric.config.store_events
+
+        unless event['data']['object']['object'] == 'card'
           Fabric.config.logger.info 'SourceUpdated: Not a card object'
           return
         end
 
-        if Fabric.config.store_events
-          check_idempotency(event) or return
+        stripe_customer = retrieve_resource(
+          'customer', event['data']['object']['customer']
+        )
+        return if stripe_customer.nil?
+
+        begin
+          stripe_source = stripe_customer.sources.retrieve(
+            event['data']['object']['id']
+          )
+        rescue Stripe::InvalidRequestError => e
+          log_data = {
+            customer: stripe_customer.id, source: event['data']['object']['id'],
+            error: e.inspect
+          }
+          Fabric.config.logger.info("SourceCreated: couldn't retrieve source"\
+            " #{log_data.to_json}")
+          return
         end
-
-        persist_model(event) if Fabric.config.persist_models
-
-        handle(event)
+        handle(event, stripe_source)
+        persist_model(stripe_source) if Fabric.config.persist?(:source)
       end
 
-      def persist_model(event)
-        customer_id = event.try(:data).try(:object).try(:customer)
-        if customer_id.present?
-          customer = Fabric::Customer.find_by(stripe_id: customer_id)
-        end
-        unless customer.present?
-          Fabric.config.logger.info "SourceUpdated: Unable to locate "\
-            "customer: #{customer_id}"
-          return
-        end
-
-        stripe_card = event.data.object
-        card_id = stripe_card.try(:id)
-        card = Fabric::Card.find_by(stripe_id: card_id)
-        unless card.present?
-          Fabric.config.logger.info "SourceUpdated: No such card: #{card_id}"
-          return
-        end
-
-        card.sync_with stripe_card
+      def persist_model(stripe_source)
+        card = retrieve_local(:card, stripe_source.id)
+        return unless card
+        card.sync_with(stripe_source)
         saved = card.save
         Fabric.config.logger.info "SourceUpdated: Updated card: "\
-          "#{stripe_card.id} saved: #{saved}"
+          "#{card.stripe_id} saved: #{saved}"
       end
-
     end
   end
 end

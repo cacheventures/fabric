@@ -32,9 +32,11 @@ module Fabric
     field :metadata, type: Hash
     field :tokenization_method, type: String
 
+    validates_uniqueness_of :stripe_id
     validates :stripe_id, :customer, :last4, :brand, :exp_month, :exp_year,
       presence: true
 
+    index({ stripe_id: 1 }, { background: true, unique: true })
     index({ customer_id: 1 }, background: true)
 
     def sync_with(card)
@@ -57,7 +59,7 @@ module Fabric
       self.address_line1_check = card.address_line1_check
       self.address_zip_check = card.address_zip_check
       self.dynamic_last4 = card.dynamic_last4
-      self.metadata = card.metadata.to_hash
+      self.metadata = Fabric.convert_metadata(card.metadata.to_hash)
       self.tokenization_method = card.tokenization_method
       self.customer = Fabric::Customer.find_by(
         stripe_id: card.customer

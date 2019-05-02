@@ -31,8 +31,6 @@ module Fabric
       @plan = @paying.present? ? @paying.first.plan : Fabric.default_plan
     end
 
-    private
-
     def billing_subscriptions
       @billing_subscriptions ||= @customer.subscriptions.billing
     end

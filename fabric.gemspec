@@ -6,8 +6,8 @@ require 'fabric/version'
 Gem::Specification.new do |gem|
   gem.name          = "fabric"
   gem.version       = Fabric::VERSION
-  gem.authors       = ["Daniel Arnold"]
-  gem.email         = ["darnold8@gmail.com"]
+  gem.authors       = ["Daniel Arnold", "Evan Berquist", "Jarrett Lusso"]
+  gem.email         = ["dan@cacheventures.com"]
 
   gem.summary       = 'A framework for integrating Rails and Stripe.'
   gem.description   = 'A framework for integrating Rails and Stripe.'

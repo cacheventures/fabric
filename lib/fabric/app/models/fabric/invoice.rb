@@ -13,7 +13,6 @@ module Fabric
     field :application_fee, type: Integer
     field :attempt_count, type: Integer
     field :attempted, type: Boolean
-    field :charge, type: String
     field :closed, type: Boolean
     field :currency, type: String
     field :date, type: Time
@@ -58,7 +57,7 @@ module Fabric
       self.attempted = invoice.attempted
       self.charge = Fabric::Charge.find_by(
         stripe_id: invoice.charge
-      ) if invoice.charge.present?
+      ) unless charge.present?
       self.closed = invoice.closed
       self.currency = invoice.currency
       self.date = invoice.date

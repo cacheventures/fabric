@@ -61,11 +61,9 @@ module Fabric
       self.dynamic_last4 = card.dynamic_last4
       self.metadata = Fabric.convert_metadata(card.metadata.to_hash)
       self.tokenization_method = card.tokenization_method
-      unless customer.present?
-        self.customer = Fabric::Customer.find_by(
-          stripe_id: card.customer
-        )
-      end
+      self.customer = Fabric::Customer.find_by(
+        stripe_id: card.customer
+      ) unless customer.present?
       self
     end
   end

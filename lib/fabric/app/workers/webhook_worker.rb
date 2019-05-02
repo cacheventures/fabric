@@ -2,7 +2,7 @@ module Fabric
   class WebhookWorker
     include Sidekiq::Worker
 
-    sidekiq_options queue: 'fabric', retry: false
+    sidekiq_options queue: 'fabric'
 
     def perform(event, webhook_class)
       log_data = { event: event['id'], webhook_class: webhook_class }

@@ -4,7 +4,7 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        check_idempotency(event) or return if Fabric.config.store_events
+        check_idempotence(event) or return if Fabric.config.store_events
         stripe_customer = retrieve_resource(
           'customer', event['data']['object']['customer']
         )

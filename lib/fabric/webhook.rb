@@ -3,7 +3,7 @@ module Fabric
 
     # @param event a Stripe event from a webhook
     # @return [Array<Fabric::Event, Boolean>] whether it existed,
-    #   for idempotency checking
+    #   for idempotence checking
     def create_event(event, customer_id)
       fabric_event = Fabric::Event.find_or_initialize_by(
         stripe_id: event['id'],
@@ -16,13 +16,13 @@ module Fabric
       [fabric_event, previously_existed]
     end
 
-    # check idempotency of an event, returning false if we already processed
+    # check idempotence of an event, returning false if we already processed
     # this event, so the caller may return out. discards the created
     # event reference.
     #
     # @param event a Stripe event from a webhook
     # @return [Boolean] true if validated
-    def check_idempotency(event, customer_id = nil)
+    def check_idempotence(event, customer_id = nil)
       _fabric_event, existed = create_event(event, customer_id)
       if existed
         Fabric.config.logger.info "#{event[:type]}: Event already exists"
@@ -37,7 +37,7 @@ module Fabric
     # @param remote_id a Stripe ID for the resource
     # @return [Fabric::resource] the local resource if exists
     def retrieve_local(resource_name, remote_id)
-      resource = "Fabric::#{resource_name.capitalize}".constantize.find_by(
+      resource = "Fabric::#{resource_name.to_s.camelcase}".constantize.find_by(
         stripe_id: remote_id
       )
       unless resource.present?

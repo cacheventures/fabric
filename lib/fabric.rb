@@ -10,17 +10,20 @@ require 'fabric/cancel_subscription_operation'
 require 'fabric/create_card_for_subscription_operation'
 require 'fabric/create_card_operation'
 require 'fabric/create_charge_operation'
+require 'fabric/create_coupon_operation'
 require 'fabric/create_customer_operation'
 require 'fabric/create_invoice_operation'
 require 'fabric/create_invoice_item_operation'
 require 'fabric/create_subscription_operation'
 require 'fabric/create_usage_record_operation'
+require 'fabric/delete_coupon_operation'
 require 'fabric/pay_invoice_operation'
 require 'fabric/plan_policy'
 require 'fabric/resume_subscription_operation'
 require 'fabric/sync_coupons_operation'
 require 'fabric/sync_plans_operation'
 require 'fabric/update_card_operation'
+require 'fabric/update_coupon_operation'
 require 'fabric/update_customer_operation'
 require 'fabric/update_plan_operation'
 require 'fabric/update_subscription_operation'
@@ -44,6 +47,7 @@ require 'fabric/webhooks/discount_updated'
 require 'fabric/webhooks/dispute_created'
 require 'fabric/webhooks/invoice_created'
 require 'fabric/webhooks/invoice_deleted'
+require 'fabric/webhooks/invoice_item_updated'
 require 'fabric/webhooks/invoice_updated'
 require 'fabric/webhooks/invoice_payment_failed'
 require 'fabric/webhooks/invoice_payment_succeeded'
@@ -94,6 +98,7 @@ module Fabric
     attr_accessor :store_events
     attr_accessor :logger
     attr_accessor :worker_callback
+    attr_accessor :persist_models
 
     def initialize
       @store_events = true

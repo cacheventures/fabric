@@ -32,12 +32,12 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'enumerize'
   gem.add_dependency 'mongoid'
-  gem.add_dependency 'stripe', '~> 3.13.0'
+  gem.add_dependency 'stripe', '< 4.0'
   gem.add_dependency 'stripe_event'
-  gem.add_dependency 'sidekiq' # ?
+  gem.add_dependency 'sidekiq'
 
-  gem.add_development_dependency "bundler", "~> 1.14"
-  gem.add_development_dependency "rake", "~> 10.0"
+  gem.add_development_dependency "bundler"
+  gem.add_development_dependency "rake"
   gem.add_development_dependency "minitest"
   gem.add_development_dependency 'pry'
   gem.add_development_dependency 'awesome_print'

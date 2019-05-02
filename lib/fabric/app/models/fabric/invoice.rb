@@ -16,7 +16,6 @@ module Fabric
     field :auto_advance, type: Boolean
     field :billing, type: String
     field :billing_reason, type: String
-    field :charge, type: String
     field :currency, type: String
     field :date, type: Time
     field :description, type: String
@@ -62,7 +61,7 @@ module Fabric
       self.billing_reason = invoice.billing_reason
       self.charge = Fabric::Charge.find_by(
         stripe_id: invoice.charge
-      ) if invoice.charge.present?
+      ) unless charge.present?
       self.currency = invoice.currency
       self.date = invoice.date
       self.description = invoice.description

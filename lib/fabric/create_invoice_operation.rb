@@ -16,7 +16,7 @@ module Fabric
       saved = invoice.save
       Fabric.config.logger.info "CreateInvoiceOperation: Completed. "\
         "saved: #{saved}"
-      stripe_invoice
+      [invoice, stripe_invoice]
     end
   end
 end

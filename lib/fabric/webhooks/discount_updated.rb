@@ -4,25 +4,38 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
-        check_idempotency(event) or return if Fabric.config.store_events
+        check_idempotence(event) or return if Fabric.config.store_events
+        stripe_customer = retrieve_resource(
+          'customer', event['data']['object']['customer']
+        )
+        return if stripe_customer.nil?
+        stripe_subscription = retrieve_resource(
+          'subscription', event['data']['object']['subscription']
+        ) if event['data']['object']['subscription']
+
         handle(event)
-        persist_model(event) if Fabric.config.persist?(:discount)
+        if Fabric.config.persist?(:discount)
+          persist_model(stripe_customer, stripe_subscription)
+        end
       end
 
-      def persist_model(event)
-        stripe_discount = event['data']['object']
-        customer = retrieve_local(:customer, stripe_discount['customer'])
+      def persist_model(stripe_customer, stripe_subscription)
+        customer = retrieve_local(:customer, stripe_customer.id)
         subscription = retrieve_local(
-          :subscription, stripe_discount['subscription']
-        ) if stripe_discount['subscription']
+          :subscription, stripe_subscription.id
+        ) if stripe_subscription
         return unless customer
 
         parent = subscription.present? ? subscription : customer
-        return unless most_recent_update?(parent, event)
-        parent.discount = stripe_discount.to_hash
+        stripe_parent = if stripe_subscription.present?
+                          stripe_subscription
+                        else
+                          stripe_customer
+                        end
+        parent.discount = stripe_parent.discount.to_hash
         saved = parent.save
 
-        Fabric.config.logger.info "DiscountUpdated: Created discount on "\
+        Fabric.config.logger.info "DiscountUpdated: Updated discount on "\
           "parent: #{parent.stripe_id} saved: #{saved}"
       end
 

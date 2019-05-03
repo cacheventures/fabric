@@ -39,7 +39,6 @@ module Fabric
     field :tax_percent, type: Float
     field :total, type: Integer
     field :webhooks_delivered_at, type: Time
-    field :discount, type: Hash
 
     validates_uniqueness_of :stripe_id
     validates :customer_id, :stripe_id, presence: true

@@ -58,11 +58,14 @@ module Fabric
       self.charge = Fabric::Charge.find_by(
         stripe_id: invoice.charge
       ) unless charge.present?
+      self.customer = Fabric::Customer.find_by(
+        stripe_id: invoice.customer
+      ) unless customer.present?
       self.closed = invoice.closed
       self.currency = invoice.currency
       self.date = invoice.date
       self.description = invoice.description
-      self.discount = invoice.try(:discount).try(:to_hash) # could be nil
+      self.discount = invoice.discount.try(:to_hash) # could be nil
       self.due_date = invoice.due_date
       self.ending_balance = invoice.ending_balance
       self.forgiven = invoice.forgiven
@@ -77,16 +80,12 @@ module Fabric
       self.receipt_number = invoice.receipt_number
       self.starting_balance = invoice.starting_balance
       self.statement_descriptor = invoice.statement_descriptor
+      self.subscription = invoice.subscription
       self.subtotal = invoice.subtotal
       self.tax = invoice.tax
       self.tax_percent = invoice.tax_percent
       self.total = invoice.total
       self.webhooks_delivered_at = invoice.webhooks_delivered_at
-      self.subscription = invoice.subscription
-      self.customer = Fabric::Customer.find_by(
-        stripe_id: invoice.customer
-      ) unless customer.present?
-      self.discount = invoice.discount.try(:to_hash)
       self
     end
 

@@ -99,16 +99,27 @@ module Fabric
     attr_accessor :logger
     attr_accessor :worker_callback
     attr_accessor :persist_models
+    attr_reader :api_version
 
     def initialize
       @store_events = true
       @logger = ActiveSupport::Logger.new($stdout)
       @worker_callback = Proc.new {}
       @persist_models = :all
+      @api_version = '2018-02-28'
     end
 
     def persist?(document)
       @persist_models == :all || @persist_models[document].present?
+    end
+
+    def api_version=(version)
+      if File.exist?("lib/fabric/versions/#{version}")
+        @api_version = version
+        require "fabric/versions/#{version}/#{version}"
+      else
+        fail InvalidVersionError, "#{version} does not exist"
+      end
     end
   end
 
@@ -181,4 +192,5 @@ module Fabric
   class Error < StandardError; end
   class InvalidResourceError < Error; end
   class SubscriptionAlreadyExistsError < Error; end
+  class InvalidVersionError < Error; end
 end

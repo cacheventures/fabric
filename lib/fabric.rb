@@ -114,12 +114,12 @@ module Fabric
     end
 
     def api_version=(version)
-      if File.exist?("lib/fabric/versions/#{version}")
-        @api_version = version
+      begin
         require "fabric/versions/#{version}/#{version}"
-      else
+      rescue LoadError
         fail InvalidVersionError, "#{version} does not exist"
       end
+      @api_version = version
     end
   end
 

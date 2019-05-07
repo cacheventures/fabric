@@ -41,7 +41,7 @@ class TestFabricModule < Minitest::Test
         currency: 'usd',
         interval: 'month',
         created: Time.now,
-        name: 'Ten Bucks'
+        product: 'prod_0'
       )
     end
 

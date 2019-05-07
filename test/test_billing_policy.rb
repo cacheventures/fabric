@@ -11,7 +11,7 @@ class TestBillingPolicy < Minitest::Test
       currency: 'usd',
       interval: 'month',
       created: Time.now,
-      name: 'One Hundred Dollars'
+      product: 'prod_0'
     )
   end
 
@@ -33,7 +33,6 @@ class TestBillingPolicy < Minitest::Test
       stripe_id: 'sub_0',
       cancel_at_period_end: false,
       customer: customer,
-      plan: Fabric.default_plan,
       start: Time.now,
       status: 'active',
       current_period_end: 30.days.from_now,
@@ -64,7 +63,6 @@ class TestBillingPolicy < Minitest::Test
       stripe_id: 'sub_0',
       cancel_at_period_end: false,
       customer: customer,
-      plan: Fabric.default_plan,
       start: Time.now,
       status: 'past_due',
       current_period_end: 30.days.from_now,
@@ -125,7 +123,6 @@ class TestBillingPolicy < Minitest::Test
       stripe_id: 'sub_0',
       cancel_at_period_end: false,
       customer: customer,
-      plan: Fabric.default_plan,
       start: Time.now,
       status: 'unpaid',
       current_period_end: 30.days.from_now,
@@ -146,7 +143,6 @@ class TestBillingPolicy < Minitest::Test
       stripe_id: 'sub_0',
       cancel_at_period_end: false,
       customer: customer,
-      plan: Fabric.default_plan,
       start: Time.now,
       status: 'active',
       current_period_end: 30.days.from_now,
@@ -158,29 +154,3 @@ class TestBillingPolicy < Minitest::Test
   end
 
 end
-
-    # customer = Fabric::Customer.create(
-    #   stripe_id: 'cus_0',
-    #   created: Time.now,
-    #   default_source: 'card_0'
-    # )
-
-    # default_card = Fabric::Card.create(
-    #   stripe_id: 'card_0',
-    #   customer: customer,
-    #   last4: '1234',
-    #   brand: 'American Express',
-    #   exp_month: 1,
-    #   exp_year: 2030
-    # )
-
-    # subscription = Fabric::Subscription.create(
-    #   stripe_id: 'sub_0',
-    #   cancel_at_period_end: false,
-    #   customer: customer,
-    #   plan: Fabric.default_plan,
-    #   start: Time.now,
-    #   status: 'active',
-    #   current_period_end: 30.days.from_now,
-    #   current_period_start: Time.now
-    # )

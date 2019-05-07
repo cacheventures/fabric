@@ -2,6 +2,11 @@
 
 ![fabric](/images/white_and_blue_stripes_by_apeculiarpersonage_d63d4ut-fullview.jpg?raw=true "blue striped fabric")
 
+By [Cache Ventures](https://cacheventures.com)
+
+[![Build Status](https://travis-ci.com/cacheventures/fabric.svg?branch=master)](https://travis-ci.com/cacheventures/fabric)
+[![Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/cacheventures/fabric/maintainability)
+
 Fabric is an opinionated Ruby framework for developers, making it easier to integrate a Rails app with [Stripe](https://stripe.com).
 
 ## Requirements

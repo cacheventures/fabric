@@ -20,18 +20,26 @@ class TestWebhookModule < Minitest::Test
       event_model = Fabric::Event.create(
         webhook: 'customer.updated',
         stripe_id: 'evt_0',
-        customer: Fabric::Customer.first
+        customer: Fabric::Customer.first,
+        api_version: '1.2.3'
       )
-      event_data = {id: 'evt_0', type: 'customer.updated'}
-      ret_event, existed = create_event(event_data)
+      event_data = {
+        'id' => 'evt_0',
+        'type' => 'customer.updated',
+        'api_version' => '1.2.3'
+      }
+      ret_event, existed = create_event(event_data, Fabric::Customer.first)
       assert_equal event_model, ret_event
       assert existed
     end
 
     def test_create_event_doesnt_exist
-      event_data = {id: 'evt_0', type: 'customer.updated'}
-      ret_event, existed = create_event(event_data)
-      ret_event.customer = Fabric::Customer.first
+      event_data = {
+        'id' => 'evt_0',
+        'type' => 'customer.updated',
+        'api_version' => '1.2.3'
+      }
+      ret_event, existed = create_event(event_data, Fabric::Customer.first)
       saved = ret_event.save
 
       assert saved
@@ -56,15 +64,24 @@ class TestWebhookModule < Minitest::Test
       event_model = Fabric::Event.create(
         webhook: 'customer.updated',
         stripe_id: 'evt_0',
-        customer: Fabric::Customer.first
+        customer: Fabric::Customer.first,
+        api_version: '1.2.3'
       )
-      event_data = {id: 'evt_0', type: 'customer.updated'}
-      refute check_idempotence(event_data)
+      event_data = {
+        'id' => 'evt_0',
+        'type' => 'customer.updated',
+        'api_version' => '1.2.3'
+      }
+      refute check_idempotence(event_data, Fabric::Customer.first)
     end
 
     def test_check_idempotence_doesnt_exist
-      event_data = {id: 'evt_0', type: 'customer.updated'}
-      assert check_idempotence(event_data)
+      event_data = {
+        'id' => 'evt_0',
+        'type' => 'customer.updated',
+        'api_version' => '1.2.3'
+      }
+      assert check_idempotence(event_data, Fabric::Customer.first)
     end
 
   end

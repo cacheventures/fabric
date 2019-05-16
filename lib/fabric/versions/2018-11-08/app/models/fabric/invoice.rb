@@ -3,6 +3,7 @@ module Fabric
     field :auto_advance, type: Boolean
     field :billing, type: String
     field :billing_reason, type: String
+    field :status, type: String
 
     def sync_with(invoice)
       self.stripe_id = Fabric.stripe_id_for invoice
@@ -34,6 +35,7 @@ module Fabric
       self.receipt_number = invoice.receipt_number
       self.starting_balance = invoice.starting_balance
       self.statement_descriptor = invoice.statement_descriptor
+      self.status = invoice.status
       self.subtotal = invoice.subtotal
       self.tax = invoice.tax
       self.tax_percent = invoice.tax_percent

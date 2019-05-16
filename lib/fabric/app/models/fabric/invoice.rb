@@ -33,6 +33,7 @@ module Fabric
     field :receipt_number, type: String
     field :starting_balance, type: Integer
     field :statement_descriptor, type: String
+    field :status, type: String
     # we can't associate subscriptions because invoices come first
     field :subscription, type: String
     field :subtotal, type: Integer
@@ -79,6 +80,7 @@ module Fabric
       self.receipt_number = invoice.receipt_number
       self.starting_balance = invoice.starting_balance
       self.statement_descriptor = invoice.statement_descriptor
+      self.status = invoice.status
       self.subtotal = invoice.subtotal
       self.tax = invoice.tax
       self.tax_percent = invoice.tax_percent

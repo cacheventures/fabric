@@ -20,6 +20,7 @@ module Fabric
       card_saved = @card.save
       Fabric.config.logger.info "UpdateCardOperation: Completed. saved: "\
         "#{card_saved}"
+      @card
     end
   end
 end

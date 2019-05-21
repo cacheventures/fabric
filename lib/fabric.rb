@@ -139,7 +139,8 @@ module Fabric
     end
   end
 
-  def sync_and_save_subscription_and_items(subscription, stripe_subscription)
+  def sync_subscription_and_items(subscription, stripe_subscription,
+                                  persist = false)
     subscription.sync_with(stripe_subscription)
     sub_items = subscription.subscription_items
 
@@ -151,10 +152,15 @@ module Fabric
     stripe_subscription.items.data.each do |sub_item|
       item = sub_items.find_by(stripe_id: sub_item.id) || sub_items.build
       item.sync_with(sub_item)
-      item.save
+      item.save if persist
     end
 
-    subscription.save
+    subscription.save if persist
+  end
+
+  # deprecated
+  def sync_and_save_subscription_and_items(subscription, stripe_subscription)
+    sync_subscription_and_items(subscription, stripe_subscription, true)
   end
 
   def convert_metadata(hash)

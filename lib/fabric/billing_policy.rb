@@ -25,5 +25,16 @@ module Fabric
     def billing_subscriptions
       @billing_subscriptions ||= @customer.subscriptions.billing
     end
+
+    def plan
+      return @plan if @plan.present?
+
+      @paying ||= billing_subscriptions
+      @plan = if @paying.present?
+                @paying.first.subscription_items.first.plan
+              else
+                Fabric.default_plan
+              end
+    end
   end
 end

@@ -2,11 +2,12 @@ module Fabric
   class CreateCardOperation
     include Fabric
 
-    def initialize(customer, token_or_card)
+    def initialize(customer, token_or_card, make_default = false)
       Fabric.config.logger.info "CreateCardOperation: Started with "\
         "#{customer} #{token_or_card}"
       @customer = get_document(Fabric::Customer, customer)
       @card = token_or_card
+      @make_default = make_default
     end
 
     def call
@@ -14,7 +15,7 @@ module Fabric
       stripe_card = stripe_customer.sources.create(card: @card)
 
       default_source = stripe_customer.default_source
-      if default_source != stripe_card.id
+      if @make_default && default_source != stripe_card.id
         stripe_customer.default_source = stripe_card.id
         stripe_customer.save
       end

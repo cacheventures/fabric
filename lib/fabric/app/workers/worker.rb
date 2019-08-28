@@ -19,14 +19,20 @@ module Fabric
 
       Fabric.config.logger.info 'Fabric::Worker: Success.'
       call_callback(:success)
-    rescue Stripe::StripeError => error
+    rescue Stripe::StripeError, PaymentIntentError => error
       Fabric.config.logger.info "Fabric::Worker: Error: #{error.inspect}"
-      call_callback(:error, error.message) || raise(error)
+      call_callback(:error, error) || raise(error)
     end
 
-    def call_callback(type, message = nil)
+    def call_callback(type, error = nil)
       return false unless @callback_data.present?
-      Fabric.config.worker_callback.call(@callback_data, type, message)
+      Fabric.config.worker_callback.call(
+        @callback_data,
+        type,
+        error.message,
+        error.code,
+        error.try(&:data)
+      )
     end
 
   end

@@ -4,7 +4,9 @@ require 'enumerize'
 require 'mongoid'
 require 'env_helper'
 require 'sidekiq'
+require 'logger'
 
+require 'fabric/errors'
 require 'fabric/billing_policy'
 require 'fabric/cancel_subscription_operation'
 require 'fabric/create_card_for_subscription_operation'
@@ -178,7 +180,8 @@ module Fabric
     nh
   end
 
-  class Error < StandardError; end
-  class InvalidResourceError < Error; end
-  class SubscriptionAlreadyExistsError < Error; end
+  def flogger
+    Fabric.config.logger
+  end
+
 end

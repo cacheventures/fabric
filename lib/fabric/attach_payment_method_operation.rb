@@ -1,5 +1,6 @@
 module Fabric
   class AttachPaymentMethodOperation
+    include Fabric
 
     def initialize(payment_method, customer)
       log_data = {

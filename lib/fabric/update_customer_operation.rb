@@ -3,10 +3,10 @@ module Fabric
     include Fabric
 
     def initialize(customer, attributes)
-      log_data = {
+      @log_data = {
         class: self.class.name, customer: customer, attributes: attributes
       }
-      flogger.json_info 'Started', log_data
+      flogger.json_info 'Started', @log_data
       @customer = get_document(Fabric::Customer, customer)
       @attributes = attributes
     end
@@ -18,7 +18,7 @@ module Fabric
       @customer.sync_with(stripe_customer)
       saved = @customer.save
 
-      flogger.json_info 'Completed', log_data.merge(saved: saved)
+      flogger.json_info 'Completed', @log_data.merge(saved: saved)
 
       [@customer, stripe_customer]
     end

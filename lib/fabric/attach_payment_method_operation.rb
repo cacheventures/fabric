@@ -3,11 +3,11 @@ module Fabric
     include Fabric
 
     def initialize(payment_method, customer)
-      log_data = {
+      @log_data = {
         class: self.class.name, payment_method: payment_method,
         customer: customer
       }
-      flogger.json_info 'Started', log_data
+      flogger.json_info 'Started', @log_data
 
       @payment_method = get_document(Fabric::PaymentMethod, payment_method)
       @customer = get_document(Fabric::Customer, customer)
@@ -21,7 +21,7 @@ module Fabric
       @payment_method.sync_with stripe_payment_method
       saved = @payment_method.save
 
-      flogger.json_info 'Completed', log_data.merge(saved: saved)
+      flogger.json_info 'Completed', @log_data.merge(saved: saved)
 
       [@payment_method, stripe_payment_method]
     end

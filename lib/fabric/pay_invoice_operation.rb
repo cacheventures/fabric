@@ -3,10 +3,10 @@ module Fabric
     include Fabric
 
     def initialize(invoice, stripe_invoice: nil)
-      log_data = {
+      @log_data = {
         class: self.class.name, invoice: invoice, stripe_invoice: stripe_invoice
       }
-      flogger.json_info 'Started', log_data
+      flogger.json_info 'Started', @log_data
 
       @invoice = get_document(Fabric::Invoice, invoice)
       @stripe_invoice = stripe_invoice
@@ -19,7 +19,7 @@ module Fabric
       @invoice.sync_with @stripe_invoice
       saved = @invoice.save
 
-      flogger.json_info 'Completed', log_data.merge(saved: saved)
+      flogger.json_info 'Completed', @log_data.merge(saved: saved)
 
       [@invoice, @stripe_invoice]
     rescue Stripe::CardError => error

@@ -34,10 +34,10 @@ module Fabric
         stripe_id: setup_intent.customer
       ) unless customer.present?
       self.description = setup_intent.description
-      self.last_setup_error = setup_intent.last_setup_error.to_hash
+      self.last_setup_error = setup_intent.last_setup_error.try(&:to_hash)
       self.livemode = setup_intent.livemode
       self.metadata = Fabric.convert_metadata(setup_intent.metadata.to_hash)
-      self.next_action = setup_intent.next_action.to_hash
+      self.next_action = setup_intent.next_action.try(&:to_hash)
       self.on_behalf_of = setup_intent.on_behalf_of
       self.payment_method = setup_intent.payment_method
       self.payment_method_options = setup_intent.payment_method_options.to_hash

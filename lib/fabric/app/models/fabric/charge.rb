@@ -6,6 +6,7 @@ module Fabric
 
     belongs_to :customer, class_name: 'Fabric::Customer', touch: true
     belongs_to :invoice, class_name: 'Fabric::Invoice'
+    belongs_to :payment_intent, class_name: 'Fabric::PaymentIntent'
 
     field :stripe_id, type: String
     field :amount, type: Integer
@@ -76,7 +77,9 @@ module Fabric
       self.order = charge.order
       self.outcome = charge.outcome.to_hash
       self.paid = charge.paid
-      self.payment_intent = charge.payment_intent
+      self.payment_intent = Fabric::PaymentIntent.find_by(
+        stripe_id: charge.payment_intent
+      ) unless payment_intent.present?
       self.receipt_email = charge.receipt_email
       self.receipt_number = charge.receipt_number
       self.refunded = charge.refunded

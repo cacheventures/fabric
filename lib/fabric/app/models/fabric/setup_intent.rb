@@ -23,6 +23,11 @@ module Fabric
     field :status, type: String
     field :usage, type: String
 
+    validates_uniqueness_of :stripe_id
+    validates :stripe_id, presence: true
+
+    index({ stripe_id: 1 }, { background: true, unique: true })
+
     def sync_with(setup_intent)
       self.stripe_id = Fabric.stripe_id_for(setup_intent)
       self.object = setup_intent.object

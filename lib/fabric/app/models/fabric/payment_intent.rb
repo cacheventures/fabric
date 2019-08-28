@@ -40,6 +40,11 @@ module Fabric
     field :transfer_data, type: Hash
     field :transfer_group, type: String
 
+    validates_uniqueness_of :stripe_id
+    validates :stripe_id, presence: true
+
+    index({ stripe_id: 1 }, { background: true, unique: true })
+
     def sync_with(payment_intent)
       self.stripe_id = Fabric.stripe_id_for(payment_intent)
       self.object = payment_intent.object

@@ -29,7 +29,6 @@ module Fabric
     field :order, type: String
     field :outcome, type: Hash
     field :paid, type: Boolean
-    field :payment_intent, type: String
     field :receipt_email, type: String
     field :receipt_number, type: String
     field :refunded, type: Boolean

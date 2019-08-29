@@ -17,7 +17,7 @@ module Fabric
       end
 
       def persist_model(stripe_setup_intent)
-        setup_intent = Fabric::SetupIntent.new
+        setup_intent = SetupIntent.new
         setup_intent.sync_with(stripe_setup_intent)
         saved = setup_intent.save
 

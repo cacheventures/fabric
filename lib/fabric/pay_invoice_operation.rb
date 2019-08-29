@@ -8,7 +8,7 @@ module Fabric
       }
       flogger.json_info 'Started', @log_data
 
-      @invoice = get_document(Fabric::Invoice, invoice)
+      @invoice = get_document(Invoice, invoice)
       @attributes = attributes
     end
 

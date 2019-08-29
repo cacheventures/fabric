@@ -17,7 +17,7 @@ module Fabric
       end
 
       def persist_model(stripe_payment_method)
-        payment_method = Fabric::PaymentMethod.new
+        payment_method = PaymentMethod.new
         payment_method.sync_with(stripe_payment_method)
         saved = payment_method.save
 

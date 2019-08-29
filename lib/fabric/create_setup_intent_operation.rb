@@ -11,7 +11,7 @@ module Fabric
 
     def call
       stripe_setup_intent = Stripe::SetupIntent.create(@attributes)
-      setup_intent = Fabric::SetupIntent.new
+      setup_intent = SetupIntent.new
       setup_intent.sync_with(stripe_setup_intent)
       saved = setup_intent.save
 

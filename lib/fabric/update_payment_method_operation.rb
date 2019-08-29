@@ -9,7 +9,7 @@ module Fabric
       }
       flogger.json_info 'Started', @log_data
 
-      @payment_method = get_document(Fabric::PaymentMethod, payment_method)
+      @payment_method = get_document(PaymentMethod, payment_method)
       @attributes = attributes
     end
 

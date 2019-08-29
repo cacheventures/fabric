@@ -22,8 +22,8 @@ module Fabric
     def sync_with(payment_method)
       self.stripe_id = Fabric.stripe_id_for payment_method
       self.object = payment_method.object
-      self.billing_details = payment_method.billing_details.try(&:to_hash)
-      self.card = payment_method.card.try(&:to_hash)
+      self.billing_details = payment_method.billing_details.try(:to_hash)
+      self.card = payment_method.card.try(:to_hash)
       self.created = payment_method.created
       self.customer = Fabric::Customer.find_by(
         stripe_id: payment_method.customer

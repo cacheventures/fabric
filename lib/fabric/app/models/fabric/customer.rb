@@ -55,7 +55,7 @@ module Fabric
       self.stripe_id = Fabric.stripe_id_for cust
       self.object = cust.object
       self.account_balance = cust.account_balance
-      self.address = cust.address.try(&:to_hash)
+      self.address = cust.address.try(:to_hash)
       self.balance = cust.balance
       self.created = cust.created
       self.currency = cust.currency
@@ -65,13 +65,13 @@ module Fabric
       self.discount = cust.discount.try(:to_hash)
       self.email = cust.email
       self.invoice_prefix = cust.invoice_prefix
-      self.invoice_settings = cust.invoice_settings.try(&:to_hash)
+      self.invoice_settings = cust.invoice_settings.try(:to_hash)
       self.livemode = cust.livemode
       self.metadata = Fabric.convert_metadata(cust.metadata.to_hash)
       self.name = cust.name
       self.phone = cust.phone
       self.preferred_locales = cust.preferred_locales
-      self.shipping = cust.shipping.try(&:to_hash)
+      self.shipping = cust.shipping.try(:to_hash)
       self.tax_exempt = cust.tax_exempt
       self
     end

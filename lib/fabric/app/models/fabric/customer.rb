@@ -13,8 +13,14 @@ module Fabric
     has_many :charges, class_name: 'Fabric::Charge', dependent: :destroy
     has_many :invoice_items, class_name: 'Fabric::InvoiceItem',
       dependent: :destroy
-    has_many :usage_records, class_name: 'Fabric::UsageRecord'
-    has_many :payment_methods, class_name: 'Fabric::PaymentMethod'
+    has_many :usage_records, class_name: 'Fabric::UsageRecord',
+      dependent: :destroy
+    has_many :payment_methods, class_name: 'Fabric::PaymentMethod',
+      dependent: :destroy
+    has_many :setup_intents, class_name: 'Fabric::SetupIntent',
+      dependent: :destroy
+    has_many :payment_intents, class_name: 'Fabric::PaymentIntent',
+      dependent: :destroy
 
     field :stripe_id, type: String
     field :object, type: String

@@ -72,6 +72,7 @@ module Fabric
     rescue Stripe::InvalidRequestError => e
       log_data[:error] = e.inspect
       flogger.json_info('couldn\'t retrieve resource', log_data)
+      nil
     end
 
     # handle an event with custom user code.

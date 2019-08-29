@@ -20,6 +20,7 @@ module Fabric
         setup_intent = Fabric::SetupIntent.new
         setup_intent.sync_with(stripe_setup_intent)
         saved = setup_intent.save
+
         log_data = {
           class: self.class.name, setup_intent: setup_intent.stripe_id,
           saved: saved

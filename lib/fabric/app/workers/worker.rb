@@ -27,7 +27,8 @@ module Fabric
     def call_callback(type, error = nil)
       return false unless @callback_data.present?
       args = [@callback_data, type]
-      args.push(error.message, error.code, error.try(&:data)) if error.present?
+      data = error.data if error.respond_to?('data')
+      args.push(error.message, error.code, data) if error.present?
       Fabric.config.worker_callback.call(*args)
     end
 

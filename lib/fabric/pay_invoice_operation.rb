@@ -30,9 +30,7 @@ module Fabric
         e.message,
         code: e.code,
         error: e.error,
-        data: {
-          payment_intent_client_secret: pi.client_secret
-        }
+        data: { payment_intent: pi, invoice: @stripe_invoice }
       )
       raise new_error
     end

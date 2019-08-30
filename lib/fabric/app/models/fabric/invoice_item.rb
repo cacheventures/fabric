@@ -19,6 +19,9 @@ module Fabric
       self.amount = invoice_item.amount
       self.invoice = invoice_item.invoice
       self.currency = invoice_item.currency
+      self.customer = Fabric::Customer.find_by(
+        stripe_id: invoice_item.customer
+      ) unless customer.present?
     end
   end
 end

@@ -157,7 +157,15 @@ module Fabric
     if reference.is_a?(Mongoid::Document)
       reference
     else
-      klass.unscoped.find(reference)
+      # stripe ids should never meet this regex for object ids.
+      # the only situation this could break is if someone set a coupon to have
+      # an object id as its stripe id since stripe allows you to choose a
+      # coupons id.
+      if reference.to_s.match?(/^[a-f0-9]{24}$/)
+        klass.unscoped.find(reference)
+      else
+        klass.unscoped.find_by(stripe_id: reference)
+      end
     end
   end
 

@@ -21,15 +21,15 @@ module Fabric
       flogger.json_info 'Completed', @log_data.merge(saved: saved)
 
       [@invoice, @stripe_invoice]
-    rescue Stripe::CardError => error
-      raise error unless error.code == 'invoice_payment_intent_requires_action'
+    rescue Stripe::CardError => e
+      raise e unless e.code == 'invoice_payment_intent_requires_action'
 
       @stripe_invoice = Stripe::Invoice.retrieve(@invoice.stripe_id)
       pi = Stripe::PaymentIntent.retrieve(@stripe_invoice.payment_intent)
       new_error = PaymentIntentError.new(
-        error.message,
-        code: error.code,
-        error: error.error,
+        e.message,
+        code: e.code,
+        error: e.error,
         data: {
           payment_intent_client_secret: pi.client_secret
         }

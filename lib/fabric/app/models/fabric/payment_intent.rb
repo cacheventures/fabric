@@ -4,6 +4,7 @@ module Fabric
     include Mongoid::Timestamps
 
     belongs_to :customer, class_name: 'Fabric::Customer'
+    belongs_to :invoice, class_name: 'Fabric::Invoice'
     has_many :charges, class_name: 'Fabric::Charge', dependent: :destroy
 
     field :stripe_id, type: String
@@ -21,7 +22,6 @@ module Fabric
     field :created, type: Time
     field :currency, type: String
     field :description, type: String
-    field :invoice, type: String
     field :last_payment_error, type: Hash
     field :livemode, type: Boolean
     field :metadata, type: Hash

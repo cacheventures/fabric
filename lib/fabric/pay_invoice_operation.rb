@@ -25,12 +25,19 @@ module Fabric
       raise e unless e.code == 'invoice_payment_intent_requires_action'
 
       @stripe_invoice = Stripe::Invoice.retrieve(@invoice.stripe_id)
-      pi = Stripe::PaymentIntent.retrieve(@stripe_invoice.payment_intent)
+      @invoice.sync_with @stripe_invoice
+      @invoice.save
+
+      stripe_pi = Stripe::PaymentIntent.retrieve(@stripe_invoice.payment_intent)
+      pi = PaymentIntent.find_or_initialize_by(stripe_id: stripe_pi.id)
+      pi.sync_with stripe_pi
+      pi.save
+
       new_error = PaymentIntentError.new(
         e.message,
         code: e.code,
         error: e.error,
-        data: { payment_intent: pi, invoice: @stripe_invoice }
+        data: {  payment_intent_client_secret: pi.client_secret }
       )
       raise new_error
     end

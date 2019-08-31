@@ -5,6 +5,8 @@ module Fabric
 
     belongs_to :customer, class_name: 'Fabric::Customer'
     has_one :charge, class_name: 'Fabric::Charge', dependent: :destroy
+    has_one :payment_intent, class_name: 'Fabric::PaymentIntent',
+      dependent: :destroy
 
     field :stripe_id, type: String
     field :amount_due, type: Integer
@@ -74,6 +76,9 @@ module Fabric
       self.next_payment_attempt = invoice.next_payment_attempt
       self.number = invoice.number
       self.paid = invoice.paid
+      self.payment_intent = Fabric::PaymentIntent.find_by(
+        stripe_id: invoice.payment_intent
+      ) unless payment_intent.present?
       self.period_end = invoice.period_end
       self.period_start = invoice.period_start
       self.receipt_number = invoice.receipt_number

@@ -32,7 +32,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'enumerize'
   gem.add_dependency 'mongoid'
-  gem.add_dependency 'stripe', '< 4.0'
+  gem.add_dependency 'stripe', '> 5'
   gem.add_dependency 'stripe_event'
   gem.add_dependency 'sidekiq'
 

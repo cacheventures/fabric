@@ -6,6 +6,7 @@ module Fabric
 
     belongs_to :customer, class_name: 'Fabric::Customer', touch: true
     belongs_to :invoice, class_name: 'Fabric::Invoice'
+    belongs_to :payment_intent, class_name: 'Fabric::PaymentIntent'
 
     field :stripe_id, type: String
     field :amount, type: Integer
@@ -28,7 +29,6 @@ module Fabric
     field :order, type: String
     field :outcome, type: Hash
     field :paid, type: Boolean
-    field :payment_intent, type: String
     field :receipt_email, type: String
     field :receipt_number, type: String
     field :refunded, type: Boolean
@@ -66,7 +66,7 @@ module Fabric
       self.dispute = charge.dispute
       self.failure_code = charge.failure_code
       self.failure_message = charge.failure_message
-      self.fraud_details = charge.fraud_details.to_hash
+      self.fraud_details = charge.fraud_details.try(:to_hash)
       self.invoice = Fabric::Invoice.find_by(
         stripe_id: charge.invoice
       ) unless invoice.present?
@@ -74,15 +74,17 @@ module Fabric
       self.metadata = Fabric.convert_metadata(charge.metadata.to_hash)
       self.on_behalf_of = charge.on_behalf_of
       self.order = charge.order
-      self.outcome = charge.outcome.to_hash
+      self.outcome = charge.outcome.try(:to_hash)
       self.paid = charge.paid
-      self.payment_intent = charge.payment_intent
+      self.payment_intent = Fabric::PaymentIntent.find_by(
+        stripe_id: charge.payment_intent
+      ) unless payment_intent.present?
       self.receipt_email = charge.receipt_email
       self.receipt_number = charge.receipt_number
       self.refunded = charge.refunded
       self.review = charge.review
       self.shipping = charge.shipping.try(:to_hash)
-      self.source = charge.source.to_hash
+      self.source = charge.source.try(:to_hash)
       self.source_transfer = charge.source_transfer
       self.statement_descriptor = charge.statement_descriptor
       self.status = charge.status

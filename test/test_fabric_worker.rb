@@ -21,6 +21,14 @@ class TestFabricWorker < Minitest::Test
     mock.expect :is_a?, false, [Hash]
     mock.expect :to_s, 'tested'
 
+    # added to get worker log line to convert to json properly
+    mock.expect :instance_variable_get, nil, [:@delegator]
+    mock.expect :instance_variable_get, nil, [:@expected_calls]
+    mock.expect :instance_variable_get, nil, [:@actual_calls]
+    mock.expect :instance_variable_get, nil, [:@delegator]
+    mock.expect :instance_variable_get, nil, [:@expected_calls]
+    mock.expect :instance_variable_get, nil, [:@actual_calls]
+
     Fabric::Worker.new.perform('test_worker', mock)
     assert_mock mock
   end

@@ -3,23 +3,21 @@ module Fabric
     include Fabric
 
     def initialize(card, attributes)
-      Fabric.config.logger.info "UpdateCardOperation: Started with "\
-        "#{card} #{attributes}"
-      @card = get_document(Fabric::Card, card)
-      @customer = @card.customer
+      @log_data = { class: self.class.name, card: card, attributes: attributes }
+      flogger.json_info 'Started', @log_data
+
+      @card = get_document(Card, card)
       @attributes = attributes
     end
 
     def call
-      stripe_customer = Stripe::Customer.retrieve(@customer.stripe_id)
-      stripe_card = stripe_customer.sources.retrieve(@card.stripe_id)
-      @attributes.each { |k, v| stripe_card.send("#{k}=", v) }
-      stripe_card.save
-
+      stripe_card = Stripe::Issuing::Card.update(@card.stripe_id, @attributes)
       @card.sync_with(stripe_card)
-      card_saved = @card.save
-      Fabric.config.logger.info "UpdateCardOperation: Completed. saved: "\
-        "#{card_saved}"
+      saved = @card.save
+
+      flogger.json_info 'Completed', @log_data.merge(saved: saved)
+
+      [@card, stripe_card]
     end
   end
 end

@@ -5,6 +5,10 @@ require 'mongoid'
 require 'env_helper'
 require 'sidekiq'
 
+require 'fabric/logger'
+require 'fabric/errors'
+require 'fabric/attach_payment_method_operation'
+require 'fabric/detach_payment_method_operation'
 require 'fabric/billing_policy'
 require 'fabric/cancel_subscription_operation'
 require 'fabric/create_card_for_subscription_operation'
@@ -16,6 +20,7 @@ require 'fabric/create_invoice_operation'
 require 'fabric/create_invoice_item_operation'
 require 'fabric/create_subscription_operation'
 require 'fabric/create_usage_record_operation'
+require 'fabric/create_setup_intent_operation'
 require 'fabric/delete_coupon_operation'
 require 'fabric/pay_invoice_operation'
 require 'fabric/plan_policy'
@@ -25,6 +30,8 @@ require 'fabric/sync_plans_operation'
 require 'fabric/update_card_operation'
 require 'fabric/update_coupon_operation'
 require 'fabric/update_customer_operation'
+require 'fabric/update_invoice_operation'
+require 'fabric/update_payment_method_operation'
 require 'fabric/update_plan_operation'
 require 'fabric/update_subscription_operation'
 require 'fabric/version'
@@ -51,9 +58,21 @@ require 'fabric/webhooks/invoice_item_updated'
 require 'fabric/webhooks/invoice_updated'
 require 'fabric/webhooks/invoice_payment_failed'
 require 'fabric/webhooks/invoice_payment_succeeded'
+require 'fabric/webhooks/payment_intent_updated'
+require 'fabric/webhooks/payment_intent_amount_capturable_updated'
+require 'fabric/webhooks/payment_intent_payment_failed'
+require 'fabric/webhooks/payment_intent_succeeded'
+require 'fabric/webhooks/payment_method_attached'
+require 'fabric/webhooks/payment_method_detached'
+require 'fabric/webhooks/payment_method_updated'
+require 'fabric/webhooks/payment_method_card_automatically_updated'
 require 'fabric/webhooks/plan_created'
 require 'fabric/webhooks/plan_deleted'
 require 'fabric/webhooks/plan_updated'
+require 'fabric/webhooks/setup_intent_created'
+require 'fabric/webhooks/setup_intent_updated'
+require 'fabric/webhooks/setup_intent_setup_failed'
+require 'fabric/webhooks/setup_intent_succeeded'
 require 'fabric/webhooks/source_created'
 require 'fabric/webhooks/source_deleted'
 require 'fabric/webhooks/source_updated'
@@ -73,7 +92,10 @@ module Fabric
   autoload :Event, 'fabric/app/models/fabric/event'
   autoload :Invoice, 'fabric/app/models/fabric/invoice'
   autoload :InvoiceItem, 'fabric/app/models/fabric/invoice_item'
+  autoload :PaymentIntent, 'fabric/app/models/fabric/payment_intent'
+  autoload :PaymentMethod, 'fabric/app/models/fabric/payment_method'
   autoload :Plan, 'fabric/app/models/fabric/plan'
+  autoload :SetupIntent, 'fabric/app/models/fabric/setup_intent'
   autoload :Subscription, 'fabric/app/models/fabric/subscription'
   autoload :SubscriptionItem, 'fabric/app/models/fabric/subscription_item'
   autoload :UsageRecord, 'fabric/app/models/fabric/usage_record'
@@ -135,7 +157,15 @@ module Fabric
     if reference.is_a?(Mongoid::Document)
       reference
     else
-      klass.unscoped.find(reference)
+      # stripe ids should never meet this regex for object ids.
+      # the only situation this could break is if someone set a coupon to have
+      # an object id as its stripe id since stripe allows you to choose a
+      # coupons id.
+      if reference.to_s.match?(/^[a-f0-9]{24}$/)
+        klass.unscoped.find(reference)
+      else
+        klass.unscoped.find_by(stripe_id: reference)
+      end
     end
   end
 
@@ -178,7 +208,8 @@ module Fabric
     nh
   end
 
-  class Error < StandardError; end
-  class InvalidResourceError < Error; end
-  class SubscriptionAlreadyExistsError < Error; end
+  def flogger
+    Fabric.config.logger
+  end
+
 end

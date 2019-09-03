@@ -6,8 +6,8 @@ require 'fabric/version'
 Gem::Specification.new do |gem|
   gem.name          = "fabric"
   gem.version       = Fabric::VERSION
-  gem.authors       = ["Daniel Arnold", "Evan Berquist", "Jarrett Lusso"]
-  gem.email         = ["dan@cacheventures.com"]
+  gem.authors       = ['Daniel Arnold', 'Evan Berquist', 'Jarrett Lusso']
+  gem.email         = ['dan@cacheventures.com', 'evan@cacheventures.com', 'jarrett@cacheventures.com']
 
   gem.summary       = 'A framework for integrating Rails and Stripe.'
   gem.description   = 'A framework for integrating Rails and Stripe.'
@@ -32,13 +32,14 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'enumerize'
   gem.add_dependency 'mongoid'
-  gem.add_dependency 'stripe', '< 4.0'
+  gem.add_dependency 'stripe', '> 5'
   gem.add_dependency 'stripe_event'
   gem.add_dependency 'sidekiq'
 
-  gem.add_development_dependency "bundler"
-  gem.add_development_dependency "rake"
-  gem.add_development_dependency "minitest"
+  gem.add_development_dependency 'bundler'
+  gem.add_development_dependency 'rake'
+  gem.add_development_dependency 'minitest'
+  gem.add_development_dependency 'minitest-reporters'
   gem.add_development_dependency 'pry'
   gem.add_development_dependency 'awesome_print'
 end

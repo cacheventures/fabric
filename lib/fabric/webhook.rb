@@ -1,5 +1,6 @@
 module Fabric
   module Webhook
+    include Fabric
 
     # @param event a Stripe event from a webhook
     # @return [Array<Fabric::Event, Boolean>] whether it existed,
@@ -25,7 +26,7 @@ module Fabric
     def check_idempotence(event, customer_id = nil)
       _fabric_event, existed = create_event(event, customer_id)
       if existed
-        Fabric.config.logger.info "#{event[:type]}: Event already exists"
+        flogger.json_info('Event already exists', event: event[:type])
         return false
       end
       true
@@ -42,7 +43,7 @@ module Fabric
       )
       unless resource.present?
         log_data = { name: resource_name, remote_id: remote_id }
-        Fabric.config.logger.info("resource not found #{log_data.to_json}")
+        flogger.json_info('resource not found', log_data)
         return
       end
       resource
@@ -56,7 +57,7 @@ module Fabric
     def most_recent_update?(resource, event)
       x = Time.at(event['created']) >= resource.updated_at
       log_data = { id: resource.id.to_s, name: resource.class.name }
-      Fabric.config.logger.info("skipping update #{log_data.to_json}") unless x
+      flogger.json_info('skipping update', log_data) unless x
       x
     end
 
@@ -70,8 +71,7 @@ module Fabric
       "Stripe::#{resource.camelcase}".constantize.retrieve(resource_id)
     rescue Stripe::InvalidRequestError => e
       log_data[:error] = e.inspect
-      Fabric.config.logger.info("couldn't retrieve resource"\
-        " #{log_data.to_json}")
+      flogger.json_info('couldn\'t retrieve resource', log_data)
       nil
     end
 

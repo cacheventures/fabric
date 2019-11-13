@@ -31,6 +31,7 @@ module Fabric
     field :paid, type: Boolean
     field :receipt_email, type: String
     field :receipt_number, type: String
+    field :receipt_url, type: String
     field :refunded, type: Boolean
     field :review, type: String
     field :shipping, type: Hash
@@ -81,6 +82,7 @@ module Fabric
       ) unless payment_intent.present?
       self.receipt_email = charge.receipt_email
       self.receipt_number = charge.receipt_number
+      self.receipt_url = charge.receipt_url
       self.refunded = charge.refunded
       self.review = charge.review
       self.shipping = charge.shipping.try(:to_hash)

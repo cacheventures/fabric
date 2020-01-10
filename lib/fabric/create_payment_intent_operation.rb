@@ -16,7 +16,7 @@ module Fabric
       pi = @customer ? @customer.payment_intents.build : PaymentIntent.new
       pi.sync_with(stripe_pi)
       saved = pi.save
-      Fabric.config.logger.info 'completed', saved: saved
+      Fabric.config.logger.json_info 'completed', saved: saved
       pi
     end
 

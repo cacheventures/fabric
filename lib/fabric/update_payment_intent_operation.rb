@@ -4,7 +4,8 @@ module Fabric
 
     def initialize(payment_intent, attributes = {})
       @log_data = {
-        class: self.class.name, customer: customer, attributes: attributes
+        class: self.class.name, payment_intent: payment_intent,
+        attributes: attributes
       }
       Fabric.config.logger.json_info 'started', @log_data
 

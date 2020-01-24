@@ -16,7 +16,7 @@ module Fabric
     def call
       stripe_pi = Stripe::PaymentIntent.update(
         @payment_intent.stripe_id,
-        attributes
+        @attributes
       )
       @payment_intent.sync_with(stripe_pi)
       saved = @payment_intent.save

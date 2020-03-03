@@ -62,6 +62,9 @@ module Fabric
       self.captured = charge.captured
       self.created = charge.created
       self.currency = charge.currency
+      self.customer = Fabric::Customer.find_by(
+        stripe_id: charge.customer
+      ) unless customer.present?
       self.description = charge.description
       self.destination = charge.destination
       self.dispute = charge.dispute

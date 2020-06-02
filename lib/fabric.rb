@@ -127,16 +127,18 @@ module Fabric
   #     # c.persist_models = %i[charge coupon customer]
   #   end
   class Config
-    attr_accessor :store_events
     attr_accessor :logger
-    attr_accessor :worker_callback
+    attr_accessor :orm
     attr_accessor :persist_models
+    attr_accessor :store_events
+    attr_accessor :worker_callback
 
     def initialize
-      @store_events = true
       @logger = ActiveSupport::Logger.new($stdout)
-      @worker_callback = Proc.new {}
+      @orm = 'mongoid'
       @persist_models = :all
+      @store_events = true
+      @worker_callback = Proc.new {}
     end
 
     def persist?(document)

@@ -40,7 +40,7 @@ module Fabric
     field :metadata, type: Hash
     field :name, type: String
     field :phone, type: String
-    field :preferred_locales, type: Array
+    field :preferred_locales, type: Array # TODO: array
     field :shipping, type: Hash
     field :tax_exempt, type: String
 

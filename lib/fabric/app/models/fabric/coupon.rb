@@ -15,7 +15,7 @@ module Fabric
     field :max_redemptions, type: Integer
     field :metadata, type: Hash
     field :name, type: String
-    field :percent_off, type: Integer
+    field :percent_off, type: Float
     field :redeem_by, type: Time
     field :times_redeemed, type: Integer
     field :coupon_valid, type: Boolean

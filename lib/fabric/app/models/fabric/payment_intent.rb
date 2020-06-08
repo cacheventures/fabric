@@ -75,6 +75,7 @@ module Fabric
       self.last_payment_error = payment_intent.last_payment_error.try(:to_hash)
       self.livemode = payment_intent.livemode
       self.metadata = Fabric.convert_metadata(payment_intent.metadata.to_hash)
+      self.next_action = payment_intent.next_action.try(:to_hash)
       self.on_behalf_of = payment_intent.on_behalf_of
       self.payment_method = payment_intent.payment_method
       self.payment_method_options = payment_intent.payment_method_options.try(:to_hash)

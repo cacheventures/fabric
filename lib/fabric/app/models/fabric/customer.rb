@@ -24,7 +24,6 @@ module Fabric
 
     field :stripe_id, type: String
     field :object, type: String
-    field :account_balance, type: Integer, default: 0 # deprecated
     field :address, type: Hash
     field :balance, type: Integer, default: 0
     field :created, type: Time
@@ -54,7 +53,6 @@ module Fabric
     def sync_with(cust)
       self.stripe_id = Fabric.stripe_id_for cust
       self.object = cust.object
-      self.account_balance = cust.account_balance
       self.address = cust.address.try(:to_hash)
       self.balance = cust.balance
       self.created = cust.created

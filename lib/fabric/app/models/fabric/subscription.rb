@@ -12,10 +12,11 @@ module Fabric
     field :application_fee_percent, type: Float
     field :cancel_at_period_end, type: Boolean
     field :canceled_at, type: Time
+    field :collection_method, type: String
     field :created, type: Time
     field :current_period_end, type: Time
     field :current_period_start, type: Time
-    field :start, type: Time
+    field :start_date, type: Time
     field :status, type: String
     enumerize :status, in: %w[trialing active past_due canceled unpaid]
     field :ended_at, type: Time
@@ -45,10 +46,11 @@ module Fabric
       self.application_fee_percent = sub.application_fee_percent
       self.cancel_at_period_end = sub.cancel_at_period_end
       self.canceled_at = sub.canceled_at
+      self.collection_method = sub.collection_method
       self.created = sub.created
       self.current_period_end = sub.current_period_end
       self.current_period_start = sub.current_period_start
-      self.start = sub.start
+      self.start_date = sub.start_date
       self.status = sub.status
       self.ended_at = sub.ended_at
       self.livemode = sub.livemode

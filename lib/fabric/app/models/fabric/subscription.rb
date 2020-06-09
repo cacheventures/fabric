@@ -28,7 +28,7 @@ module Fabric
     field :discount, type: Hash
 
     validates_uniqueness_of :stripe_id
-    validates :stripe_id, :cancel_at_period_end, :customer, :start, :status,
+    validates :stripe_id, :cancel_at_period_end, :customer, :start_date, :status,
               :current_period_end, :current_period_start, presence: true
 
     scope :active, -> { where(status: 'active') }

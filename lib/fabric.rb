@@ -159,13 +159,6 @@ module Fabric
     end
   end
 
-  def default_plan
-    default_plan_id = ENVHelper.get('fabric_default_plan')
-    return Fabric::Plan.first unless default_plan_id.present?
-    plan = Fabric::Plan.find_by(stripe_id: default_plan_id)
-    plan.present? ? plan : Fabric::Plan.first
-  end
-
   def get_document(klass, reference)
     if reference.is_a?(Mongoid::Document)
       reference
@@ -187,7 +180,7 @@ module Fabric
     sub_items = subscription.subscription_items
 
     item_ids = sub_items.map(&:stripe_id)
-    stripe_item_ids = stripe_subscription.items.data.map(&:id)
+    stripe_item_ids = stripe_subscription.items.map(&:id)
     removed_item_ids = item_ids - stripe_item_ids
 
     sub_items.where(:stripe_id.in => removed_item_ids).destroy_all

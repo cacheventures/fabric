@@ -5,6 +5,8 @@ module Fabric
     extend Enumerize
 
     belongs_to :product, class_name: 'Fabric::Product'
+    has_many :subscription_items, class_name: 'Fabric::SubscriptionItem',
+      inverse_of: :price
 
     field :stripe_id, type: String
     field :active, type: Boolean

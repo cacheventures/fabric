@@ -80,9 +80,5 @@ module Fabric
       sources.find_by(stripe_id: default_source)
     end
 
-    def plan
-      Fabric::BillingPolicy.new(self).plan
-    end
-
   end
 end

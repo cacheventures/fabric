@@ -30,7 +30,6 @@ module Fabric
     field :customer_shipping, type: Hash
     field :customer_tax_exempt, type: String
     field :customer_tax_ids, type: Array
-    field :date, type: Time
     field :default_payment_method, type: String
     field :default_source, type: String
     field :default_tax_rates, type: Array
@@ -100,7 +99,6 @@ module Fabric
       self.customer_phone = invoice.customer_phone
       self.customer_shipping = invoice.customer_shipping.try(:to_hash)
       self.customer_tax_ids = invoice.customer_tax_ids
-      self.date = invoice.date
       self.default_payment_method = invoice.default_payment_method
       self.default_source = invoice.default_source
       self.default_tax_rates = invoice.default_tax_rates

@@ -4,7 +4,7 @@ module Fabric
 
     def initialize(attributes = {})
       @log_data = { class: self.class.to_s, attributes: attributes }
-      Fabric.config.logger.info 'started', @log_data
+      Fabric.config.logger.json_info 'started', @log_data
       @attributes = attributes
     end
 
@@ -21,7 +21,7 @@ module Fabric
 
       saved = subscription.save
 
-      Fabric.config.logger.info 'completed', @log_data.merge(saved: saved)
+      Fabric.config.logger.json_info 'completed', @log_data.merge(saved: saved)
 
       [subscription, stripe_subscription]
     end

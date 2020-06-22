@@ -31,7 +31,7 @@ module Fabric
         customer = retrieve_local(:customer, stripe_source.customer)
         return unless customer
 
-        source = Fabric::Card.new(customer: customer)
+        source = Fabric::Source.new(customer: customer)
         source.sync_with(stripe_source)
         saved = source.save
         Fabric.config.logger.info "SourceCreated: Created source: "\

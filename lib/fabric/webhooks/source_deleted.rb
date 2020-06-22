@@ -10,7 +10,7 @@ module Fabric
       end
 
       def persist_model(event)
-        source = retrieve_local(:card, event['data']['object']['id'])
+        source = retrieve_local(:source, event['data']['object']['id'])
         return unless source
 
         source.destroy

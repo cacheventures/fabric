@@ -6,7 +6,7 @@ module Fabric
 
     has_many :subscriptions, class_name: 'Fabric::Subscription',
       dependent: :destroy
-    has_many :sources, class_name: 'Fabric::Card', dependent: :destroy
+    has_many :sources, class_name: 'Fabric::Source', dependent: :destroy
     has_many :invoices, class_name: 'Fabric::Invoice', dependent: :destroy
     has_many :events, class_name: 'Fabric::Event', inverse_of: :customer,
       dependent: :destroy

@@ -6,6 +6,12 @@ module Fabric
       def call(event)
         check_idempotence(event) or return if Fabric.config.store_events
 
+        if event['data']['object']['object'] == 'card'
+          Fabric.config.logger.json_info "SourceCreated: Ignoring legacy card",
+            card: event['data']['object']
+          return
+        end
+
         stripe_customer = retrieve_resource(
           'customer', event['data']['object']['customer']
         )

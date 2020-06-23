@@ -6,9 +6,10 @@ module Fabric
       def call(event)
         check_idempotence(event) or return if Fabric.config.store_events
 
-        if event['data']['object']['object'] == 'card'
-          Fabric.config.logger.json_info "SourceCreated: Ignoring legacy card",
-            card: event['data']['object']
+        object_type = event['data']['object']['object'] 
+        if object_type == 'card' || object_type == 'bank_account'
+          Fabric.config.logger.json_info "SourceCreated: Ignoring, non-source",
+            object: event['data']['object']
           return
         end
 

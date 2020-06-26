@@ -11,17 +11,13 @@ module Fabric
     end
 
     def call
-      initial_subscription = Stripe::Subscription.retrieve(
-        @subscription.stripe_id
-      )
-      stripe_subscription = initial_subscription.delete(
-        at_period_end: @at_period_end
-      )
-
       if @at_period_end
-        @subscription.sync_with(stripe_subscription)
-        @subscription.save
+        Fabric::UpdateSubscriptionOperation.new(
+          @subscription,
+          cancel_at_period_end: true
+        ).call
       else
+        Stripe::Subscription.delete(@subscription.stripe_id)
         @subscription.destroy
       end
     end

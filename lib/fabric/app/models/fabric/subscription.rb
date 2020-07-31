@@ -8,6 +8,8 @@ module Fabric
     has_many :subscription_items, class_name: 'Fabric::SubscriptionItem',
                                   dependent: :destroy
 
+    alias_method :items, :subscription_items
+
     field :stripe_id, type: String
     field :application_fee_percent, type: Float
     field :cancel_at_period_end, type: Boolean

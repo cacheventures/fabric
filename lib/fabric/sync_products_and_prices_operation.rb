@@ -14,7 +14,7 @@ module Fabric
         product.save
       end
 
-      Stripe::Price.list.auto_paging_each do |p|
+      Stripe::Price.list(expand: ['data.tiers']).auto_paging_each do |p|
         price = Fabric::Price.find_by(stripe_id: p.id) || Fabric::Price.new
         price.sync_with(p)
         price.save

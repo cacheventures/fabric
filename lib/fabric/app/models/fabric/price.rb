@@ -18,7 +18,7 @@ module Fabric
     field :metadata, type: Hash
     field :nickname, type: String
     field :recurring, type: Hash
-    # field :tiers, type: Array # excluded; not expanded by default
+    field :tiers, type: Array # excluded; not expanded by default
     field :tiers_mode, type: String
     field :transform_quantity, type: Hash
     field :type, type: String
@@ -44,6 +44,7 @@ module Fabric
         stripe_id: price.product
       ) unless product.present?
       self.recurring = price.recurring.try(:to_hash)
+      self.tiers = price.try(:tiers)&.map { |tier| tier.to_hash }
       self.tiers_mode = price.tiers_mode
       self.transform_quantity = price.transform_quantity.try(:to_hash)
       self.type = price.type

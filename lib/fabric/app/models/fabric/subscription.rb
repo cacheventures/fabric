@@ -27,6 +27,7 @@ module Fabric
     field :trial_end, type: Time
     field :trial_start, type: Time
     field :discount, type: Hash
+    field :default_payment_method, type: String
 
     validates_uniqueness_of :stripe_id
     validates :stripe_id, :cancel_at_period_end, :customer, :start, :status,

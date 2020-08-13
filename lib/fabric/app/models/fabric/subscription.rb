@@ -61,6 +61,7 @@ module Fabric
       self.customer = Fabric::Customer.find_by(
         stripe_id: sub.customer
       ) unless customer.present?
+      self.default_payment_method = sub.default_payment_method
       self.discount = sub.discount.try(:to_hash)
       self
     end

@@ -7,6 +7,7 @@ module Fabric
     belongs_to :customer, class_name: 'Fabric::Customer', touch: true
     has_many :subscription_items, class_name: 'Fabric::SubscriptionItem',
                                   dependent: :destroy
+    has_one :default_payment_method, class_name: 'Fabric::PaymentMethod'
 
     alias_method :items, :subscription_items
 
@@ -27,7 +28,6 @@ module Fabric
     field :trial_end, type: Time
     field :trial_start, type: Time
     field :discount, type: Hash
-    field :default_payment_method, type: String
 
     validates_uniqueness_of :stripe_id
     validates :stripe_id, :cancel_at_period_end, :customer, :start, :status,
@@ -62,7 +62,9 @@ module Fabric
       self.customer = Fabric::Customer.find_by(
         stripe_id: sub.customer
       ) unless customer.present?
-      self.default_payment_method = sub.default_payment_method
+      self.default_payment_method = Fabric::PaymentMethod.find_by(
+        stripe_id: sub.default_payment_method
+      ) if sub.default_payment_method
       self.discount = sub.discount.try(:to_hash)
       self
     end

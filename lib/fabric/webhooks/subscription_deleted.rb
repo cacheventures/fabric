@@ -10,7 +10,7 @@ module Fabric
         )
         return if stripe_subscription.nil?
 
-        handle(event)
+        handle(event, stripe_subscription)
         return unless Fabric.config.persist?(:subscription)
 
         persist_model(stripe_subscription)

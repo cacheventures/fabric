@@ -7,7 +7,7 @@ module Fabric
     belongs_to :customer, class_name: 'Fabric::Customer', touch: true
     has_many :subscription_items, class_name: 'Fabric::SubscriptionItem',
                                   dependent: :destroy
-    has_one :default_payment_method, class_name: 'Fabric::PaymentMethod'
+    belongs_to :default_payment_method, class_name: 'Fabric::PaymentMethod'
 
     alias_method :items, :subscription_items
 

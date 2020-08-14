@@ -4,7 +4,7 @@ module Fabric
     include Mongoid::Timestamps
 
     belongs_to :customer, class_name: 'Fabric::Customer'
-    belongs_to :subscription, class_name: 'Fabric::Subscription'
+    has_many :subscriptions, class_name: 'Fabric::Subscription'
 
     field :stripe_id, type: String
 

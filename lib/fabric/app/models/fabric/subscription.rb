@@ -20,7 +20,7 @@ module Fabric
     field :current_period_start, type: Time
     field :start_date, type: Time
     field :status, type: String
-    enumerize :status, in: %w[trialing active past_due canceled unpaid]
+    enumerize :status, in: %w[trialing active past_due canceled unpaid incomplete incomplete_expired]
     field :ended_at, type: Time
     field :livemode, type: Boolean
     field :metadata, type: Hash

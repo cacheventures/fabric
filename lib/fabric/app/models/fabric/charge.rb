@@ -5,8 +5,10 @@ module Fabric
     extend Enumerize
 
     belongs_to :customer, class_name: 'Fabric::Customer', touch: true
-    belongs_to :invoice, class_name: 'Fabric::Invoice'
-    belongs_to :payment_intent, class_name: 'Fabric::PaymentIntent'
+    belongs_to :invoice, class_name: 'Fabric::Invoice',
+      foreign_key: :invoice_id, primary_key: :stripe_id
+    belongs_to :payment_intent, class_name: 'Fabric::PaymentIntent',
+      foreign_key: :payment_intent_id, primary_key: :stripe_id
 
     field :stripe_id, type: String
     field :amount, type: Integer

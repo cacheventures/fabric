@@ -4,7 +4,8 @@ module Fabric
     include Mongoid::Timestamps
 
     belongs_to :customer, class_name: 'Fabric::Customer'
-    has_one :charge, class_name: 'Fabric::Charge', dependent: :destroy
+    has_one :charge, class_name: 'Fabric::Charge',
+      foreign_key: :invoice_id, primary_key: :stripe_id, dependent: :destroy
     has_one :payment_intent, class_name: 'Fabric::PaymentIntent',
       dependent: :destroy
 

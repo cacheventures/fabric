@@ -10,7 +10,8 @@ module Fabric
     has_many :invoices, class_name: 'Fabric::Invoice', dependent: :destroy
     has_many :events, class_name: 'Fabric::Event', inverse_of: :customer,
       dependent: :destroy
-    has_many :charges, class_name: 'Fabric::Charge', dependent: :destroy
+    has_many :charges, class_name: 'Fabric::Charge',
+      foreign_key: :customer_id, primary_key: :stripe_id, dependent: :destroy
     has_many :invoice_items, class_name: 'Fabric::InvoiceItem',
       dependent: :destroy
     has_many :usage_records, class_name: 'Fabric::UsageRecord',

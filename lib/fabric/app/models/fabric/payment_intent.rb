@@ -5,7 +5,9 @@ module Fabric
 
     belongs_to :customer, class_name: 'Fabric::Customer'
     belongs_to :invoice, class_name: 'Fabric::Invoice'
-    has_many :charges, class_name: 'Fabric::Charge', dependent: :destroy
+    has_many :charges, class_name: 'Fabric::Charge',
+      foreign_key: :payment_intent_id, primary_key: :stripe_id,
+      dependent: :destroy
 
     field :stripe_id, type: String
     field :object, type: String
@@ -56,11 +58,6 @@ module Fabric
       self.canceled_at = payment_intent.canceled_at
       self.cancellation_reason = payment_intent.cancellation_reason
       self.capture_method = payment_intent.capture_method
-      payment_intent.charges.data.each do |charge|
-        c = charges.find_by(stripe_id: charge.id) || charges.build
-        c.sync_with(charge)
-        c.save
-      end
       self.client_secret = payment_intent.client_secret
       self.confirmation_method = payment_intent.confirmation_method
       self.created = payment_intent.created

@@ -2,7 +2,6 @@ require 'stripe'
 require 'stripe_event'
 require 'enumerize'
 require 'mongoid'
-require 'env_helper'
 require 'sidekiq'
 
 require 'fabric/logger'

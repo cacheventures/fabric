@@ -4,7 +4,7 @@ module Fabric
     include Mongoid::Timestamps
 
     belongs_to :customer, class_name: 'Fabric::Customer', inverse_of: :events,
-      touch: true
+      primary_key: :stripe_id, touch: true
 
     field :stripe_id, type: String
     field :api_version, type: String
@@ -29,9 +29,7 @@ module Fabric
       self.livemode = event[:livemode]
       self.request = event[:request]
       customer_id = event[:object] == 'customer' ? event[:id] : event[:customer]
-      self.customer = Fabric::Customer.find_by(
-        stripe_id: customer_id
-      ) unless customer.present?
+      self.customer_id = customer_id
       self
     end
 

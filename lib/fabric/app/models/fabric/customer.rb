@@ -5,23 +5,25 @@ module Fabric
     extend Enumerize
 
     has_many :subscriptions, class_name: 'Fabric::Subscription',
-      dependent: :destroy
-    has_many :sources, class_name: 'Fabric::Card', dependent: :destroy
-    has_many :invoices, class_name: 'Fabric::Invoice', dependent: :destroy
+      primary_key: :stripe_id, dependent: :destroy
+    has_many :sources, class_name: 'Fabric::Source',
+      primary_key: :stripe_id, dependent: :destroy
+    has_many :invoices, class_name: 'Fabric::Invoice',
+      primary_key: :stripe_id, dependent: :destroy
     has_many :events, class_name: 'Fabric::Event', inverse_of: :customer,
-      dependent: :destroy
+      primary_key: :stripe_id, dependent: :destroy
     has_many :charges, class_name: 'Fabric::Charge',
-      foreign_key: :customer_id, primary_key: :stripe_id, dependent: :destroy
+      primary_key: :stripe_id, dependent: :destroy
     has_many :invoice_items, class_name: 'Fabric::InvoiceItem',
-      dependent: :destroy
+      primary_key: :stripe_id, dependent: :destroy
     has_many :usage_records, class_name: 'Fabric::UsageRecord',
-      dependent: :destroy
+      primary_key: :stripe_id, dependent: :destroy
     has_many :payment_methods, class_name: 'Fabric::PaymentMethod',
-      dependent: :destroy
+      primary_key: :stripe_id, dependent: :destroy
     has_many :setup_intents, class_name: 'Fabric::SetupIntent',
-      dependent: :destroy
+      primary_key: :stripe_id, dependent: :destroy
     has_many :payment_intents, class_name: 'Fabric::PaymentIntent',
-      dependent: :destroy
+      primary_key: :stripe_id, dependent: :destroy
 
     field :stripe_id, type: String
     field :object, type: String

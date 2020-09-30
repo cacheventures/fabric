@@ -3,8 +3,10 @@ module Fabric
     include Mongoid::Document
     include Mongoid::Timestamps
 
-    belongs_to :customer, class_name: 'Fabric::Customer'
-    belongs_to :subscription_item, class_name: 'Fabric::SubscriptionItem'
+    belongs_to :customer, class_name: 'Fabric::Customer',
+      primary_key: :stripe_id
+    belongs_to :subscription_item, class_name: 'Fabric::SubscriptionItem',
+      primary_key: :stripe_id
 
     field :stripe_id, type: String
     field :quantity, type: Integer
@@ -19,9 +21,7 @@ module Fabric
       self.stripe_id = Fabric.stripe_id_for(usage_record)
       self.quantity = usage_record.quantity
       self.timestamp = usage_record.timestamp
-      self.subscription_item = Fabric::SubscriptionItem.find_by(
-        stripe_id: usage_record.subscription_item
-      )
+      self.subscription_item_id = usage_record.subscription_item
       self
     end
   end

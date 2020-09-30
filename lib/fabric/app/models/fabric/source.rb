@@ -5,7 +5,7 @@ module Fabric
     extend Enumerize
 
     belongs_to :customer, class_name: 'Fabric::Customer', inverse_of: :sources,
-      touch: true
+      primary_key: :stripe_id, touch: true
 
     field :stripe_id, type: String
 
@@ -46,7 +46,7 @@ module Fabric
     field :usage, type: String
 
     validates_uniqueness_of :stripe_id
-    validates :stripe_id, :customer, :type, presence: true
+    validates :stripe_id, :customer_id, :type, presence: true
 
     index({ stripe_id: 1 }, { background: true, unique: true })
     index({ customer_id: 1 }, background: true)
@@ -76,9 +76,7 @@ module Fabric
       self.code_verification = source.try(:code_verification).try(:to_hash)
       self.created = source.created
       self.currency = source.currency
-      self.customer = Fabric::Customer.find_by(
-        stripe_id: source.customer
-      ) unless customer.present?
+      self.customer_id = source.customer
       self.flow = source.flow
       self.livemode = source.livemode
       self.metadata = Fabric.convert_metadata(source.metadata.to_hash)

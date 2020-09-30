@@ -4,8 +4,10 @@ module Fabric
     include Mongoid::Timestamps
     extend Enumerize
 
+    belongs_to :product, class_name: 'Fabric::Product',
+      primary_key: :stripe_id
     has_many :subscription_items, class_name: 'Fabric::SubscriptionItem',
-                                  inverse_of: :plan
+      primary_key: :stripe_id, inverse_of: :plan
 
     field :stripe_id, type: String
     field :object, type: String
@@ -19,13 +21,12 @@ module Fabric
     field :metadata, type: Hash
     field :nickname, type: String
     field :trial_period_days, type: Integer
-    field :product, type: String
     field :billing_scheme, type: String
     field :transform_usage, type: Hash
     field :usage_type, type: String
 
     validates_uniqueness_of :stripe_id
-    validates :stripe_id, :amount, :currency, :interval, :created, :product,
+    validates :stripe_id, :amount, :currency, :interval, :created, :product_id,
               presence: true
 
     index({ stripe_id: 1 }, { background: true, unique: true })
@@ -42,7 +43,7 @@ module Fabric
       self.metadata = Fabric.convert_metadata(plan.metadata.to_hash)
       self.nickname = plan.nickname
       self.trial_period_days = plan.trial_period_days
-      self.product = plan.product
+      self.product_id = plan.product
       self.billing_scheme = plan.billing_scheme
       if plan.transform_usage.present?
         self.transform_usage = plan.transform_usage.to_hash

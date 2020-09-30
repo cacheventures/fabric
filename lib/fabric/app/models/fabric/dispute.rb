@@ -3,8 +3,10 @@ module Fabric
     include Mongoid::Document
     include Mongoid::Timestamps
 
-    belongs_to :charge, class_name: 'Fabric::Charge'
-    belongs_to :payment_intent, class_name: 'Fabric::PaymentIntent'
+    belongs_to :charge, class_name: 'Fabric::Charge',
+      primary_key: :stripe_id
+    belongs_to :payment_intent, class_name: 'Fabric::PaymentIntent',
+      primary_key: :stripe_id
 
     field :stripe_id, type: String
     field :amount, type: Integer
@@ -36,12 +38,8 @@ module Fabric
       self.evidence_details = dispute.evidence_details.try(:to_hash)
       self.is_charge_refundable = dispute.is_charge_refundable
       self.livemode = dispute.livemode
-      self.charge = Fabric::Charge.find_by(
-        stripe_id: dispute.charge
-      ) unless charge.present?
-      self.payment_intent = Fabric::PaymentIntent.find_by(
-        stripe_id: dispute.payment_intent
-      ) unless payment_intent.present?
+      self.charge_id = dispute.charge
+      self.payment_intent_id = dispute.payment_intent
     end
   end
 end

@@ -3,7 +3,8 @@ module Fabric
     include Mongoid::Document
     include Mongoid::Timestamps
 
-    belongs_to :customer, class_name: 'Fabric::Customer', touch: true
+    belongs_to :customer, class_name: 'Fabric::Customer',
+      primary_key: :stripe_id, touch: true
 
     field :stripe_id, type: String
     field :amount, type: Integer
@@ -19,9 +20,7 @@ module Fabric
       self.amount = invoice_item.amount
       self.invoice = invoice_item.invoice
       self.currency = invoice_item.currency
-      self.customer = Fabric::Customer.find_by(
-        stripe_id: invoice_item.customer
-      ) unless customer.present?
+      self.customer_id = invoice_item.customer
     end
   end
 end

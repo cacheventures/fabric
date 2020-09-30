@@ -3,11 +3,12 @@ module Fabric
     include Mongoid::Document
     include Mongoid::Timestamps
 
-    belongs_to :customer, class_name: 'Fabric::Customer'
+    belongs_to :customer, class_name: 'Fabric::Customer',
+      primary_key: :stripe_id
     has_one :charge, class_name: 'Fabric::Charge',
-      foreign_key: :invoice_id, primary_key: :stripe_id, dependent: :destroy
+      primary_key: :stripe_id, dependent: :destroy
     has_one :payment_intent, class_name: 'Fabric::PaymentIntent',
-      dependent: :destroy
+      primary_key: :stripe_id, dependent: :destroy
 
     field :stripe_id, type: String
     field :account_country, type: String
@@ -87,16 +88,11 @@ module Fabric
       self.attempted = invoice.attempted
       self.auto_advance = invoice.auto_advance
       self.billing_reason = invoice.billing_reason
-      self.charge = Fabric::Charge.find_by(
-        stripe_id: invoice.charge
-      ) unless charge.present?
       self.closed = invoice.closed
       self.collection_method = invoice.collection_method
       self.created = invoice.created
       self.currency = invoice.currency
-      self.customer = Fabric::Customer.find_by(
-        stripe_id: invoice.customer
-      ) unless customer.present?
+      self.customer_id = invoice.customer
       self.custom_fields = invoice.custom_fields
       self.customer_address = invoice.customer_address.try(:to_hash)
       self.customer_email = invoice.customer_email
@@ -122,9 +118,6 @@ module Fabric
       self.next_payment_attempt = invoice.next_payment_attempt
       self.number = invoice.number
       self.paid = invoice.paid
-      self.payment_intent = Fabric::PaymentIntent.find_by(
-        stripe_id: invoice.payment_intent
-      ) unless payment_intent.present?
       self.period_end = invoice.period_end
       self.period_start = invoice.period_start
       self.post_payment_credit_notes_amount = invoice.post_payment_credit_notes_amount

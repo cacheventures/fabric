@@ -3,7 +3,8 @@ module Fabric
     include Mongoid::Document
     include Mongoid::Timestamps
 
-    belongs_to :customer, class_name: 'Fabric::Customer'
+    belongs_to :customer, class_name: 'Fabric::Customer',
+      primary_key: :stripe_id
 
     field :stripe_id, type: String
     field :object, type: String
@@ -35,9 +36,7 @@ module Fabric
       self.cancellation_reason = setup_intent.cancellation_reason
       self.client_secret = setup_intent.client_secret
       self.created = setup_intent.created
-      self.customer = Fabric::Customer.find_by(
-        stripe_id: setup_intent.customer
-      ) unless customer.present?
+      self.customer_id = setup_intent.customer
       self.description = setup_intent.description
       self.last_setup_error = setup_intent.last_setup_error.try(:to_hash)
       self.livemode = setup_intent.livemode

@@ -4,9 +4,10 @@ module Fabric
     include Mongoid::Timestamps
     extend Enumerize
 
-    belongs_to :product, class_name: 'Fabric::Product'
+    belongs_to :product, class_name: 'Fabric::Product',
+      primary_key: :stripe_id
     has_many :subscription_items, class_name: 'Fabric::SubscriptionItem',
-      inverse_of: :price
+      primary_key: :stripe_id, inverse_of: :price
 
     field :stripe_id, type: String
     field :active, type: Boolean
@@ -40,9 +41,7 @@ module Fabric
       self.lookup_key = price.lookup_key
       self.metadata = Fabric.convert_metadata(price.metadata.to_hash)
       self.nickname = price.nickname
-      self.product = Fabric::Product.find_by(
-        stripe_id: price.product
-      ) unless product.present?
+      self.product_id = price.product
       self.recurring = price.recurring.try(:to_hash)
       self.tiers_mode = price.tiers_mode
       self.transform_quantity = price.transform_quantity.try(:to_hash)

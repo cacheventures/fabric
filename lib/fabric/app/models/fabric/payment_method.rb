@@ -3,7 +3,10 @@ module Fabric
     include Mongoid::Document
     include Mongoid::Timestamps
 
-    belongs_to :customer, class_name: 'Fabric::Customer'
+    belongs_to :customer, class_name: 'Fabric::Customer',
+      primary_key: :stripe_id
+    has_many :subscriptions, class_name: 'Fabric::Subscription',
+      primary_key: :stripe_id
 
     field :stripe_id, type: String
     field :object, type: String
@@ -25,9 +28,7 @@ module Fabric
       self.billing_details = payment_method.billing_details.try(:to_hash)
       self.card = payment_method.card.try(:to_hash)
       self.created = payment_method.created
-      self.customer = Fabric::Customer.find_by(
-        stripe_id: payment_method.customer
-      ) unless customer.present?
+      self.customer_id = payment_method.customer
       self.livemode = payment_method.livemode
       self.metadata = Fabric.convert_metadata(payment_method.metadata.to_hash)
       self.type = payment_method.type

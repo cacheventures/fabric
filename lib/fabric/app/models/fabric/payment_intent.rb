@@ -3,11 +3,12 @@ module Fabric
     include Mongoid::Document
     include Mongoid::Timestamps
 
-    belongs_to :customer, class_name: 'Fabric::Customer'
-    belongs_to :invoice, class_name: 'Fabric::Invoice'
+    belongs_to :customer, class_name: 'Fabric::Customer',
+      primary_key: :stripe_id
+    belongs_to :invoice, class_name: 'Fabric::Invoice',
+      primary_key: :stripe_id
     has_many :charges, class_name: 'Fabric::Charge',
-      foreign_key: :payment_intent_id, primary_key: :stripe_id,
-      dependent: :destroy
+      primary_key: :stripe_id, dependent: :destroy
 
     field :stripe_id, type: String
     field :object, type: String
@@ -62,13 +63,9 @@ module Fabric
       self.confirmation_method = payment_intent.confirmation_method
       self.created = payment_intent.created
       self.currency = payment_intent.currency
-      self.customer = Fabric::Customer.find_by(
-        stripe_id: payment_intent.customer
-      ) unless customer.present?
+      self.customer_id = payment_intent.customer
       self.description = payment_intent.description
-      self.invoice = Fabric::Invoice.find_by(
-        stripe_id: payment_intent.invoice
-      ) unless invoice.present?
+      self.invoice_id = payment_intent.invoice
       self.last_payment_error = payment_intent.last_payment_error.try(:to_hash)
       self.livemode = payment_intent.livemode
       self.metadata = Fabric.convert_metadata(payment_intent.metadata.to_hash)

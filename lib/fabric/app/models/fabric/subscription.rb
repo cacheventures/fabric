@@ -4,9 +4,12 @@ module Fabric
     include Mongoid::Timestamps
     extend Enumerize
 
-    belongs_to :customer, class_name: 'Fabric::Customer', touch: true
+    belongs_to :customer, class_name: 'Fabric::Customer', touch: true,
+      primary_key: :stripe_id
     has_many :subscription_items, class_name: 'Fabric::SubscriptionItem',
-                                  dependent: :destroy
+      primary_key: :stripe_id, dependent: :destroy
+    belongs_to :default_payment_method, class_name: 'Fabric::PaymentMethod',
+      primary_key: :stripe_id
 
     alias_method :items, :subscription_items
 
@@ -30,7 +33,11 @@ module Fabric
     field :discount, type: Hash
 
     validates_uniqueness_of :stripe_id
+<<<<<<< HEAD
     validates :stripe_id, :cancel_at_period_end, :customer, :start_date, :status,
+=======
+    validates :stripe_id, :cancel_at_period_end, :customer_id, :start, :status,
+>>>>>>> 0dfb556... update all other relationships
               :current_period_end, :current_period_start, presence: true
 
     scope :active, -> { where(status: 'active') }
@@ -60,9 +67,14 @@ module Fabric
       self.tax_percent = sub.tax_percent
       self.trial_end = sub.trial_end
       self.trial_start = sub.trial_start
+<<<<<<< HEAD
       self.customer = Fabric::Customer.find_by(
         stripe_id: sub.customer
       ) unless customer.present?
+=======
+      self.customer_id = sub.customer
+      self.default_payment_method_id = sub.default_payment_method
+>>>>>>> 0dfb556... update all other relationships
       self.discount = sub.discount.try(:to_hash)
       self
     end

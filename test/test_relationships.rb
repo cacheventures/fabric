@@ -23,14 +23,14 @@ class TestRelationships < Minitest::Test
     Fabric::Price.destroy_all
     Fabric::Product.destroy_all
     Fabric::SetupIntent.destroy_all
-    Fabric::Source.destroy_all
+    Fabric::Card.destroy_all
     Fabric::UsageRecord.destroy_all
   end
 
   def test_customer
     customer.reload
     subscription.reload
-    source.reload
+    card.reload
     invoice.reload
     event.reload
     charge.reload
@@ -41,7 +41,7 @@ class TestRelationships < Minitest::Test
     payment_intent.reload
 
     assert_equal customer.subscriptions, [subscription]
-    assert_equal customer.sources, [source]
+    assert_equal customer.sources, [card]
     assert_equal customer.invoices, [invoice]
     assert_equal customer.events, [event]
     assert_equal customer.charges, [charge]
@@ -151,11 +151,11 @@ class TestRelationships < Minitest::Test
     assert_equal setup_intent.customer, customer
   end
 
-  def test_source
-    source.reload
+  def test_card
+    card.reload
     customer.reload
 
-    assert_equal source.customer, customer
+    assert_equal card.customer, customer
   end
 
   def test_subscription

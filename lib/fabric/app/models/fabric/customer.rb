@@ -6,7 +6,7 @@ module Fabric
 
     has_many :subscriptions, class_name: 'Fabric::Subscription',
       primary_key: :stripe_id, dependent: :destroy
-    has_many :sources, class_name: 'Fabric::Source',
+    has_many :sources, class_name: 'Fabric::Card',
       primary_key: :stripe_id, dependent: :destroy
     has_many :invoices, class_name: 'Fabric::Invoice',
       primary_key: :stripe_id, dependent: :destroy

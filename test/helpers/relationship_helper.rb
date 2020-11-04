@@ -67,7 +67,7 @@ def subscription
     customer_id: 'cust_xxx',
     default_payment_method_id: 'pm_xxx',
     cancel_at_period_end: false,
-    start: Time.now,
+    start_date: Time.now,
     status: 'active',
     current_period_end: 1.month.from_now,
     current_period_start: Time.now
@@ -116,11 +116,14 @@ def setup_intent
   )
 end
 
-def source
-  @source ||= Fabric::Source.create!(
+def card
+  @card ||= Fabric::Card.create!(
     stripe_id: 'src_xxx',
     customer_id: 'cust_xxx',
-    type: 'card'
+    last4: '1234',
+    brand: 'Visa',
+    exp_month: 1,
+    exp_year: 2021
   )
 end
 

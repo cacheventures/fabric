@@ -27,7 +27,6 @@ module Fabric
     field :ended_at, type: Time
     field :livemode, type: Boolean
     field :metadata, type: Hash
-    field :tax_percent, type: Float
     field :trial_end, type: Time
     field :trial_start, type: Time
     field :discount, type: Hash
@@ -60,7 +59,6 @@ module Fabric
       self.ended_at = sub.ended_at
       self.livemode = sub.livemode
       self.metadata = Fabric.convert_metadata(sub.metadata.to_hash)
-      self.tax_percent = sub.tax_percent
       self.trial_end = sub.trial_end
       self.trial_start = sub.trial_start
       self.customer_id = sub.customer

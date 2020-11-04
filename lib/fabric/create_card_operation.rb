@@ -10,7 +10,9 @@ module Fabric
     end
 
     def call
-      stripe_customer = Stripe::Customer.retrieve @customer.stripe_id
+      stripe_customer = Stripe::Customer.retrieve(
+        id: @customer.stripe_id, expand: ['sources']
+      )
       stripe_card = stripe_customer.sources.create(card: @card)
 
       default_source = stripe_customer.default_source

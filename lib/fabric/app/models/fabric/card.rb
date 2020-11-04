@@ -5,7 +5,7 @@ module Fabric
     extend Enumerize
 
     belongs_to :customer, class_name: 'Fabric::Customer', inverse_of: :sources,
-      touch: true
+      primary_key: :stripe_id, touch: true
 
     field :stripe_id, type: String
     field :last4, type: String
@@ -33,7 +33,7 @@ module Fabric
     field :tokenization_method, type: String
 
     validates_uniqueness_of :stripe_id
-    validates :stripe_id, :customer, :last4, :brand, :exp_month, :exp_year,
+    validates :stripe_id, :customer_id, :last4, :brand, :exp_month, :exp_year,
       presence: true
 
     index({ stripe_id: 1 }, { background: true, unique: true })
@@ -61,9 +61,6 @@ module Fabric
       self.dynamic_last4 = card.dynamic_last4
       self.metadata = Fabric.convert_metadata(card.metadata.to_hash)
       self.tokenization_method = card.tokenization_method
-      self.customer = Fabric::Customer.find_by(
-        stripe_id: card.customer
-      ) unless customer.present?
       self
     end
   end

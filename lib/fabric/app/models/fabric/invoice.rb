@@ -85,7 +85,6 @@ module Fabric
       self.attempted = invoice.attempted
       self.auto_advance = invoice.auto_advance
       self.billing_reason = invoice.billing_reason
-      self.closed = invoice.closed
       self.collection_method = invoice.collection_method
       self.created = invoice.created
       self.currency = invoice.currency

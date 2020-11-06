@@ -23,6 +23,8 @@ module Fabric
 
       Fabric.config.logger.info "UpdateSubscriptionOperation: Completed. "\
         "saved: #{saved}"
+
+      [@subscription, stripe_subscription]
     end
   end
 end

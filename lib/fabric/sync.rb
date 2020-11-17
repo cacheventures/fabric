@@ -3,7 +3,7 @@ module Fabric
     module_function
 
     def from_fabric_model(document)
-      stripe_class = resource.class.name.gsub('Fabric', 'Stripe').constantize
+      stripe_class = document.class.name.gsub('Fabric', 'Stripe').constantize
       resource = stripe_class.retrieve(document.stripe_id)
       document.sync_with(resource)
       document.save

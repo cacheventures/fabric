@@ -99,6 +99,7 @@ require 'fabric/webhooks/subscription_updated'
 require 'fabric/webhooks/plan_updated'
 require 'fabric/app/workers/worker.rb'
 require 'fabric/app/workers/webhook_worker.rb'
+require 'fabric/sync.rb'
 
 module Fabric
   autoload :Card, 'fabric/app/models/fabric/card'

@@ -9,7 +9,7 @@ module Fabric
     has_many :subscription_items, class_name: 'Fabric::SubscriptionItem',
       primary_key: :stripe_id, dependent: :destroy
     belongs_to :default_payment_method, class_name: 'Fabric::PaymentMethod',
-      primary_key: :stripe_id
+      primary_key: :stripe_id, optional: true
 
     alias_method :items, :subscription_items
 

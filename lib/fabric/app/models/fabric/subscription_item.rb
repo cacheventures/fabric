@@ -27,6 +27,7 @@ module Fabric
       self.plan_id = Fabric.stripe_id_for(sub_item.plan)
       self.price_id = Fabric.stripe_id_for(sub_item.price)
       self.quantity = sub_item.quantity if sub_item.try(:quantity).present?
+      self.subscription_id = sub_item.subscription
       self
     end
   end

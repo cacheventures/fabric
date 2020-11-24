@@ -1,5 +1,5 @@
 module Fabric
   module Webhooks
-    class PaymentIntentPaymentAmountCapturableUpdated < PaymentIntentUpdated; end
+    class PaymentIntentAmountCapturableUpdated < PaymentIntentUpdated; end
   end
 end

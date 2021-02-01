@@ -9,6 +9,9 @@ module Fabric
       primary_key: :stripe_id, dependent: :destroy
     has_one :payment_intent, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id, dependent: :destroy
+    has_one :customer_balance_transaction,
+      class_name: 'Fabric::CustomerBalanceTransaction',
+      primary_key: :stripe_id, dependent: :destroy
 
     field :stripe_id, type: String
     field :account_country, type: String

@@ -24,6 +24,11 @@ module Fabric
       primary_key: :stripe_id, dependent: :destroy
     has_many :payment_intents, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id, dependent: :destroy
+    has_many :customer_balance_transactions,
+      class_name: 'Fabric::CustomerBalanceTransaction',
+      primary_key: :stripe_id, dependent: :destroy
+
+    alias_method :balance_transactions, :customer_balance_transactions
 
     field :stripe_id, type: String
     field :object, type: String

@@ -16,9 +16,14 @@ module Fabric
       )
       cbt = Fabric::CustomerBalanceTransaction.new
       cbt.sync_with(stripe_cbt)
-      saved = cbt.save
+      cbt_saved = cbt.save
+      
+      stripe_customer = Stripe::Customer.retrieve(@customer.stripe_id)
+      @customer.sync_with(stripe_customer)
+      cust_saved = @customer.save
+
       Fabric.config.logger.info "CreateCustomerBalanceTransactionOperation: "\
-        "Completed. saved: #{saved}"
+        "Completed. cbt_saved: #{cbt_saved}, cust_saved: #{cust_saved}"
       [cbt, stripe_cbt]
     end
   end

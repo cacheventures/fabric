@@ -17,6 +17,9 @@ module Fabric
     field :type, type: String
     field :created, type: Time
 
+    validates_uniqueness_of :stripe_id
+    validates :customer_id, :stripe_id, presence: true
+
     def sync_with(customer_balance_transaction)
       self.stripe_id = Fabric.stripe_id_for customer_balance_transaction
       self.customer_id = customer_balance_transaction.customer

@@ -10,13 +10,15 @@ module Fabric
       primary_key: :stripe_id
     belongs_to :payment_intent, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id
+    belongs_to :balance_transaction, class_name: 'Fabric::BalanceTransaction',
+      primary_key: :stripe_id
+    has_many :refunds, class_name: 'Fabric::Refund', primary_key: :stripe_id
 
     field :stripe_id, type: String
     field :amount, type: Integer
     field :amount_refunded, type: Integer
     field :application, type: String
     field :application_fee, type: String
-    field :balance_transaction, type: String
     field :captured, type: Boolean
     field :created, type: Time
     field :currency, type: String
@@ -61,7 +63,7 @@ module Fabric
       self.amount_refunded = charge.amount_refunded
       self.application = charge.application
       self.application_fee = charge.application_fee
-      self.balance_transaction = charge.balance_transaction
+      self.balance_transaction_id = charge.balance_transaction
       self.captured = charge.captured
       self.created = charge.created
       self.currency = charge.currency
@@ -92,7 +94,24 @@ module Fabric
       self.status = charge.status
       self.transfer = charge.try(:transfer)
       self.transfer_group = charge.transfer_group
+      sync_external(charge)
       self
+    end
+
+    def sync_external(charge)
+      if charge.balance_transaction
+        sbt = Stripe::BalanceTransaction.retrieve(charge.balance_transaction)
+        fbt = Fabric::BalanceTransaction.find_or_initialize_by(stripe_id: sbt.id)
+        fbt.sync_with(sbt).save
+      end
+
+      refunds = charge.refunds.data
+      if refunds.size.positive? && self.refunds.size != refunds.size
+        refunds.each do |sr|
+          fr = Fabric::Refund.find_or_initialize_by(stripe_id: sr.id)
+          fr.sync_with(sr).save
+        end
+      end
     end
   end
 end

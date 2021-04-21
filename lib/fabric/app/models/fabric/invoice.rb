@@ -5,7 +5,7 @@ module Fabric
 
     belongs_to :customer, class_name: 'Fabric::Customer',
       primary_key: :stripe_id
-    has_one :charge, class_name: 'Fabric::Charge',
+    has_many :charges, class_name: 'Fabric::Charge',
       primary_key: :stripe_id, dependent: :destroy
     has_one :payment_intent, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id, dependent: :destroy
@@ -136,6 +136,10 @@ module Fabric
       self.total_tax_amounts = invoice.total_tax_amounts
       self.webhooks_delivered_at = invoice.webhooks_delivered_at
       self
+    end
+
+    def charge
+      charges.order(created: :desc).first
     end
 
   end

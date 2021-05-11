@@ -9,6 +9,7 @@ module Fabric
       primary_key: :stripe_id
     has_many :charges, class_name: 'Fabric::Charge',
       primary_key: :stripe_id, dependent: :destroy
+    has_one :review, class_name: 'Fabric::Review', primary_key: :stripe_id
 
     field :stripe_id, type: String
     field :object, type: String
@@ -34,7 +35,6 @@ module Fabric
     field :payment_method_options, type: Hash
     field :payment_method_types, type: Array
     field :receipt_email, type: String
-    field :review, type: String
     field :setup_future_usage, type: String
     field :shipping, type: Hash
     field :statement_descriptor, type: String
@@ -74,7 +74,6 @@ module Fabric
       self.payment_method_options = payment_intent.payment_method_options.try(:to_hash)
       self.payment_method_types = payment_intent.payment_method_types
       self.receipt_email = payment_intent.receipt_email
-      self.review = payment_intent.review
       self.setup_future_usage = payment_intent.setup_future_usage
       self.shipping = payment_intent.shipping.try(:to_hash)
       self.statement_descriptor = payment_intent.statement_descriptor
@@ -82,6 +81,8 @@ module Fabric
       self.status = payment_intent.status
       self.transfer_data = payment_intent.transfer_data.try(:to_hash)
       self.transfer_group = payment_intent.transfer_group
+      self
     end
+
   end
 end

@@ -13,6 +13,7 @@ module Fabric
     belongs_to :balance_transaction, class_name: 'Fabric::BalanceTransaction',
       primary_key: :stripe_id
     has_many :refunds, class_name: 'Fabric::Refund', primary_key: :stripe_id
+    has_one :review, class_name: 'Fabric::Review', primary_key: :stripe_id
 
     field :stripe_id, type: String
     field :amount, type: Integer
@@ -38,7 +39,6 @@ module Fabric
     field :receipt_number, type: String
     field :receipt_url, type: String
     field :refunded, type: Boolean
-    field :review, type: String
     field :shipping, type: Hash
     field :source, type: Hash
     field :source_transfer, type: String
@@ -86,7 +86,6 @@ module Fabric
       self.receipt_number = charge.receipt_number
       self.receipt_url = charge.receipt_url
       self.refunded = charge.refunded
-      self.review = charge.review
       self.shipping = charge.shipping.try(:to_hash)
       self.source = charge.source.try(:to_hash)
       self.source_transfer = charge.source_transfer

@@ -99,7 +99,7 @@ module Fabric
       self.customer_name = invoice.customer_name
       self.customer_phone = invoice.customer_phone
       self.customer_shipping = invoice.customer_shipping.try(:to_hash)
-      self.customer_tax_ids = invoice.customer_tax_ids
+      self.customer_tax_ids = invoice.customer_tax_ids&.map(&:to_hash)
       self.date = invoice.date
       self.default_payment_method = invoice.default_payment_method
       self.default_source = invoice.default_source

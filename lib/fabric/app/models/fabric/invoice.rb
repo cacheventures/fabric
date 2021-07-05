@@ -139,7 +139,7 @@ module Fabric
     end
 
     def charge
-      charges.order(created: :desc).first
+      charges.sort { |c| c.created }.reverse.first
     end
 
   end

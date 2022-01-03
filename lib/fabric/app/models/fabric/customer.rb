@@ -2,7 +2,6 @@ module Fabric
   class Customer
     include Mongoid::Document
     include Mongoid::Timestamps
-    extend Enumerize
 
     has_many :subscriptions, class_name: 'Fabric::Subscription',
       primary_key: :stripe_id, dependent: :destroy
@@ -23,6 +22,8 @@ module Fabric
     has_many :setup_intents, class_name: 'Fabric::SetupIntent',
       primary_key: :stripe_id, dependent: :destroy
     has_many :payment_intents, class_name: 'Fabric::PaymentIntent',
+      primary_key: :stripe_id, dependent: :destroy
+    has_many :tax_ids, class_name: 'Fabric::TaxId',
       primary_key: :stripe_id, dependent: :destroy
 
     field :stripe_id, type: String

@@ -2,7 +2,6 @@ module Fabric
   class Product
     include Mongoid::Document
     include Mongoid::Timestamps
-    extend Enumerize
 
     has_many :plans, class_name: 'Fabric::Plan',
       primary_key: :stripe_id, dependent: :nullify

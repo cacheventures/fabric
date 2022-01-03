@@ -2,7 +2,6 @@ module Fabric
   class Price
     include Mongoid::Document
     include Mongoid::Timestamps
-    extend Enumerize
 
     belongs_to :product, class_name: 'Fabric::Product',
       primary_key: :stripe_id

@@ -23,7 +23,7 @@ module Fabric
       primary_key: :stripe_id, dependent: :destroy
     has_many :payment_intents, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id, dependent: :destroy
-    has_many :tax_ids, class_name: 'Fabric::TaxID',
+    has_many :tax_ids, class_name: 'Fabric::TaxId',
       primary_key: :stripe_id, dependent: :destroy
 
     field :stripe_id, type: String

@@ -1,5 +1,5 @@
 module Fabric
-  class DeleteTaxIDOperation
+  class DeleteTaxIdOperation
     include Fabric
 
     def initialize(customer, tax_id)
@@ -9,7 +9,7 @@ module Fabric
       flogger.json_info 'Started', @log_data
 
       @customer = get_document(Fabric::Customer, customer) if customer
-      @tax_id = get_document(Fabric::TaxID, tax_id) if tax_id
+      @tax_id = get_document(Fabric::TaxId, tax_id) if tax_id
     end
 
     def call

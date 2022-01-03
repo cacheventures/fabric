@@ -1,5 +1,5 @@
 module Fabric
-  class CreateTaxIDOperation
+  class CreateTaxIdOperation
     include Fabric
 
     def initialize(customer, attributes = {})
@@ -18,7 +18,7 @@ module Fabric
         @attributes
       )
 
-      tax_id = TaxID.new
+      tax_id = TaxId.new
       tax_id.sync_with stripe_tax_id
       saved = tax_id.save
 

@@ -1,5 +1,5 @@
 module Fabric
-  class TaxID
+  class TaxId
     include Mongoid::Document
     include Mongoid::Timestamps
     extend Enumerize

@@ -126,7 +126,7 @@ module Fabric
   autoload :Source, 'fabric/app/models/fabric/source'
   autoload :Subscription, 'fabric/app/models/fabric/subscription'
   autoload :SubscriptionItem, 'fabric/app/models/fabric/subscription_item'
-  autoload :TaxID, 'fabric/app/models/fabric/tax_id'
+  autoload :TaxId, 'fabric/app/models/fabric/tax_id'
   autoload :UsageRecord, 'fabric/app/models/fabric/usage_record'
 
   class << self

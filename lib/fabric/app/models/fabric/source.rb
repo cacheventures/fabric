@@ -2,7 +2,6 @@ module Fabric
   class Source
     include Mongoid::Document
     include Mongoid::Timestamps
-    extend Enumerize
 
     belongs_to :customer, class_name: 'Fabric::Customer', inverse_of: :sources,
       primary_key: :stripe_id, touch: true

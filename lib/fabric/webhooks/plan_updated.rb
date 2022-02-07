@@ -4,10 +4,12 @@ module Fabric
       include Fabric::Webhook
 
       def call(event)
+        id = event['data']['object']['id']
+        return PriceUpdated.new.call(event) if id.starts_with?('price_')
+
         check_idempotence(event) or return if Fabric.config.store_events
-        stripe_plan = retrieve_resource(
-          'plan', event['data']['object']['id']
-        )
+
+        stripe_plan = retrieve_resource('plan', id)
         return if stripe_plan.nil?
 
         handle(event, stripe_plan)

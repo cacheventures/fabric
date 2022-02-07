@@ -16,6 +16,10 @@ module Fabric
 
       def persist_model(stripe_price)
         price = Fabric::Price.new
+        stripe_price = Stripe::Price.retrieve(
+          id: stripe_price.id,
+          expand: ['tiers']
+        )
         price.sync_with(stripe_price)
         saved = price.save
         Fabric.config.logger.json_info 'created price',

@@ -18,6 +18,10 @@ module Fabric
         price = retrieve_local(:price, stripe_price.id)
         return unless price
 
+        stripe_price = Stripe::Price.retrieve(
+          id: stripe_price.id,
+          expand: ['tiers']
+        )
         price.sync_with(stripe_price)
         saved = price.save
         Fabric.config.logger.json_info 'updated price',

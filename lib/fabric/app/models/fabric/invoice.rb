@@ -93,7 +93,7 @@ module Fabric
       self.created = invoice.created
       self.currency = invoice.currency
       self.customer_id = invoice.customer
-      self.custom_fields = invoice.custom_fields.map { |cf| cf.to_hash }
+      self.custom_fields = invoice.custom_fields&.map(&:to_hash)
       self.customer_address = invoice.customer_address.try(:to_hash)
       self.customer_email = invoice.customer_email
       self.customer_name = invoice.customer_name

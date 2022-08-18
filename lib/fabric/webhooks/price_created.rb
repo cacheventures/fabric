@@ -18,7 +18,7 @@ module Fabric
         price = Fabric::Price.new
         stripe_price = Stripe::Price.retrieve(
           id: stripe_price.id,
-          expand: ['tiers']
+          expand: price.expand_attributes
         )
         price.sync_with(stripe_price)
         saved = price.save

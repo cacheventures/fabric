@@ -144,18 +144,21 @@ module Fabric
   #     c.store_events = false
   #     c.persist_models = :all
   #     # c.persist_models = %i[charge coupon customer]
+  #     # c.currencies = %w(usd eur)
   #   end
   class Config
     attr_accessor :store_events
     attr_accessor :logger
     attr_accessor :worker_callback
     attr_accessor :persist_models
+    attr_accessor :currencies
 
     def initialize
       @store_events = true
       @logger = ActiveSupport::Logger.new($stdout)
       @worker_callback = Proc.new {}
       @persist_models = :all
+      @currencies = %w(usd)
     end
 
     def persist?(document)

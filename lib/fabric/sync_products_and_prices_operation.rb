@@ -14,7 +14,14 @@ module Fabric
         product.save
       end
 
-      Stripe::Price.list(expand: ['data.tiers']).auto_paging_each do |p|
+      expand_attributes = ['data.tiers']
+      if Fabric.config.currencies.count > 1
+        expand_attributes.push('data.currency_options')
+        Fabric.config.currencies.each do |currency|
+          expand_attributes.push("data.currency_options.#{currency}.tiers")
+        end
+      end
+      Stripe::Price.list(expand: expand_attributes).auto_paging_each do |p|
         price = Fabric::Price.find_by(stripe_id: p.id) || Fabric::Price.new
         price.sync_with(p)
         price.save

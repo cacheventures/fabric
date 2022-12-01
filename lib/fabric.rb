@@ -214,27 +214,18 @@ module Fabric
   end
 
   def convert_metadata(stripe_metadata)
-    hash = stripe_metadata.to_hash
-    new_hash = {}.with_indifferent_access
-
-    hash.each do |key, value|
+    hash = stripe_metadata&.to_hash || {}
+    hash.transform_values do |value|
       if value.to_i.to_s == value
-        new_hash[key] = value.to_i
-        next
+        value.to_i
+      elsif value.to_f.to_s == value
+        value.to_f
+      elsif value.in? %w[true false]
+        value == 'true' ? true : false
+      else
+        value
       end
-      if value.to_f.to_s == value
-        new_hash[key] = value.to_f
-        next
-      end
-      if value.in? %w[true false]
-        new_hash[key] = value == 'true' ? true : false
-        next
-      end
-
-      new_hash[key] = value
-    end
-
-    new_hash
+    end.with_indifferent_access
   end
 
   def flogger

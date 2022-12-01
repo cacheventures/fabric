@@ -28,7 +28,7 @@ class TestWebhookModule < Minitest::Test
         'type' => 'customer.updated',
         'api_version' => '1.2.3'
       }
-      ret_event, existed = create_event(event_data, Fabric::Customer.first)
+      ret_event, existed = create_event(event_data, Fabric::Customer.first.id)
       assert_equal event_model, ret_event
       assert existed
     end
@@ -39,7 +39,7 @@ class TestWebhookModule < Minitest::Test
         'type' => 'customer.updated',
         'api_version' => '1.2.3'
       }
-      ret_event, existed = create_event(event_data, Fabric::Customer.first)
+      ret_event, existed = create_event(event_data, Fabric::Customer.first.id)
       saved = ret_event.save
 
       assert saved
@@ -72,7 +72,7 @@ class TestWebhookModule < Minitest::Test
         'type' => 'customer.updated',
         'api_version' => '1.2.3'
       }
-      refute check_idempotence(event_data, Fabric::Customer.first)
+      refute check_idempotence(event_data, Fabric::Customer.first.id)
     end
 
     def test_check_idempotence_doesnt_exist
@@ -81,7 +81,7 @@ class TestWebhookModule < Minitest::Test
         'type' => 'customer.updated',
         'api_version' => '1.2.3'
       }
-      assert check_idempotence(event_data, Fabric::Customer.first)
+      assert check_idempotence(event_data, Fabric::Customer.first.id)
     end
 
   end

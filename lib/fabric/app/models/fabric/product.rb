@@ -42,9 +42,10 @@ module Fabric
       self.description = product.description
       self.images = product.images
       self.livemode = product.livemode
-      self.package_dimensions = product.try(:package_dimensions).try(:to_hash)
+      self.package_dimensions =
+        product.try(:package_dimensions)&.to_hash&.with_indifferent_access
       self.shippable = product.try(:shippable)
-      self.metadata = Fabric.convert_metadata(product.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(product.metadata)
       self.name = product.name
       self.statement_descriptor = product.statement_descriptor
       self.type = product.type

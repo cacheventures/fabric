@@ -20,7 +20,7 @@ module Fabric
       self.object = file.object
       self.created = file.created
       self.filename = file.filename
-      self.links = file.links.try(:to_hash)
+      self.links = file.links&.to_hash&.with_indifferent_access
       self.size = file.size
       self.url = file.url
     end

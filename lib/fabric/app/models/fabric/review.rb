@@ -35,9 +35,10 @@ module Fabric
       self.closed_reason = review.closed_reason
       self.created = review.created
       self.ip_address = review.ip_address
-      self.ip_address_location = review.ip_address_location.try(:to_hash)
+      self.ip_address_location =
+        review.ip_address_location&.to_hash&.with_indifferent_access
       self.opened_reason = review.opened_reason
-      self.session = review.session.try(:to_hash)
+      self.session = review.session&.to_hash&.with_indifferent_access
       self.livemode = review.livemode
       self
     end

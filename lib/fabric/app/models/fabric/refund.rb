@@ -41,7 +41,7 @@ module Fabric
       self.balance_transaction_id = refund.balance_transaction
       self.currency = refund.currency
       self.description = refund.try(:description)
-      self.metadata = Fabric.convert_metadata(refund.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(refund.metadata)
       self.reason = refund.reason
       self.status = refund.status
       self.created = refund.created

@@ -66,20 +66,23 @@ module Fabric
       self.customer_id = payment_intent.customer
       self.description = payment_intent.description
       self.invoice_id = payment_intent.invoice
-      self.last_payment_error = payment_intent.last_payment_error.try(:to_hash)
+      self.last_payment_error =
+        payment_intent.last_payment_error&.to_hash&.with_indifferent_access
       self.livemode = payment_intent.livemode
-      self.metadata = Fabric.convert_metadata(payment_intent.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(payment_intent.metadata)
       self.on_behalf_of = payment_intent.on_behalf_of
       self.payment_method = payment_intent.payment_method
-      self.payment_method_options = payment_intent.payment_method_options.try(:to_hash)
+      self.payment_method_options =
+        payment_intent.payment_method_options&.to_hash&.with_indifferent_access
       self.payment_method_types = payment_intent.payment_method_types
       self.receipt_email = payment_intent.receipt_email
       self.setup_future_usage = payment_intent.setup_future_usage
-      self.shipping = payment_intent.shipping.try(:to_hash)
+      self.shipping = payment_intent.shipping&.to_hash&.with_indifferent_access
       self.statement_descriptor = payment_intent.statement_descriptor
       self.statement_descriptor_suffix = payment_intent.statement_descriptor_suffix
       self.status = payment_intent.status
-      self.transfer_data = payment_intent.transfer_data.try(:to_hash)
+      self.transfer_data =
+        payment_intent.transfer_data&.to_hash&.with_indifferent_access
       self.transfer_group = payment_intent.transfer_group
       self
     end

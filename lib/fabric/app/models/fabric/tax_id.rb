@@ -25,7 +25,7 @@ module Fabric
       self.id_type = tax_id.type
       self.value = tax_id.value
       self.created = tax_id.created
-      self.verification = tax_id.verification.try(:to_hash)
+      self.verification = tax_id.verification&.to_hash&.with_indifferent_access
     end
   end
 end

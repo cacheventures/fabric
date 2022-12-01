@@ -3,6 +3,7 @@ require 'stripe_event'
 require 'enumerize'
 require 'mongoid'
 require 'sidekiq'
+require 'active_support/core_ext/hash/indifferent_access'
 
 require 'fabric/logger'
 require 'fabric/errors'
@@ -212,25 +213,28 @@ module Fabric
     subscription.save
   end
 
-  def convert_metadata(hash)
-    nh = {}
-    hash.each do |k, v|
-      if v.to_i.to_s == v
-        nh[k] = v.to_i
+  def convert_metadata(stripe_metadata)
+    hash = stripe_metadata.to_hash
+    new_hash = {}.with_indifferent_access
+
+    hash.each do |key, value|
+      if value.to_i.to_s == value
+        new_hash[key] = value.to_i
         next
       end
-      if v.to_f.to_s == v
-        nh[k] = v.to_f
+      if value.to_f.to_s == value
+        new_hash[key] = value.to_f
         next
       end
-      if v.in? %w[true false]
-        nh[k] = v == 'true' ? true : false
+      if value.in? %w[true false]
+        new_hash[key] = value == 'true' ? true : false
         next
       end
 
-      nh[k] = v
+      new_hash[key] = value
     end
-    nh
+
+    new_hash
   end
 
   def flogger

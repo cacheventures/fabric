@@ -34,7 +34,9 @@ module Fabric
       self.currency = balance_transaction.currency
       self.description = balance_transaction.description
       self.fee = balance_transaction.try(:fee)
-      self.fee_details = balance_transaction.fee_details.map(&:to_hash)
+      self.fee_details = balance_transaction.fee_details.map do |e|
+        e.to_hash.with_indifferent_access
+      end
       self.net = balance_transaction.net
       self.source_id = balance_transaction.source
       self.status = balance_transaction.status

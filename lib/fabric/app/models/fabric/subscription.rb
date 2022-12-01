@@ -57,13 +57,13 @@ module Fabric
       self.status = sub.status
       self.ended_at = sub.ended_at
       self.livemode = sub.livemode
-      self.metadata = Fabric.convert_metadata(sub.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(sub.metadata)
       self.tax_percent = sub.tax_percent
       self.trial_end = sub.trial_end
       self.trial_start = sub.trial_start
       self.customer_id = sub.customer
       self.default_payment_method_id = sub.default_payment_method
-      self.discount = sub.discount.try(:to_hash)
+      self.discount = sub.discount&.to_hash&.with_indifferent_access
       self
     end
 

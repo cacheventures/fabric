@@ -53,36 +53,39 @@ module Fabric
     def sync_with(source)
       self.stripe_id = Fabric.stripe_id_for(source)
 
-      self.ach_credit_transfer = source.try(:ach_credit_transfer).try(:to_hash)
-      self.ach_debit = source.try(:ach_debit).try(:to_hash)
-      self.alipay = source.try(:alipay).try(:to_hash)
-      self.bancontact = source.try(:bancontact).try(:to_hash)
-      self.card = source.try(:card).try(:to_hash)
-      self.card_present = source.try(:card_present).try(:to_hash)
-      self.eps = source.try(:eps).try(:to_hash)
-      self.giropay = source.try(:giropay).try(:to_hash)
-      self.ideal = source.try(:ideal).try(:to_hash)
-      self.multibanco = source.try(:multibanco).try(:to_hash)
-      self.klarna = source.try(:klarna).try(:to_hash)
-      self.p24 = source.try(:p24).try(:to_hash)
-      self.sepa_debit = source.try(:sepa_debit).try(:to_hash)
-      self.sofort = source.try(:sofort).try(:to_hash)
-      self.three_d_secure = source.try(:three_d_secure).try(:to_hash)
-      self.wechat = source.try(:wechat).try(:to_hash)
+      self.ach_credit_transfer =
+        source.try(:ach_credit_transfer)&.to_hash&.with_indifferent_access
+      self.ach_debit = source.try(:ach_debit)&.to_hash&.with_indifferent_access
+      self.alipay = source.try(:alipay)&.to_hash&.with_indifferent_access
+      self.bancontact = source.try(:bancontact)&.to_hash&.with_indifferent_access
+      self.card = source.try(:card)&.to_hash&.with_indifferent_access
+      self.card_present = source.try(:card_present)&.to_hash&.with_indifferent_access
+      self.eps = source.try(:eps)&.to_hash&.with_indifferent_access
+      self.giropay = source.try(:giropay)&.to_hash&.with_indifferent_access
+      self.ideal = source.try(:ideal)&.to_hash&.with_indifferent_access
+      self.multibanco = source.try(:multibanco)&.to_hash&.with_indifferent_access
+      self.klarna = source.try(:klarna)&.to_hash&.with_indifferent_access
+      self.p24 = source.try(:p24)&.to_hash&.with_indifferent_access
+      self.sepa_debit = source.try(:sepa_debit)&.to_hash&.with_indifferent_access
+      self.sofort = source.try(:sofort)&.to_hash&.with_indifferent_access
+      self.three_d_secure = source.try(:three_d_secure)&.to_hash&.with_indifferent_access
+      self.wechat = source.try(:wechat)&.to_hash&.with_indifferent_access
 
       self.amount = source.amount
       self.client_secret = source.client_secret
-      self.code_verification = source.try(:code_verification).try(:to_hash)
+      self.code_verification =
+        source.try(:code_verification)&.to_hash&.with_indifferent_access
       self.created = source.created
       self.currency = source.currency
       self.customer_id = source.customer
       self.flow = source.flow
       self.livemode = source.livemode
-      self.metadata = Fabric.convert_metadata(source.metadata.to_hash)
-      self.owner = source.owner.try(:to_hash)
-      self.receiver = source.try(:receiver).try(:to_hash)
-      self.redirect = source.try(:redirect).try(:to_hash)
-      self.source_order = source.try(:source_order).try(:to_hash)
+      self.metadata = Fabric.convert_metadata(source.metadata)
+      self.owner = source.owner&.to_hash&.with_indifferent_access
+      self.receiver = source.try(:receiver)&.to_hash&.with_indifferent_access
+      self.redirect = source.try(:redirect)&.to_hash&.with_indifferent_access
+      self.source_order =
+        source.try(:source_order)&.to_hash&.with_indifferent_access
       self.statement_descriptor = source.statement_descriptor
       self.status = source.status
       self.type = source.type

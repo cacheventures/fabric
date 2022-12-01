@@ -39,18 +39,23 @@ module Fabric
       self.billing_scheme = price.billing_scheme
       self.created = price.created
       self.currency = price.currency
-      self.currency_options = price.currency_options.try(:to_hash)
-      self.custom_unit_amount = price.custom_unit_amount.try(:to_hash)
+      self.currency_options =
+        price.currency_options&.to_hash&.with_indifferent_access
+      self.custom_unit_amount =
+        price.custom_unit_amount&.to_hash&.with_indifferent_access
       self.livemode = price.livemode
       self.lookup_key = price.lookup_key
-      self.metadata = Fabric.convert_metadata(price.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(price.metadata)
       self.nickname = price.nickname
       self.product_id = price.product
-      self.recurring = price.recurring.try(:to_hash)
+      self.recurring = price.recurring&.to_hash&.with_indifferent_access
       self.tax_behavior = price.tax_behavior
-      self.tiers = price.try(:tiers)&.map { |tier| tier.to_hash }
+      self.tiers = price.try(:tiers)&.map do |tier|
+        tier.to_hash.with_indifferent_access
+      end
       self.tiers_mode = price.tiers_mode
-      self.transform_quantity = price.transform_quantity.try(:to_hash)
+      self.transform_quantity =
+        price.transform_quantity&.to_hash&.with_indifferent_access
       self.type = price.type
       self.unit_amount = price.unit_amount
       self.unit_amount_decimal = price.unit_amount_decimal

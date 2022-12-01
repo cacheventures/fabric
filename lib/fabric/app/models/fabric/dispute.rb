@@ -28,14 +28,17 @@ module Fabric
       self.stripe_id = dispute.id
       self.amount = dispute.amount
       self.currency = dispute.currency
-      self.evidence = dispute.evidence.try(:to_hash)
-      self.metadata = dispute.metadata.try(:to_hash)
+      self.evidence = dispute.evidence&.to_hash&.with_indifferent_access
+      self.metadata = dispute.metadata&.to_hash&.with_indifferent_access
       self.reason = dispute.reason
       self.status = dispute.status
       self.object = dispute.object
-      self.balance_transactions = dispute.balance_transactions.map(&:to_hash)
+      self.balance_transactions = dispute.balance_transactions.map do |e|
+        e.to_hash.with_indifferent_access
+      end
       self.created = dispute.created
-      self.evidence_details = dispute.evidence_details.try(:to_hash)
+      self.evidence_details =
+        dispute.evidence_details&.to_hash&.with_indifferent_access
       self.is_charge_refundable = dispute.is_charge_refundable
       self.livemode = dispute.livemode
       self.charge_id = dispute.charge

@@ -40,13 +40,14 @@ module Fabric
       self.interval = plan.interval
       self.interval_count = plan.interval_count
       self.livemode = plan.livemode
-      self.metadata = Fabric.convert_metadata(plan.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(plan.metadata)
       self.nickname = plan.nickname
       self.trial_period_days = plan.trial_period_days
       self.product_id = plan.product
       self.billing_scheme = plan.billing_scheme
       if plan.transform_usage.present?
-        self.transform_usage = plan.transform_usage.to_hash
+        self.transform_usage =
+          plan.transform_usage.to_hash.with_indifferent_access
       end
       self.usage_type = plan.usage_type
       self

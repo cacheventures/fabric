@@ -35,6 +35,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'stripe', '> 5'
   gem.add_dependency 'stripe_event'
   gem.add_dependency 'sidekiq'
+  gem.add_dependency 'activesupport'
 
   gem.add_development_dependency 'bundler'
   gem.add_development_dependency 'rake'

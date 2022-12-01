@@ -39,24 +39,25 @@ module Fabric
     def sync_with(payment_method)
       self.stripe_id = Fabric.stripe_id_for payment_method
 
-      self.au_becs_debit = payment_method.try(:au_becs_debit).try(:to_hash)
-      self.bacs_debit = payment_method.try(:bacs_debit).try(:to_hash)
-      self.bancontact = payment_method.try(:bancontact).try(:to_hash)
-      self.card = payment_method.try(:card).try(:to_hash)
-      self.card_present = payment_method.try(:card_present).try(:to_hash)
-      self.eps = payment_method.try(:eps).try(:to_hash)
-      self.fpx = payment_method.try(:fpx).try(:to_hash)
-      self.giropay = payment_method.try(:giropay).try(:to_hash)
-      self.ideal = payment_method.try(:ideal).try(:to_hash)
-      self.p24 = payment_method.try(:p24).try(:to_hash)
-      self.sepa_debit = payment_method.try(:sepa_debit).try(:to_hash)
+      self.au_becs_debit = payment_method.try(:au_becs_debit)&.to_hash&.with_indifferent_access
+      self.bacs_debit = payment_method.try(:bacs_debit)&.to_hash&.with_indifferent_access
+      self.bancontact = payment_method.try(:bancontact)&.to_hash&.with_indifferent_access
+      self.card = payment_method.try(:card)&.to_hash&.with_indifferent_access
+      self.card_present = payment_method.try(:card_present)&.to_hash&.with_indifferent_access
+      self.eps = payment_method.try(:eps)&.to_hash&.with_indifferent_access
+      self.fpx = payment_method.try(:fpx)&.to_hash&.with_indifferent_access
+      self.giropay = payment_method.try(:giropay)&.to_hash&.with_indifferent_access
+      self.ideal = payment_method.try(:ideal)&.to_hash&.with_indifferent_access
+      self.p24 = payment_method.try(:p24)&.to_hash&.with_indifferent_access
+      self.sepa_debit = payment_method.try(:sepa_debit)&.to_hash&.with_indifferent_access
 
       self.object = payment_method.object
-      self.billing_details = payment_method.billing_details.try(:to_hash)
+      self.billing_details =
+        payment_method.billing_details&.to_hash&.with_indifferent_access
       self.created = payment_method.created
       self.customer_id = payment_method.customer
       self.livemode = payment_method.livemode
-      self.metadata = Fabric.convert_metadata(payment_method.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(payment_method.metadata)
       self.type = payment_method.type
       self
     end

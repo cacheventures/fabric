@@ -93,28 +93,34 @@ module Fabric
       self.created = invoice.created
       self.currency = invoice.currency
       self.customer_id = invoice.customer
-      self.custom_fields = invoice.custom_fields&.map(&:to_hash)
-      self.customer_address = invoice.customer_address.try(:to_hash)
+      self.custom_fields = invoice.custom_fields&.map do |e|
+        e.to_hash.with_indifferent_access
+      end
+      self.customer_address =
+        invoice.customer_address&.to_hash&.with_indifferent_access
       self.customer_email = invoice.customer_email
       self.customer_name = invoice.customer_name
       self.customer_phone = invoice.customer_phone
-      self.customer_shipping = invoice.customer_shipping.try(:to_hash)
-      self.customer_tax_ids = invoice.customer_tax_ids&.map(&:to_hash)
+      self.customer_shipping =
+        invoice.customer_shipping&.to_hash&.with_indifferent_access
+      self.customer_tax_ids = invoice.customer_tax_ids&.map do |e|
+        e.to_hash.with_indifferent_access
+      end
       self.date = invoice.date
       self.default_payment_method = invoice.default_payment_method
       self.default_source = invoice.default_source
       self.default_tax_rates = invoice.default_tax_rates
       self.description = invoice.description
-      self.discount = invoice.discount.try(:to_hash) # could be nil
+      self.discount = invoice.discount&.to_hash&.with_indifferent_access
       self.due_date = invoice.due_date
       self.ending_balance = invoice.ending_balance
       self.footer = invoice.footer
       self.forgiven = invoice.forgiven
       self.hosted_invoice_url = invoice.hosted_invoice_url
       self.invoice_pdf = invoice.invoice_pdf
-      self.lines = invoice.lines.to_hash.try(:[], :data)
+      self.lines = invoice.lines.to_hash.with_indifferent_access.dig(:data)
       self.livemode = invoice.livemode
-      self.metadata = Fabric.convert_metadata(invoice.metadata.to_hash)
+      self.metadata = Fabric.convert_metadata(invoice.metadata)
       self.next_payment_attempt = invoice.next_payment_attempt
       self.number = invoice.number
       self.paid = invoice.paid
@@ -126,12 +132,14 @@ module Fabric
       self.starting_balance = invoice.starting_balance
       self.statement_descriptor = invoice.statement_descriptor
       self.status = invoice.status
-      self.status_transitions = invoice.status_transitions.try(:to_hash)
+      self.status_transitions =
+        invoice.status_transitions&.to_hash&.with_indifferent_access
       self.subscription = invoice.subscription
       self.subscription_proration_date = invoice.try(:subscription_proration_date)
       self.subtotal = invoice.subtotal
       self.tax = invoice.tax
-      self.threshold_reason = invoice.try(:threshold_reason).try(:to_hash)
+      self.threshold_reason =
+        invoice.try(:threshold_reason)&.to_hash&.with_indifferent_access
       self.total = invoice.total
       self.total_tax_amounts = invoice.total_tax_amounts
       self.webhooks_delivered_at = invoice.webhooks_delivered_at

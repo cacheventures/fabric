@@ -32,7 +32,8 @@ module Fabric
                         else
                           stripe_customer
                         end
-        parent.discount = stripe_parent.discount.try(:to_hash)
+        parent.discount =
+          stripe_parent.discount&.to_hash&.with_indifferent_access
         saved = parent.save
 
         Fabric.config.logger.info "DiscountUpdated: Updated discount on "\

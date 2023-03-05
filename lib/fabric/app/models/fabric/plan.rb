@@ -1,5 +1,6 @@
 module Fabric
   class Plan
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
     extend Enumerize
@@ -32,7 +33,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(plan)
-      self.stripe_id = Fabric.stripe_id_for plan
+      self.stripe_id = stripe_id_for(plan)
       self.object = plan.object
       self.amount = plan.amount
       self.created = plan.created
@@ -40,14 +41,13 @@ module Fabric
       self.interval = plan.interval
       self.interval_count = plan.interval_count
       self.livemode = plan.livemode
-      self.metadata = Fabric.convert_metadata(plan.metadata)
+      self.metadata = convert_metadata(plan.metadata)
       self.nickname = plan.nickname
       self.trial_period_days = plan.trial_period_days
       self.product_id = plan.product
       self.billing_scheme = plan.billing_scheme
       if plan.transform_usage.present?
-        self.transform_usage =
-          plan.transform_usage.to_hash.with_indifferent_access
+        self.transform_usage = handle_hash(plan.transform_usage)
       end
       self.usage_type = plan.usage_type
       self

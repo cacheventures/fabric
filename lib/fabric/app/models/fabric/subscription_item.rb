@@ -1,5 +1,6 @@
 module Fabric
   class SubscriptionItem
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -22,12 +23,13 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(sub_item)
-      self.stripe_id = Fabric.stripe_id_for sub_item
-      self.metadata = Fabric.convert_metadata(sub_item.metadata)
-      self.plan_id = Fabric.stripe_id_for(sub_item.plan)
-      self.price_id = Fabric.stripe_id_for(sub_item.price)
+      self.stripe_id = stripe_id_for(sub_item)
+      self.metadata = convert_metadata(sub_item.metadata)
+      self.plan_id = handle_expanded(sub_item.plan)
+      self.price_id = handle_expanded(sub_item.price)
       self.quantity = sub_item.quantity if sub_item.try(:quantity).present?
       self
     end
+
   end
 end

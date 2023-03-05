@@ -1,5 +1,6 @@
 module Fabric
   class Product
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -33,7 +34,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(product)
-      self.stripe_id = Fabric.stripe_id_for product
+      self.stripe_id = stripe_id_for(product)
       self.active = product.active
       self.product_attributes = product_attributes_for(product)
       self.caption = product.try(:caption)
@@ -42,10 +43,9 @@ module Fabric
       self.description = product.description
       self.images = product.images
       self.livemode = product.livemode
-      self.package_dimensions =
-        product.try(:package_dimensions)&.to_hash&.with_indifferent_access
+      self.package_dimensions = handle_hash(product.try(:package_dimensions))
       self.shippable = product.try(:shippable)
-      self.metadata = Fabric.convert_metadata(product.metadata)
+      self.metadata = convert_metadata(product.metadata)
       self.name = product.name
       self.statement_descriptor = product.statement_descriptor
       self.type = product.type

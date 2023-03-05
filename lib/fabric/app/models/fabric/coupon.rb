@@ -1,5 +1,6 @@
 module Fabric
   class Coupon
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
     extend Enumerize
@@ -26,7 +27,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(coupon)
-      self.stripe_id = Fabric.stripe_id_for coupon
+      self.stripe_id = stripe_id_for(coupon)
       self.amount_off = coupon.amount_off
       self.created = coupon.created
       self.currency = coupon.currency
@@ -34,7 +35,7 @@ module Fabric
       self.duration_in_months = coupon.duration_in_months
       self.livemode = coupon.livemode
       self.max_redemptions = coupon.max_redemptions
-      self.metadata = Fabric.convert_metadata(coupon.metadata)
+      self.metadata = convert_metadata(coupon.metadata)
       self.name = coupon.name
       self.percent_off = coupon.percent_off
       self.redeem_by = coupon.redeem_by

@@ -1,5 +1,6 @@
 module Fabric
   class Dispute
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -25,11 +26,11 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(dispute)
-      self.stripe_id = dispute.id
+      self.stripe_id = stripe_id_for(dispute.id)
       self.amount = dispute.amount
       self.currency = dispute.currency
-      self.evidence = dispute.evidence&.to_hash&.with_indifferent_access
-      self.metadata = dispute.metadata&.to_hash&.with_indifferent_access
+      self.evidence = handle_hash(dispute.evidence)
+      self.metadata = handle_hash(dispute.metadata)
       self.reason = dispute.reason
       self.status = dispute.status
       self.object = dispute.object
@@ -37,12 +38,11 @@ module Fabric
         e.to_hash.with_indifferent_access
       end
       self.created = dispute.created
-      self.evidence_details =
-        dispute.evidence_details&.to_hash&.with_indifferent_access
+      self.evidence_details = handle_hash(dispute.evidence_details)
       self.is_charge_refundable = dispute.is_charge_refundable
       self.livemode = dispute.livemode
-      self.charge_id = dispute.charge
-      self.payment_intent_id = dispute.payment_intent
+      self.charge_id = handle_expanded(dispute.charge)
+      self.payment_intent_id = handle_expanded(dispute.payment_intent)
     end
   end
 end

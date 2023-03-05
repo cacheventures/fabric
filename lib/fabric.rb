@@ -10,8 +10,6 @@ require 'fabric/errors'
 require 'fabric/attach_payment_method_operation'
 require 'fabric/billing_policy'
 require 'fabric/cancel_subscription_operation'
-require 'fabric/create_card_for_subscription_operation'
-require 'fabric/create_card_operation'
 require 'fabric/create_charge_operation'
 require 'fabric/create_coupon_operation'
 require 'fabric/create_customer_operation'
@@ -105,6 +103,7 @@ require 'fabric/webhooks/review_opened'
 require 'fabric/webhooks/review_closed'
 require 'fabric/app/workers/worker.rb'
 require 'fabric/app/workers/webhook_worker.rb'
+require 'fabric/app/models/fabric/base.rb'
 
 module Fabric
   autoload :BalanceTransaction, 'fabric/app/models/fabric/balance_transaction'
@@ -143,12 +142,14 @@ module Fabric
   # define Config class, to be used as
   #   Fabric.configure do |c|
   #     c.store_events = false
+  #     c.store_events_data = false
   #     c.persist_models = :all
   #     # c.persist_models = %i[charge coupon customer]
   #     # c.currencies = %w(usd eur)
   #   end
   class Config
     attr_accessor :store_events
+    attr_accessor :store_events_data
     attr_accessor :logger
     attr_accessor :worker_callback
     attr_accessor :persist_models
@@ -156,6 +157,7 @@ module Fabric
 
     def initialize
       @store_events = true
+      @store_events_data = false
       @logger = ActiveSupport::Logger.new($stdout)
       @worker_callback = Proc.new {}
       @persist_models = :all
@@ -168,16 +170,6 @@ module Fabric
   end
 
   module_function
-
-  def stripe_id_for(reference)
-    if reference.is_a? Stripe::APIResource
-      reference.id
-    elsif reference.is_a? Mongoid::Document
-      reference.stripe_id
-    else
-      fail InvalidResourceError, reference.to_s
-    end
-  end
 
   def get_document(klass, reference)
     if reference.is_a?(Mongoid::Document)
@@ -211,21 +203,6 @@ module Fabric
     end
 
     subscription.save
-  end
-
-  def convert_metadata(stripe_metadata)
-    hash = stripe_metadata&.to_hash || {}
-    hash.transform_values do |value|
-      if value.to_i.to_s == value
-        value.to_i
-      elsif value.to_f.to_s == value
-        value.to_f
-      elsif value.in? %w[true false]
-        value == 'true' ? true : false
-      else
-        value
-      end
-    end.with_indifferent_access
   end
 
   def flogger

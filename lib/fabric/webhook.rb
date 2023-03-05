@@ -5,13 +5,14 @@ module Fabric
     # @param event a Stripe event from a webhook
     # @return [Array<Fabric::Event, Boolean>] whether it existed,
     #   for idempotence checking
-    def create_event(event, customer_id)
+    def create_event(event)
       fabric_event = Fabric::Event.find_or_initialize_by(
         stripe_id: event['id'],
         webhook: event['type'],
-        customer_id: customer_id
       )
       fabric_event.api_version = event['api_version']
+      fabric_event.customer_id = Fabric::Event.extract_customer_id(event['data'])
+      fabric_event.data = event['data'] if Fabric.config.store_events_data
       previously_existed = fabric_event.persisted?
       fabric_event.save unless previously_existed
       [fabric_event, previously_existed]
@@ -23,8 +24,8 @@ module Fabric
     #
     # @param event a Stripe event from a webhook
     # @return [Boolean] true if validated
-    def check_idempotence(event, customer_id = nil)
-      _fabric_event, existed = create_event(event, customer_id)
+    def check_idempotence(event)
+      _fabric_event, existed = create_event(event)
       if existed
         flogger.json_info('Event already exists', event: event[:type])
         return false

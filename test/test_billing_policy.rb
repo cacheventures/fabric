@@ -19,7 +19,7 @@ class TestBillingPolicy < Minitest::Test
     Fabric::Subscription.update_all(customer: nil)
     Fabric::Subscription.destroy_all
     Fabric::Customer.destroy_all
-    Fabric::Card.destroy_all
+    Fabric::PaymentMethod.destroy_all
     Fabric::Plan.destroy_all
   end
 
@@ -27,9 +27,9 @@ class TestBillingPolicy < Minitest::Test
     customer = Fabric::Customer.create(
       stripe_id: 'cus_0',
       created: Time.now,
-      default_source: 'card_0'
+      invoice_settings: { default_payment_method: 'payment_method_0' }
     )
-    subscription = Fabric::Subscription.create(
+    Fabric::Subscription.create(
       stripe_id: 'sub_0',
       cancel_at_period_end: false,
       customer: customer,
@@ -46,7 +46,7 @@ class TestBillingPolicy < Minitest::Test
     customer = Fabric::Customer.create(
       stripe_id: 'cus_0',
       created: Time.now,
-      default_source: 'card_0'
+      invoice_settings: { default_payment_method: 'payment_method_0' }
     )
 
     bp = Fabric::BillingPolicy.new(customer)
@@ -57,9 +57,9 @@ class TestBillingPolicy < Minitest::Test
     customer = Fabric::Customer.create(
       stripe_id: 'cus_0',
       created: Time.now,
-      default_source: 'card_0'
+      invoice_settings: { default_payment_method: 'payment_method_0' }
     )
-    subscription = Fabric::Subscription.create(
+    Fabric::Subscription.create(
       stripe_id: 'sub_0',
       cancel_at_period_end: false,
       customer: customer,
@@ -77,7 +77,7 @@ class TestBillingPolicy < Minitest::Test
     customer = Fabric::Customer.create(
       stripe_id: 'cus_0',
       created: Time.now,
-      default_source: 'card_0'
+      invoice_settings: { default_payment_method: 'payment_method_0' }
     )
 
     bp = Fabric::BillingPolicy.new(customer)
@@ -88,15 +88,17 @@ class TestBillingPolicy < Minitest::Test
     customer = Fabric::Customer.create(
       stripe_id: 'cus_0',
       created: Time.now,
-      default_source: 'card_0'
+      invoice_settings: { default_payment_method: 'payment_method_0' }
     )
-    card = Fabric::Card.create(
-      stripe_id: 'card_0',
+    Fabric::PaymentMethod.create(
+      stripe_id: 'payment_method_0',
       customer: customer,
-      last4: '1234',
-      brand: 'American Express',
-      exp_month: 1,
-      exp_year: 2030
+      card: {
+        last4: '1234',
+        brand: 'American Express',
+        exp_month: 1,
+        exp_year: 2030
+      }
     )
 
     bp = Fabric::BillingPolicy.new(customer)
@@ -117,9 +119,9 @@ class TestBillingPolicy < Minitest::Test
     customer = Fabric::Customer.create(
       stripe_id: 'cus_0',
       created: Time.now,
-      default_source: 'card_0'
+      invoice_settings: { default_payment_method: 'payment_method_0' }
     )
-    subscription = Fabric::Subscription.create(
+    Fabric::Subscription.create(
       stripe_id: 'sub_0',
       cancel_at_period_end: false,
       customer: customer,
@@ -137,9 +139,9 @@ class TestBillingPolicy < Minitest::Test
     customer = Fabric::Customer.create(
       stripe_id: 'cus_0',
       created: Time.now,
-      default_source: 'card_0'
+      invoice_settings: { default_payment_method: 'payment_method_0' }
     )
-    subscription = Fabric::Subscription.create(
+    Fabric::Subscription.create(
       stripe_id: 'sub_0',
       cancel_at_period_end: false,
       customer: customer,

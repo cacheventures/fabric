@@ -1,5 +1,6 @@
 module Fabric
   class Customer
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -9,7 +10,7 @@ module Fabric
       primary_key: :stripe_id, dependent: :destroy
     has_many :invoices, class_name: 'Fabric::Invoice',
       primary_key: :stripe_id, dependent: :destroy
-    has_many :events, class_name: 'Fabric::Event', inverse_of: :customer,
+    has_many :events, class_name: 'Fabric::Event',
       primary_key: :stripe_id, dependent: :destroy
     has_many :charges, class_name: 'Fabric::Charge',
       primary_key: :stripe_id, dependent: :destroy
@@ -56,27 +57,27 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(cust)
-      self.stripe_id = Fabric.stripe_id_for cust
+      self.stripe_id = stripe_id_for(cust)
       self.object = cust.object
       self.account_balance = cust.account_balance
-      self.address = cust.address&.to_hash&.with_indifferent_access
+      self.address = handle_hash(cust.address)
       self.balance = cust.balance
       self.created = cust.created
       self.currency = cust.currency
       self.default_source = cust.default_source
       self.delinquent = cust.delinquent
       self.description = cust.description
-      self.discount = cust.discount&.to_hash&.with_indifferent_access
+      self.discount = handle_hash(cust.discount)
       self.email = cust.email
       self.invoice_prefix = cust.invoice_prefix
       self.invoice_settings =
-        cust.invoice_settings&.to_hash&.with_indifferent_access
+        handle_hash(cust.invoice_settings)
       self.livemode = cust.livemode
-      self.metadata = Fabric.convert_metadata(cust.metadata)
+      self.metadata = convert_metadata(cust.metadata)
       self.name = cust.name
       self.phone = cust.phone
       self.preferred_locales = cust.preferred_locales
-      self.shipping = cust.shipping&.to_hash&.with_indifferent_access
+      self.shipping = handle_hash(cust.shipping)
       self.tax_exempt = cust.tax_exempt
       self
     end

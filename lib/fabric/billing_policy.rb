@@ -15,7 +15,7 @@ module Fabric
     end
 
     def billable?
-      @customer.sources.present?
+      @customer.payment_methods.present?
     end
 
     def has_unpaid?

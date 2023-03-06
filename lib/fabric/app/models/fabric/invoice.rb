@@ -95,7 +95,7 @@ module Fabric
       self.currency = invoice.currency
       self.customer_id = handle_expanded(invoice.customer)
       self.custom_fields = invoice.custom_fields&.map do |e|
-        handle_hash(e.to_hash)
+        handle_hash(e)
       end
       self.customer_address = handle_hash(invoice.customer_address)
       self.customer_email = invoice.customer_email

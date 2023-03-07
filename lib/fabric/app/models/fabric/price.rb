@@ -35,7 +35,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(price)
-      self.stripe_id = stripe_id_for(price)
+      self.stripe_id = price.id
       self.active = price.active
       self.billing_scheme = price.billing_scheme
       self.created = price.created

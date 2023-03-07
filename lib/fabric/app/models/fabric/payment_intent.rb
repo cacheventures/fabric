@@ -50,7 +50,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(payment_intent)
-      self.stripe_id = stripe_id_for(payment_intent)
+      self.stripe_id = payment_intent.id
       self.object = payment_intent.object
       self.amount = payment_intent.amount
       self.amount_capturable = payment_intent.amount_capturable

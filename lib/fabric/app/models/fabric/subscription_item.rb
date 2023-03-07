@@ -23,7 +23,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(sub_item)
-      self.stripe_id = stripe_id_for(sub_item)
+      self.stripe_id = sub_item.id
       self.metadata = convert_metadata(sub_item.metadata)
       self.plan_id = handle_expanded(sub_item.plan)
       self.price_id = handle_expanded(sub_item.price)

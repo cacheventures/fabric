@@ -1,16 +1,6 @@
 module Fabric
   module Base
 
-    def stripe_id_for(reference)
-      if reference.is_a? Stripe::APIResource
-        reference.id
-      elsif reference.is_a? Mongoid::Document
-        reference.stripe_id
-      else
-        fail InvalidResourceError, reference.to_s
-      end
-    end
-
     # method to retrieve the stripe object and sync it locally
     def sync_from_stripe
       return self unless stripe_id.present?

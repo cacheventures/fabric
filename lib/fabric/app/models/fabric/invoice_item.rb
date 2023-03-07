@@ -17,7 +17,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(invoice_item)
-      self.stripe_id = stripe_id_for(invoice_item)
+      self.stripe_id = invoice_item.id
       self.amount = invoice_item.amount
       self.invoice = invoice_item.invoice
       self.currency = invoice_item.currency

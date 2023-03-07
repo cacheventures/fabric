@@ -1,5 +1,6 @@
 module Fabric
   class Review
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -25,7 +26,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(review)
-      self.stripe_id = stripe_id_for(review)
+      self.stripe_id = review.id
       self.charge_id = handle_expanded(review.charge)
       self.payment_intent_id = handle_expanded(review.payment_intent)
       self.reason = review.reason

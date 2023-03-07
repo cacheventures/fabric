@@ -26,7 +26,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(dispute)
-      self.stripe_id = stripe_id_for(dispute.id)
+      self.stripe_id = dispute.id
       self.amount = dispute.amount
       self.currency = dispute.currency
       self.evidence = handle_hash(dispute.evidence)

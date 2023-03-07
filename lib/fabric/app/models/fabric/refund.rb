@@ -33,7 +33,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(refund)
-      self.stripe_id = stripe_id_for(refund)
+      self.stripe_id = refund.id
       self.charge_id = handle_expanded(refund.charge)
       self.payment_intent_id = handle_expanded(refund.payment_intent)
       self.amount = refund.amount

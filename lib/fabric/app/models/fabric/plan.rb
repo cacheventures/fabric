@@ -33,7 +33,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(plan)
-      self.stripe_id = stripe_id_for(plan)
+      self.stripe_id = plan.id
       self.object = plan.object
       self.amount = plan.amount
       self.created = plan.created

@@ -34,7 +34,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(product)
-      self.stripe_id = stripe_id_for(product)
+      self.stripe_id = product.id
       self.active = product.active
       self.product_attributes = product_attributes_for(product)
       self.caption = product.try(:caption)

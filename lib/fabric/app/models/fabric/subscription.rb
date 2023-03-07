@@ -51,7 +51,7 @@ module Fabric
     index({ status: 1 }, background: true)
 
     def sync_with(sub)
-      self.stripe_id = stripe_id_for(sub)
+      self.stripe_id = sub.id
       self.application_fee_percent = sub.application_fee_percent
       self.cancel_at_period_end = sub.cancel_at_period_end
       self.canceled_at = sub.canceled_at

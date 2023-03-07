@@ -57,7 +57,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(cust)
-      self.stripe_id = stripe_id_for(cust)
+      self.stripe_id = cust.id
       self.object = cust.object
       self.account_balance = cust.account_balance
       self.address = handle_hash(cust.address)

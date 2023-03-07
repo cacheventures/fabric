@@ -20,7 +20,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(tax_id)
-      self.stripe_id = stripe_id_for(tax_id)
+      self.stripe_id = tax_id.id
       self.customer_id = handle_expanded(tax_id.customer)
       self.country = tax_id.country
       self.id_type = tax_id.type

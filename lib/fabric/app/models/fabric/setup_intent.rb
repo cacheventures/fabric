@@ -31,7 +31,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(setup_intent)
-      self.stripe_id = stripe_id_for(setup_intent)
+      self.stripe_id = setup_intent.id
       self.object = setup_intent.object
       self.application = setup_intent.application
       self.cancellation_reason = setup_intent.cancellation_reason

@@ -37,7 +37,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(payment_method)
-      self.stripe_id = stripe_id_for(payment_method)
+      self.stripe_id = payment_method.id
 
       SUPPORTED_PAYMENT_METHODS.each do |name|
         self[name] = handle_hash(payment_method.try(name))

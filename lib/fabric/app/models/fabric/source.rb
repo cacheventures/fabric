@@ -1,5 +1,6 @@
 module Fabric
   class Source
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -31,7 +32,7 @@ module Fabric
     index({ customer_id: 1 }, background: true)
 
     def sync_with(source)
-      self.stripe_id = stripe_id_for(source)
+      self.stripe_id = source.id
       self.amount = source.amount
       self.client_secret = source.client_secret
       self.code_verification = handle_hash(source.try(:code_verification))

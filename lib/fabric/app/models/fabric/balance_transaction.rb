@@ -4,11 +4,6 @@ module Fabric
     include Mongoid::Document
     include Mongoid::Timestamps
 
-    has_one :charge, class_name: 'Fabric::Charge', primary_key: :stripe_id,
-      inverse_of: 'Fabric::Charge'
-    has_one :refund, class_name: 'Fabric::Refund', primary_key: :stripe_id,
-      inverse_of: 'Fabric::Refund'
-
     field :stripe_id, type: String
     field :amount, type: Integer
     field :currency, type: String
@@ -47,6 +42,14 @@ module Fabric
       self.exchange_rate = balance_transaction.exchange_rate
       self.reporting_category = balance_transaction.reporting_category
       self
+    end
+
+    def charge
+      Charge.find_by(stripe_id: source_id) if source_id.start_with?('ch')
+    end
+
+    def refund
+      Refund.find_by(stripe_id: source_id) if source_id.start_with?('re')
     end
 
   end

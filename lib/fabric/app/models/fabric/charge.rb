@@ -12,7 +12,7 @@ module Fabric
     belongs_to :payment_intent, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id
     belongs_to :balance_transaction, class_name: 'Fabric::BalanceTransaction',
-      primary_key: :stripe_id
+      primary_key: :stripe_id, inverse_of: nil
     has_many :refunds, class_name: 'Fabric::Refund', primary_key: :stripe_id
     has_one :review, class_name: 'Fabric::Review', primary_key: :stripe_id
 

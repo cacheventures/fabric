@@ -12,7 +12,7 @@ module Fabric
       )
       fabric_event.api_version = event['api_version']
       fabric_event.customer_id = Fabric::Event.extract_customer_id(event['data'])
-      fabric_event.data = event['data'] if Fabric.config.store_events_data
+      fabric_event.data = event['data'] if Fabric.config.store_event_data
       previously_existed = fabric_event.persisted?
       fabric_event.save unless previously_existed
       [fabric_event, previously_existed]

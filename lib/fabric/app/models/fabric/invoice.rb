@@ -11,7 +11,7 @@ module Fabric
     has_one :payment_intent, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id, dependent: :destroy
     has_one :subscription, class_name: 'Fabric::Subscription',
-      primary_key: :latest_invoice_id
+      primary_key: :stripe_id, foreign_key: :latest_invoice_id
 
     field :stripe_id, type: String
     field :account_country, type: String
@@ -75,7 +75,6 @@ module Fabric
     validates :customer_id, :stripe_id, presence: true
 
     index({ stripe_id: 1 }, { background: true, unique: true })
-    index({ customer_id: 1, subscription_id: 1 }, background: true)
 
     def sync_with(invoice)
       self.stripe_id = invoice.id

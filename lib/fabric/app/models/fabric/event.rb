@@ -25,7 +25,7 @@ module Fabric
       self.api_version = event.api_version
       self.created = event.created
       event_data = handle_hash(event.data)
-      self.data = event_data if Fabric.config.store_events_data
+      self.data = event_data if Fabric.config.store_event_data
       self.livemode = event.livemode
       self.request = handle_hash(event.request)
       self.customer_id = Fabric::Event.extract_customer_id(event_data)

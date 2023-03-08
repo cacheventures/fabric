@@ -142,14 +142,14 @@ module Fabric
   # define Config class, to be used as
   #   Fabric.configure do |c|
   #     c.store_events = false
-  #     c.store_events_data = false
+  #     c.store_event_data = false
   #     c.persist_models = :all
   #     # c.persist_models = %i[charge coupon customer]
   #     # c.currencies = %w(usd eur)
   #   end
   class Config
     attr_accessor :store_events
-    attr_accessor :store_events_data
+    attr_accessor :store_event_data
     attr_accessor :logger
     attr_accessor :worker_callback
     attr_accessor :persist_models
@@ -157,7 +157,7 @@ module Fabric
 
     def initialize
       @store_events = true
-      @store_events_data = false
+      @store_event_data = false
       @logger = ActiveSupport::Logger.new($stdout)
       @worker_callback = Proc.new {}
       @persist_models = :all

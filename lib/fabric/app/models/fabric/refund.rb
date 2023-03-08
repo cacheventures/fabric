@@ -9,10 +9,10 @@ module Fabric
     belongs_to :payment_intent, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id
     belongs_to :balance_transaction, class_name: 'Fabric::BalanceTransaction',
-      primary_key: :stripe_id
+      primary_key: :stripe_id, inverse_of: nil
     belongs_to :failure_balance_transaction,
       class_name: 'Fabric::BalanceTransaction',
-      primary_key: :stripe_id
+      primary_key: :stripe_id, inverse_of: nil
 
     field :stripe_id, type: String
     field :amount, type: Integer

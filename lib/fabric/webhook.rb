@@ -6,12 +6,12 @@ module Fabric
     # @return [Array<Fabric::Event, Boolean>] whether it existed,
     #   for idempotence checking
     def create_event(event)
-      fabric_event = Fabric::Event.find_or_initialize_by(
-        stripe_id: event['id'],
+      fabric_event = Fabric::Event.find_or_initialize_by(stripe_id: event['id'])
+      fabric_event.assign_attributes(
         webhook: event['type'],
+        api_version: event['api_version'],
+        customer_id: Fabric::Event.extract_customer_id(event['data'])
       )
-      fabric_event.api_version = event['api_version']
-      fabric_event.customer_id = Fabric::Event.extract_customer_id(event['data'])
       fabric_event.data = event['data'] if Fabric.config.store_event_data
       previously_existed = fabric_event.persisted?
       fabric_event.save unless previously_existed

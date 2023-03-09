@@ -19,7 +19,6 @@ module Fabric
     validates_presence_of :api_version, :webhook
 
     index({ stripe_id: 1 }, { background: true, unique: true })
-    index({ webhook: 1, customer_id: 1 }, background: true)
 
     def sync_with(event)
       self.api_version = event.api_version

@@ -1,5 +1,6 @@
 module Fabric
   class InvoiceItem
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -16,11 +17,11 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(invoice_item)
-      self.stripe_id = Fabric.stripe_id_for invoice_item
+      self.stripe_id = invoice_item.id
       self.amount = invoice_item.amount
       self.invoice = invoice_item.invoice
       self.currency = invoice_item.currency
-      self.customer_id = invoice_item.customer
+      self.customer_id = handle_expanded(invoice_item.customer)
     end
   end
 end

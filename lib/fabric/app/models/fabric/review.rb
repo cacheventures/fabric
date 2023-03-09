@@ -1,5 +1,6 @@
 module Fabric
   class Review
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -9,8 +10,6 @@ module Fabric
       primary_key: :stripe_id
 
     field :stripe_id, type: String
-    field :charge_id, type: String
-    field :payment_intent_id, type: String
     field :reason, type: String
     field :billing_zip, type: String
     field :closed_reason, type: String
@@ -27,18 +26,17 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(review)
-      self.stripe_id = Fabric.stripe_id_for review
-      self.charge_id = review.charge
-      self.payment_intent_id = review.payment_intent
+      self.stripe_id = review.id
+      self.charge_id = handle_expanded(review.charge)
+      self.payment_intent_id = handle_expanded(review.payment_intent)
       self.reason = review.reason
       self.billing_zip = review.billing_zip
       self.closed_reason = review.closed_reason
       self.created = review.created
       self.ip_address = review.ip_address
-      self.ip_address_location =
-        review.ip_address_location&.to_hash&.with_indifferent_access
+      self.ip_address_location = handle_hash(review.ip_address_location)
       self.opened_reason = review.opened_reason
-      self.session = review.session&.to_hash&.with_indifferent_access
+      self.session = handle_hash(review.session)
       self.livemode = review.livemode
       self
     end

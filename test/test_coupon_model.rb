@@ -95,10 +95,4 @@ class TestCouponModel < Minitest::Test
     assert_mock mock_coupon
   end
 
-  def test_stripe_id_for_string
-    assert_raises(Fabric::InvalidResourceError) do
-      Fabric::Coupon.new.send(:coupon_valid_for, 'string')
-    end
-  end
-
 end

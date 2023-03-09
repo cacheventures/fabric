@@ -1,5 +1,6 @@
 module Fabric
   class TaxId
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -19,13 +20,13 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(tax_id)
-      self.stripe_id = Fabric.stripe_id_for(tax_id)
-      self.customer_id = tax_id.customer
+      self.stripe_id = tax_id.id
+      self.customer_id = handle_expanded(tax_id.customer)
       self.country = tax_id.country
       self.id_type = tax_id.type
       self.value = tax_id.value
       self.created = tax_id.created
-      self.verification = tax_id.verification&.to_hash&.with_indifferent_access
+      self.verification = handle_hash(tax_id.verification)
     end
   end
 end

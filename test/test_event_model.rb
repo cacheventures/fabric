@@ -12,65 +12,30 @@ class TestEventModel < Minitest::Test
     Fabric::Event.destroy_all
   end
 
-  def test_stripe_object_id_method
-    customer = Fabric::Customer.create(
-      stripe_id: 'cus_0',
-      created: Time.now
-    )
-    event = Fabric::Event.create(
-      webhook: 'customer.updated',
-      data: { object: { id: 'cus_0' } },
-      customer: customer
-    )
-
-    assert_equal 'cus_0', event.stripe_object_id
+  def test_extract_customer_id_with_customer_data_object
+    data = {
+      object: {
+        object: 'customer',
+        id: 'cus_xxx',
+        customer: nil
+      }
+    }.deep_stringify_keys
+    customer_id = Fabric::Event.extract_customer_id(data)
+    assert_equal 'cus_xxx', customer_id
+    refute_nil customer_id
   end
 
-  def test_stripe_customer_method_object_is_customer
-    customer = Fabric::Customer.create(
-      stripe_id: 'cus_0',
-      created: Time.now
-    )
-    event = Fabric::Event.create(
-      webhook: 'customer.updated',
-      data: { object: { id: 'cus_0', object: 'customer' } },
-      customer: customer
-    )
-
-    assert_equal 'cus_0', event.stripe_customer
-  end
-
-  def test_stripe_customer_method_object_is_not_customer
-    customer = Fabric::Customer.create(
-      stripe_id: 'cus_0',
-      created: Time.now
-    )
-    event = Fabric::Event.create(
-      webhook: 'customer.subscription.updated',
-      data: {
-        object: {
-          id: 'sub_0',
-          object: 'subscription',
-          customer: 'cus_0'
-        }
-      },
-      customer: customer
-    )
-
-    assert_equal 'cus_0', event.stripe_customer
-  end
-
-  def test_stripe_customer_method_without_data
-    customer = Fabric::Customer.create(
-      stripe_id: 'cus_0',
-      created: Time.now
-    )
-    event = Fabric::Event.create(
-      webhook: 'customer.updated',
-      customer: customer
-    )
-
-    assert_nil event.stripe_customer
+  def test_extract_customer_id_with_payment_intent_data_object
+    data = {
+      object: {
+        object: 'payment_intent',
+        id: 'pi_xxx',
+        customer: 'cus_xxx'
+      }
+    }.deep_stringify_keys
+    customer_id = Fabric::Event.extract_customer_id(data)
+    assert_equal 'cus_xxx', customer_id
+    refute_equal 'pi_xxx', customer_id
   end
 
 end

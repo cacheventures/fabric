@@ -1,5 +1,6 @@
 module Fabric
   class Subscription
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
     extend Enumerize
@@ -10,6 +11,8 @@ module Fabric
       primary_key: :stripe_id, dependent: :destroy
     belongs_to :default_payment_method, class_name: 'Fabric::PaymentMethod',
       primary_key: :stripe_id
+    belongs_to :latest_invoice, class_name: 'Fabric::Invoice',
+      primary_key: :stripe_id, foreign_key: :latest_invoice_id
 
     alias_method :items, :subscription_items
 
@@ -22,7 +25,9 @@ module Fabric
     field :current_period_start, type: Time
     field :start, type: Time
     field :status, type: String
-    enumerize :status, in: %w[trialing active past_due canceled unpaid incomplete incomplete_expired]
+    enumerize :status, in: %w[
+      trialing active past_due canceled unpaid incomplete incomplete_expired
+    ]
     field :ended_at, type: Time
     field :livemode, type: Boolean
     field :metadata, type: Hash
@@ -46,7 +51,7 @@ module Fabric
     index({ status: 1 }, background: true)
 
     def sync_with(sub)
-      self.stripe_id = Fabric.stripe_id_for sub
+      self.stripe_id = sub.id
       self.application_fee_percent = sub.application_fee_percent
       self.cancel_at_period_end = sub.cancel_at_period_end
       self.canceled_at = sub.canceled_at
@@ -57,13 +62,14 @@ module Fabric
       self.status = sub.status
       self.ended_at = sub.ended_at
       self.livemode = sub.livemode
-      self.metadata = Fabric.convert_metadata(sub.metadata)
+      self.metadata = convert_metadata(sub.metadata)
       self.tax_percent = sub.tax_percent
       self.trial_end = sub.trial_end
       self.trial_start = sub.trial_start
-      self.customer_id = sub.customer
-      self.default_payment_method_id = sub.default_payment_method
-      self.discount = sub.discount&.to_hash&.with_indifferent_access
+      self.customer_id = handle_expanded(sub.customer)
+      self.default_payment_method_id = handle_expanded(sub.default_payment_method)
+      self.discount = handle_hash(sub.discount)
+      self.latest_invoice_id = handle_expanded(sub.latest_invoice)
       self
     end
 

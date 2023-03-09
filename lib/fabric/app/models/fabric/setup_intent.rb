@@ -1,5 +1,6 @@
 module Fabric
   class SetupIntent
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -30,24 +31,22 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(setup_intent)
-      self.stripe_id = Fabric.stripe_id_for(setup_intent)
+      self.stripe_id = setup_intent.id
       self.object = setup_intent.object
       self.application = setup_intent.application
       self.cancellation_reason = setup_intent.cancellation_reason
       self.client_secret = setup_intent.client_secret
       self.created = setup_intent.created
-      self.customer_id = setup_intent.customer
+      self.customer_id = handle_expanded(setup_intent.customer)
       self.description = setup_intent.description
-      self.last_setup_error =
-        setup_intent.last_setup_error&.to_hash&.with_indifferent_access
+      self.last_setup_error = handle_hash(setup_intent.last_setup_error)
       self.livemode = setup_intent.livemode
-      self.metadata = Fabric.convert_metadata(setup_intent.metadata)
-      self.next_action =
-        setup_intent.next_action&.to_hash&.with_indifferent_access
+      self.metadata = convert_metadata(setup_intent.metadata)
+      self.next_action = handle_hash(setup_intent.next_action)
       self.on_behalf_of = setup_intent.on_behalf_of
-      self.payment_method = setup_intent.payment_method
+      self.payment_method = handle_expanded(setup_intent.payment_method)
       self.payment_method_options =
-        setup_intent.payment_method_options&.to_hash&.with_indifferent_access
+        handle_hash(setup_intent.payment_method_options)
       self.payment_method_types = setup_intent.payment_method_types
       self.status = setup_intent.status
       self.usage = setup_intent.usage

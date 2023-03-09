@@ -1,5 +1,6 @@
 module Fabric
   class PaymentIntent
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -49,7 +50,7 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(payment_intent)
-      self.stripe_id = Fabric.stripe_id_for(payment_intent)
+      self.stripe_id = payment_intent.id
       self.object = payment_intent.object
       self.amount = payment_intent.amount
       self.amount_capturable = payment_intent.amount_capturable
@@ -63,26 +64,24 @@ module Fabric
       self.confirmation_method = payment_intent.confirmation_method
       self.created = payment_intent.created
       self.currency = payment_intent.currency
-      self.customer_id = payment_intent.customer
+      self.customer_id = handle_expanded(payment_intent.customer)
       self.description = payment_intent.description
-      self.invoice_id = payment_intent.invoice
-      self.last_payment_error =
-        payment_intent.last_payment_error&.to_hash&.with_indifferent_access
+      self.invoice_id = handle_expanded(payment_intent.invoice)
+      self.last_payment_error = handle_hash(payment_intent.last_payment_error)
       self.livemode = payment_intent.livemode
-      self.metadata = Fabric.convert_metadata(payment_intent.metadata)
+      self.metadata = convert_metadata(payment_intent.metadata)
       self.on_behalf_of = payment_intent.on_behalf_of
-      self.payment_method = payment_intent.payment_method
+      self.payment_method = handle_expanded(payment_intent.payment_method)
       self.payment_method_options =
-        payment_intent.payment_method_options&.to_hash&.with_indifferent_access
+        handle_hash(payment_intent.payment_method_options)
       self.payment_method_types = payment_intent.payment_method_types
       self.receipt_email = payment_intent.receipt_email
       self.setup_future_usage = payment_intent.setup_future_usage
-      self.shipping = payment_intent.shipping&.to_hash&.with_indifferent_access
+      self.shipping = handle_hash(payment_intent.shipping)
       self.statement_descriptor = payment_intent.statement_descriptor
       self.statement_descriptor_suffix = payment_intent.statement_descriptor_suffix
       self.status = payment_intent.status
-      self.transfer_data =
-        payment_intent.transfer_data&.to_hash&.with_indifferent_access
+      self.transfer_data = handle_hash(payment_intent.transfer_data)
       self.transfer_group = payment_intent.transfer_group
       self
     end

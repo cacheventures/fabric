@@ -1,5 +1,6 @@
 module Fabric
   class Charge
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
     extend Enumerize
@@ -11,7 +12,7 @@ module Fabric
     belongs_to :payment_intent, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id
     belongs_to :balance_transaction, class_name: 'Fabric::BalanceTransaction',
-      primary_key: :stripe_id
+      primary_key: :stripe_id, inverse_of: nil
     has_many :refunds, class_name: 'Fabric::Refund', primary_key: :stripe_id
     has_one :review, class_name: 'Fabric::Review', primary_key: :stripe_id
 
@@ -58,36 +59,36 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(charge)
-      self.stripe_id = Fabric.stripe_id_for charge
+      self.stripe_id = charge.id
       self.amount = charge.amount
       self.amount_refunded = charge.amount_refunded
       self.application = charge.application
       self.application_fee = charge.application_fee
-      self.balance_transaction_id = charge.balance_transaction
+      self.balance_transaction_id = handle_expanded(charge.balance_transaction)
       self.captured = charge.captured
       self.created = charge.created
       self.currency = charge.currency
-      self.customer_id = charge.customer
+      self.customer_id = handle_expanded(charge.customer)
       self.description = charge.description
       self.destination = charge.destination
       self.dispute = charge.dispute
       self.failure_code = charge.failure_code
       self.failure_message = charge.failure_message
-      self.fraud_details = charge.fraud_details&.to_hash&.with_indifferent_access
-      self.invoice_id = charge.invoice
+      self.fraud_details = handle_hash(charge.fraud_details)
+      self.invoice_id = handle_expanded(charge.invoice)
       self.livemode = charge.livemode
-      self.metadata = Fabric.convert_metadata(charge.metadata)
+      self.metadata = convert_metadata(charge.metadata)
       self.on_behalf_of = charge.on_behalf_of
       self.order = charge.order
-      self.outcome = charge.outcome&.to_hash&.with_indifferent_access
+      self.outcome = handle_hash(charge.outcome)
       self.paid = charge.paid
-      self.payment_intent_id = charge.payment_intent
+      self.payment_intent_id = handle_expanded(charge.payment_intent)
       self.receipt_email = charge.receipt_email
       self.receipt_number = charge.receipt_number
       self.receipt_url = charge.receipt_url
       self.refunded = charge.refunded
-      self.shipping = charge.shipping&.to_hash&.with_indifferent_access
-      self.source = charge.source&.to_hash&.with_indifferent_access
+      self.shipping = handle_hash(charge.shipping)
+      self.source = handle_hash(charge.source)
       self.source_transfer = charge.source_transfer
       self.statement_descriptor = charge.statement_descriptor
       self.status = charge.status
@@ -112,5 +113,6 @@ module Fabric
         end
       end
     end
+
   end
 end

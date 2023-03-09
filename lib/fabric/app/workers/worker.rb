@@ -20,7 +20,7 @@ module Fabric
 
       flogger.json_info 'Success.', @log_data
       call_callback(:success)
-    rescue Stripe::StripeError, PaymentIntentError => error
+    rescue Stripe::StripeError => error
       flogger.json_info 'Error', @log_data.merge!(error: error.inspect)
       call_callback(:error, error) || raise(error)
     end

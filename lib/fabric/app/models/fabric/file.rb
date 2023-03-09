@@ -1,5 +1,6 @@
 module Fabric
   class File
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -20,7 +21,7 @@ module Fabric
       self.object = file.object
       self.created = file.created
       self.filename = file.filename
-      self.links = file.links&.to_hash&.with_indifferent_access
+      self.links = handle_hash(file.links)
       self.size = file.size
       self.url = file.url
     end

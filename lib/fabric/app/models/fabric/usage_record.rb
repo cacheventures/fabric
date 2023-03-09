@@ -1,5 +1,6 @@
 module Fabric
   class UsageRecord
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -18,10 +19,12 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(usage_record)
-      self.stripe_id = Fabric.stripe_id_for(usage_record)
+      self.stripe_id = usage_record.id
+      self.customer_id = handle_expanded(usage_record.customer)
       self.quantity = usage_record.quantity
       self.timestamp = usage_record.timestamp
-      self.subscription_item_id = usage_record.subscription_item
+      self.subscription_item_id =
+        handle_expanded(usage_record.subscription_item)
       self
     end
   end

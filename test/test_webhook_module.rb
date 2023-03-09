@@ -26,9 +26,15 @@ class TestWebhookModule < Minitest::Test
       event_data = {
         'id' => 'evt_0',
         'type' => 'customer.updated',
-        'api_version' => '1.2.3'
+        'api_version' => '1.2.3',
+        'data' => {
+          'object' => {
+            'object' => 'customer',
+            'id' => 'cus_0'
+          }
+        }
       }
-      ret_event, existed = create_event(event_data, Fabric::Customer.first.id)
+      ret_event, existed = create_event(event_data)
       assert_equal event_model, ret_event
       assert existed
     end
@@ -37,9 +43,15 @@ class TestWebhookModule < Minitest::Test
       event_data = {
         'id' => 'evt_0',
         'type' => 'customer.updated',
-        'api_version' => '1.2.3'
+        'api_version' => '1.2.3',
+        'data' => {
+          'object' => {
+            'object' => 'customer',
+            'id' => 'cus_0'
+          }
+        }
       }
-      ret_event, existed = create_event(event_data, Fabric::Customer.first.id)
+      ret_event, existed = create_event(event_data)
       saved = ret_event.save
 
       assert saved
@@ -61,7 +73,7 @@ class TestWebhookModule < Minitest::Test
     end
 
     def test_check_idempotence_exists
-      event_model = Fabric::Event.create(
+      Fabric::Event.create(
         webhook: 'customer.updated',
         stripe_id: 'evt_0',
         customer: Fabric::Customer.first,
@@ -70,18 +82,30 @@ class TestWebhookModule < Minitest::Test
       event_data = {
         'id' => 'evt_0',
         'type' => 'customer.updated',
-        'api_version' => '1.2.3'
+        'api_version' => '1.2.3',
+        'data' => {
+          'object' => {
+            'object' => 'customer',
+            'id' => 'cus_0'
+          }
+        }
       }
-      refute check_idempotence(event_data, Fabric::Customer.first.id)
+      refute check_idempotence(event_data)
     end
 
     def test_check_idempotence_doesnt_exist
       event_data = {
         'id' => 'evt_0',
         'type' => 'customer.updated',
-        'api_version' => '1.2.3'
+        'api_version' => '1.2.3',
+        'data' => {
+          'object' => {
+            'object' => 'customer',
+            'id' => 'cus_0'
+          }
+        }
       }
-      assert check_idempotence(event_data, Fabric::Customer.first.id)
+      assert check_idempotence(event_data)
     end
 
   end

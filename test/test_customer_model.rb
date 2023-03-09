@@ -9,50 +9,40 @@ class TestCustomerModel < Minitest::Test
 
   def teardown
     Fabric::Customer.destroy_all
-    Fabric::Card.destroy_all
+    Fabric::PaymentMethod.destroy_all
     Fabric::Plan.destroy_all
   end
 
-  def test_customer_source_method
+  def test_customer_default_payment_method
     customer = Fabric::Customer.create(
       stripe_id: 'cus_0',
       created: Time.now,
-      default_source: 'card_0'
+      invoice_settings: { default_payment_method: 'payment_method_0' }
     )
-    default_card = Fabric::Card.create(
-      stripe_id: 'card_0',
+    default_payment_method = Fabric::PaymentMethod.create(
+      stripe_id: 'payment_method_0',
       customer: customer,
-      last4: '1234',
-      brand: 'American Express',
-      exp_month: 1,
-      exp_year: 2030
+      card: {
+        last4: '1234',
+        brand: 'American Express',
+        exp_month: 1,
+        exp_year: 2030
+      }
     )
-    alternate_card = Fabric::Card.create(
-      stripe_id: 'card_1',
+    Fabric::PaymentMethod.create(
+      stripe_id: 'payment_method_1',
       customer: customer,
-      last4: '5678',
-      brand: 'Visa',
-      exp_month: 2,
-      exp_year: 2028
+      card: {
+        last4: '5678',
+        brand: 'Visa',
+        exp_month: 2,
+        exp_year: 2028
+      }
     )
-    assert_equal default_card, customer.source
-  end
-
-  def test_customer_plan_method
-    customer = Fabric::Customer.create(
-      stripe_id: 'cus_0',
-      created: Time.now
+    assert_equal(
+      default_payment_method.stripe_id,
+      customer.invoice_settings[:default_payment_method]
     )
-    only_plan = Fabric::Plan.create(
-      stripe_id: '0',
-      amount: 1000,
-      currency: 'usd',
-      interval: 'month',
-      created: Time.now,
-      product: 'prod_0'
-    )
-
-    assert_equal Fabric.default_plan, customer.plan
   end
 
 end

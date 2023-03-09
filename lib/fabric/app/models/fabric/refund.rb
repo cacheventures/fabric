@@ -1,5 +1,6 @@
 module Fabric
   class Refund
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
@@ -8,14 +9,12 @@ module Fabric
     belongs_to :payment_intent, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id
     belongs_to :balance_transaction, class_name: 'Fabric::BalanceTransaction',
-      primary_key: :stripe_id
+      primary_key: :stripe_id, inverse_of: nil
     belongs_to :failure_balance_transaction,
       class_name: 'Fabric::BalanceTransaction',
-      primary_key: :stripe_id
+      primary_key: :stripe_id, inverse_of: nil
 
     field :stripe_id, type: String
-    field :charge_id, type: String
-    field :payment_intent_id, type: String
     field :amount, type: Integer
     field :currency, type: String
     field :description, type: String
@@ -34,18 +33,19 @@ module Fabric
     index({ stripe_id: 1 }, { background: true, unique: true })
 
     def sync_with(refund)
-      self.stripe_id = Fabric.stripe_id_for refund
-      self.charge_id = refund.charge
-      self.payment_intent_id = refund.payment_intent
+      self.stripe_id = refund.id
+      self.charge_id = handle_expanded(refund.charge)
+      self.payment_intent_id = handle_expanded(refund.payment_intent)
       self.amount = refund.amount
-      self.balance_transaction_id = refund.balance_transaction
+      self.balance_transaction_id = handle_expanded(refund.balance_transaction)
       self.currency = refund.currency
       self.description = refund.try(:description)
-      self.metadata = Fabric.convert_metadata(refund.metadata)
+      self.metadata = convert_metadata(refund.metadata)
       self.reason = refund.reason
       self.status = refund.status
       self.created = refund.created
-      self.failure_balance_transaction_id = refund.try(:failure_balance_transaction)
+      self.failure_balance_transaction_id =
+        handle_expanded(refund.try(:failure_balance_transaction))
       self.failure_reason = refund.try(:failure_reason)
       self.receipt_number = refund.receipt_number
       self.source_transfer_reversal = refund.source_transfer_reversal

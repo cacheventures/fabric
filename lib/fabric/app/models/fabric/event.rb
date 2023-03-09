@@ -1,9 +1,10 @@
 module Fabric
   class Event
+    include Base
     include Mongoid::Document
     include Mongoid::Timestamps
 
-    belongs_to :customer, class_name: 'Fabric::Customer', inverse_of: :events,
+    belongs_to :customer, class_name: 'Fabric::Customer',
       primary_key: :stripe_id, touch: true
 
     field :stripe_id, type: String
@@ -11,46 +12,35 @@ module Fabric
     field :created, type: Integer
     field :data, type: Hash, default: {}
     field :livemode, type: Boolean
-    field :request, type: String
+    field :request, type: Hash
     field :webhook, type: String
 
     validates_uniqueness_of :stripe_id
     validates_presence_of :api_version, :webhook
 
     index({ stripe_id: 1 }, { background: true, unique: true })
-    index({ webhook: 1, customer_id: 1 }, background: true)
 
-    # stripe_id and webhook cannot be obtained from event.data.object, so
-    # events must be initialized with them before running #from
     def sync_with(event)
-      self.api_version = event[:api_version]
-      self.created = event[:created]
-      self.data = event[:data]
-      self.livemode = event[:livemode]
-      self.request = event[:request]
-      customer_id = event[:object] == 'customer' ? event[:id] : event[:customer]
-      self.customer_id = customer_id
+      self.api_version = event.api_version
+      self.created = event.created
+      event_data = handle_hash(event.data)
+      self.data = event_data if Fabric.config.store_event_data
+      self.livemode = event.livemode
+      self.request = handle_hash(event.request)
+      self.customer_id = Fabric::Event.extract_customer_id(event_data)
       self
     end
 
-    def stripe_object_id
-      data.try(:[], :object).try(:[], :id)
-    end
-
-    # get stripe customer id from data.object
-    # TODO: test if not tested
-    def stripe_customer
-      if is_customer?
-        data[:object].try(:[], :id)
-      else # object == 'subscription', etc.
-        data[:object].try(:[], :customer)
-      end
-    end
-
-    private
-
-    def is_customer?
-      data[:object].try(:[], :object) == 'customer'
+    # this actually is the stupid structure of event['data']
+    # {
+    #   object: {
+    #     object: 'customer/setup_intent/payment_intent.etc',
+    #     customer_id: 'cus_xxx'
+    #   }
+    # }
+    def self.extract_customer_id(event_data)
+      object = event_data['object']
+      object['object'] == 'customer' ? object['id'] : object['customer']
     end
 
   end

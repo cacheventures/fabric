@@ -13,7 +13,7 @@ class TestCustomerModel < Minitest::Test
     Fabric::Plan.destroy_all
   end
 
-  def test_customer_source_method
+  def test_customer_default_payment_method
     customer = Fabric::Customer.create(
       stripe_id: 'cus_0',
       created: Time.now,

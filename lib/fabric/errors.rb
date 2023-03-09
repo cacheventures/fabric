@@ -14,5 +14,4 @@ module Fabric
   end
 
   class InvalidResourceError < Error; end
-  class PaymentIntentError < Error; end
 end

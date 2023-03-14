@@ -35,6 +35,7 @@ module Fabric
     field :created, type: Time
     field :currency, type: String, default: 'usd'
     field :default_source, type: String
+    field :deleted, type: Boolean
     field :delinquent, type: Boolean, default: false
     field :description, type: String
     field :discount, type: Hash
@@ -59,6 +60,9 @@ module Fabric
     def sync_with(cust)
       self.stripe_id = cust.id
       self.object = cust.object
+      self.deleted = cust.deleted?
+      return self if cust.deleted?
+
       self.account_balance = cust.account_balance
       self.address = handle_hash(cust.address)
       self.balance = cust.balance

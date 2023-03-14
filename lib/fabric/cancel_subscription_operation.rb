@@ -2,28 +2,22 @@ module Fabric
   class CancelSubscriptionOperation
     include Fabric
 
-    def initialize(subscription, at_period_end = false)
+    def initialize(subscription, attributes)
       Fabric.config.logger.info "CancelSubscriptionOperation: Started with "\
-        "#{subscription} #{at_period_end}"
+        "#{subscription} #{attributes}"
       @subscription = get_document(Fabric::Subscription, subscription)
-      @customer = @subscription.customer
-      @at_period_end = at_period_end
+      @attributes = attributes
     end
 
     def call
-      initial_subscription = Stripe::Subscription.retrieve(
-        @subscription.stripe_id
-      )
-      stripe_subscription = initial_subscription.delete(
-        at_period_end: @at_period_end
+      stripe_subscription = Stripe::Subscription.cancel(
+        @subscription.stripe_id, attributes
       )
 
-      if @at_period_end
-        @subscription.sync_with(stripe_subscription)
-        @subscription.save
-      else
-        @subscription.destroy
-      end
+      @subscription.sync_with(stripe_subscription)
+      @subscription.save
+
+      [@subscription, stripe_subscription]
     end
 
   end

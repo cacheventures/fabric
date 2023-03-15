@@ -61,28 +61,48 @@ module Fabric
       self.stripe_id = cust.id
       self.object = cust.object
       self.deleted = cust.deleted?
-      return self if cust.deleted?
-
-      self.account_balance = cust.account_balance
-      self.address = handle_hash(cust.address)
-      self.balance = cust.balance
-      self.created = cust.created
-      self.currency = cust.currency
-      self.default_source = cust.default_source
-      self.delinquent = cust.delinquent
-      self.description = cust.description
-      self.discount = handle_hash(cust.discount)
-      self.email = cust.email
-      self.invoice_prefix = cust.invoice_prefix
-      self.invoice_settings =
-        handle_hash(cust.invoice_settings)
-      self.livemode = cust.livemode
-      self.metadata = convert_metadata(cust.metadata)
-      self.name = cust.name
-      self.phone = cust.phone
-      self.preferred_locales = cust.preferred_locales
-      self.shipping = handle_hash(cust.shipping)
-      self.tax_exempt = cust.tax_exempt
+      if cust.deleted?
+        self.account_balance = nil
+        self.address = nil
+        self.balance = nil
+        self.created = nil
+        self.currency = nil
+        self.default_source = nil
+        self.delinquent = nil
+        self.description = nil
+        self.discount = nil
+        self.email = nil
+        self.invoice_prefix = nil
+        self.invoice_settings = nil
+        self.livemode = nil
+        self.metadata = nil
+        self.name = nil
+        self.phone = nil
+        self.preferred_locales = nil
+        self.shipping = nil
+        self.tax_exempt = nil
+      else
+        self.account_balance = cust.account_balance
+        self.address = handle_hash(cust.address)
+        self.balance = cust.balance
+        self.created = cust.created
+        self.currency = cust.currency
+        self.default_source = cust.default_source
+        self.delinquent = cust.delinquent
+        self.description = cust.description
+        self.discount = handle_hash(cust.discount)
+        self.email = cust.email
+        self.invoice_prefix = cust.invoice_prefix
+        self.invoice_settings =
+          handle_hash(cust.invoice_settings)
+        self.livemode = cust.livemode
+        self.metadata = convert_metadata(cust.metadata)
+        self.name = cust.name
+        self.phone = cust.phone
+        self.preferred_locales = cust.preferred_locales
+        self.shipping = handle_hash(cust.shipping)
+        self.tax_exempt = cust.tax_exempt
+      end
       self
     end
 

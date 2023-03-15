@@ -51,7 +51,7 @@ module Fabric
     field :tax_exempt, type: String
 
     validates_uniqueness_of :stripe_id
-    validates :stripe_id, :created, presence: true
+    validates :stripe_id, presence: true
     validates :default_source, presence: true,
       if: proc { |c| c.sources.present? }
 

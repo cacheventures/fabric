@@ -1,16 +1,6 @@
 name: Ruby
 
-on:
-  push:
-    branches: [ 'master' ]
-    paths_ignore:
-      - '**.md'
-      - '**.txt'
-  pull_request:
-    branches: [ 'master' ]
-    paths_ignore:
-      - '**.md'
-      - '**.txt'
+on: [push, pull_request]
 
 permissions:
   contents: read

@@ -10,8 +10,8 @@ module Fabric
       primary_key: :stripe_id, dependent: :destroy
     has_one :payment_intent, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id, dependent: :destroy
-    has_one :subscription, class_name: 'Fabric::Subscription',
-      primary_key: :stripe_id, foreign_key: :latest_invoice_id
+    belongs_to :subscription, class_name: 'Fabric::Subscription',
+      primary_key: :stripe_id
 
     field :stripe_id, type: String
     field :account_country, type: String
@@ -131,6 +131,7 @@ module Fabric
       self.statement_descriptor = invoice.statement_descriptor
       self.status = invoice.status
       self.status_transitions = handle_hash(invoice.status_transitions)
+      self.subscription_id = handle_expanded(invoice.subscription)
       self.subscription_proration_date = invoice.try(:subscription_proration_date)
       self.subtotal = invoice.subtotal
       self.tax = invoice.tax

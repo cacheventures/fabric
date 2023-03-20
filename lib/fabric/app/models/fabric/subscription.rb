@@ -12,7 +12,7 @@ module Fabric
     belongs_to :default_payment_method, class_name: 'Fabric::PaymentMethod',
       primary_key: :stripe_id
     belongs_to :latest_invoice, class_name: 'Fabric::Invoice',
-      primary_key: :stripe_id, foreign_key: :latest_invoice_id
+      primary_key: :stripe_id, foreign_key: :latest_invoice_id, inverse_of: nil
 
     alias_method :items, :subscription_items
 
@@ -74,7 +74,7 @@ module Fabric
     end
 
     def invoices
-      Fabric::Invoice.where(subscription: stripe_id)
+      Fabric::Invoice.where(subscription_id: stripe_id)
     end
 
   end

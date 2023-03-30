@@ -6,8 +6,8 @@ module Fabric
 
     belongs_to :customer, class_name: 'Fabric::Customer',
       primary_key: :stripe_id
-    has_many :charges, class_name: 'Fabric::Charge',
-      primary_key: :stripe_id, dependent: :destroy
+    belongs_to :charge, class_name: 'Fabric::Charge', primary_key: :stripe_id,
+      inverse_of: nil
     has_one :payment_intent, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id, dependent: :destroy
     belongs_to :subscription, class_name: 'Fabric::Subscription',
@@ -88,6 +88,7 @@ module Fabric
       self.attempted = invoice.attempted
       self.auto_advance = invoice.auto_advance
       self.billing_reason = invoice.billing_reason
+      self.charge_id = handle_expanded(invoice.charge)
       self.closed = invoice.closed
       self.collection_method = invoice.collection_method
       self.created = invoice.created
@@ -140,10 +141,6 @@ module Fabric
       self.total_tax_amounts = invoice.total_tax_amounts
       self.webhooks_delivered_at = invoice.webhooks_delivered_at
       self
-    end
-
-    def charge
-      charges.sort { |c| c.created }.first
     end
 
   end

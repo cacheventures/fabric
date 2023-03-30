@@ -8,7 +8,7 @@ module Fabric
     belongs_to :customer, class_name: 'Fabric::Customer',
       primary_key: :stripe_id, touch: true
     belongs_to :invoice, class_name: 'Fabric::Invoice',
-      primary_key: :stripe_id
+      primary_key: :stripe_id, inverse_of: nil
     belongs_to :payment_intent, class_name: 'Fabric::PaymentIntent',
       primary_key: :stripe_id
     belongs_to :balance_transaction, class_name: 'Fabric::BalanceTransaction',

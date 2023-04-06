@@ -9,6 +9,7 @@ end
 def invoice
   @invoice ||= Fabric::Invoice.create!(
     customer_id: 'cust_xxx',
+    charge_id: 'ch_xxx',
     stripe_id: 'invc_xxx'
   )
 end

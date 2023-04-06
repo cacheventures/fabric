@@ -6,9 +6,9 @@ module Fabric
 
     SUPPORTED_PAYMENT_METHODS = %i(
       acss_debit affirm afterpay_clearpay alipay au_becs_debit bacs_debit
-      bancontact blik boleto card card_present customer_balance eps fpx giropay
-      grabpay ideal interac_present klarna konbini link oxxo p24 paynow pix
-      promptpay sepa_debit sofort us_bank_account wechat_pay
+      bancontact blik boleto card card_present cashapp customer_balance eps fpx
+      giropay grabpay ideal interac_present klarna konbini link oxxo p24 paynow
+      pix promptpay sepa_debit sofort us_bank_account wechat_pay
     )
 
     belongs_to :customer, class_name: 'Fabric::Customer',

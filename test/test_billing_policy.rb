@@ -33,7 +33,6 @@ class TestBillingPolicy < Minitest::Test
       stripe_id: 'sub_0',
       cancel_at_period_end: false,
       customer: customer,
-      start: Time.now,
       status: 'active',
       current_period_end: 30.days.from_now,
       current_period_start: Time.now
@@ -63,7 +62,6 @@ class TestBillingPolicy < Minitest::Test
       stripe_id: 'sub_0',
       cancel_at_period_end: false,
       customer: customer,
-      start: Time.now,
       status: 'past_due',
       current_period_end: 30.days.from_now,
       current_period_start: Time.now
@@ -125,7 +123,6 @@ class TestBillingPolicy < Minitest::Test
       stripe_id: 'sub_0',
       cancel_at_period_end: false,
       customer: customer,
-      start: Time.now,
       status: 'unpaid',
       current_period_end: 30.days.from_now,
       current_period_start: Time.now
@@ -145,7 +142,6 @@ class TestBillingPolicy < Minitest::Test
       stripe_id: 'sub_0',
       cancel_at_period_end: false,
       customer: customer,
-      start: Time.now,
       status: 'active',
       current_period_end: 30.days.from_now,
       current_period_start: Time.now

@@ -35,7 +35,7 @@ module Fabric
     field :current_period_start, type: Time
     field :days_until_due, type: Integer
     field :description, type: String
-    field :default_tax_rates, type: Hash
+    field :default_tax_rates, type: Array
     field :discount, type: Hash
     field :ended_at, type: Time
     field :livemode, type: Boolean

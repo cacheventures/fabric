@@ -7,8 +7,6 @@ module Fabric
 
     belongs_to :customer, class_name: 'Fabric::Customer', touch: true,
       primary_key: :stripe_id
-    has_many :subscription_items, class_name: 'Fabric::SubscriptionItem',
-      primary_key: :stripe_id, dependent: :destroy
     belongs_to :default_payment_method, class_name: 'Fabric::PaymentMethod',
       primary_key: :stripe_id
     belongs_to :latest_invoice, class_name: 'Fabric::Invoice',
@@ -16,6 +14,8 @@ module Fabric
     belongs_to :pending_setup_intent, class_name: 'Fabric::SetupIntent',
       primary_key: :stripe_id, foreign_key: :pending_setup_intent_id,
       inverse_of: nil
+    has_many :subscription_items, class_name: 'Fabric::SubscriptionItem',
+      primary_key: :stripe_id, dependent: :destroy
 
     alias_method :items, :subscription_items
 
@@ -34,13 +34,13 @@ module Fabric
     field :current_period_end, type: Time
     field :current_period_start, type: Time
     field :days_until_due, type: Integer
-    field :description, type: String
     field :default_tax_rates, type: Array
+    field :description, type: String
     field :discount, type: Hash
     field :ended_at, type: Time
     field :livemode, type: Boolean
-    field :next_pending_invoice_item_invoice, type: Time
     field :metadata, type: Hash
+    field :next_pending_invoice_item_invoice, type: Time
     field :pause_collection, type: Hash
     field :payment_settings, type: Hash
     field :pending_invoice_item_interval, type: Hash
@@ -48,8 +48,8 @@ module Fabric
     field :start_date, type: Time
     field :status, type: String
     enumerize :status, in: %w[
-      trialing active past_due canceled unpaid incomplete incomplete_expired
-      paused
+      active canceled incomplete incomplete_expired past_due paused trialing
+      unpaid
     ]
     field :tax_percent, type: Float
     field :trial_end, type: Time
@@ -60,11 +60,11 @@ module Fabric
     validates_presence_of :stripe_id, :customer_id, :status
 
     scope :active, -> { where(status: 'active') }
-    scope :billing, -> { where(:status.in => %w[trialing active past_due]) }
+    scope :billing, -> { where(:status.in => %w[active past_due trialing]) }
     scope :non_canceled, lambda {
-      where(:status.in => %w[trialing active past_due unpaid paused])
+      where(:status.in => %w[active past_due paused trialing unpaid])
     }
-    scope :unpaid, -> { where(:status.in => %w[unpaid past_due]) }
+    scope :unpaid, -> { where(:status.in => %w[past_due unpaid]) }
 
     index({ stripe_id: 1 }, { background: true, unique: true })
     index({ status: 1 }, background: true)

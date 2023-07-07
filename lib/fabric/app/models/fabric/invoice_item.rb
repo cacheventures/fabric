@@ -23,7 +23,6 @@ module Fabric
     field :price, type: Hash
     field :proration, type: Boolean
     field :quantity, type: Integer
-    field :subscription_item, type: String
     field :tax_rates, type: Array
     field :unit_amount, type: Integer
     field :unit_amount_decimal, type: String

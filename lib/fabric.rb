@@ -113,6 +113,7 @@ module Fabric
   autoload :Dispute, 'fabric/app/models/fabric/dispute'
   autoload :Event, 'fabric/app/models/fabric/event'
   autoload :File, 'fabric/app/models/fabric/file'
+  autoload :FundingInstructions, 'fabric/app/models/fabric/funding_instructions'
   autoload :Invoice, 'fabric/app/models/fabric/invoice'
   autoload :InvoiceItem, 'fabric/app/models/fabric/invoice_item'
   autoload :PaymentIntent, 'fabric/app/models/fabric/payment_intent'

@@ -27,6 +27,8 @@ module Fabric
     has_many :tax_ids, class_name: 'Fabric::TaxId',
       primary_key: :stripe_id, dependent: :destroy
 
+    embeds_one :funding_instructions, class_name: 'Fabric::FundingInstructions'
+
     field :stripe_id, type: String
     field :object, type: String
     field :account_balance, type: Integer, default: 0 # deprecated

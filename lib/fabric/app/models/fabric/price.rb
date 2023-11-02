@@ -40,7 +40,7 @@ module Fabric
       self.billing_scheme = price.billing_scheme
       self.created = price.created
       self.currency = price.currency
-      self.currency_options = handle_hash(price.currency_options)
+      self.currency_options = handle_hash(price.try(:currency_options))
       self.custom_unit_amount = handle_hash(price.custom_unit_amount)
       self.livemode = price.livemode
       self.lookup_key = price.lookup_key
@@ -61,7 +61,7 @@ module Fabric
     # Stripe has multiple currency support for Prices. To make sure we expand
     # all of the tiers, we check the configured currencies for Fabric and expand
     # every currency's tiers.
-    def expand_attributes
+    def self.expand_attributes
       return %w(tiers) if Fabric.config.currencies.count == 1
 
       %w(tiers currency_options) + Fabric.config.currencies.map do |currency|

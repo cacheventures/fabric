@@ -66,10 +66,13 @@ module Fabric
     #
     # @param resource name of Stripe resource
     # @param resource_id id of resource to retrieve from Stripe
+    # @param options additional options to pass to Stripe's retrieve method
     # @return [Stripe::APIResource, nil] returns the Stripe::Resource if able and nil otherwise
-    def retrieve_resource(resource, resource_id)
+    def retrieve_resource(resource, resource_id, options = {})
       log_data = { resource: resource, resource_id: resource_id }
-      "Stripe::#{resource.camelcase}".constantize.retrieve(resource_id)
+      "Stripe::#{resource.camelcase}".constantize.retrieve(
+        options.merge(id: resource_id)
+      )
     rescue Stripe::InvalidRequestError => e
       log_data[:error] = e.inspect
       flogger.json_info('couldn\'t retrieve resource', log_data)

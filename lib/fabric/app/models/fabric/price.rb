@@ -40,7 +40,7 @@ module Fabric
       self.billing_scheme = price.billing_scheme
       self.created = price.created
       self.currency = price.currency
-      self.currency_options = handle_hash(price.currency_options)
+      self.currency_options = handle_hash(price.try(:currency_options))
       self.custom_unit_amount = handle_hash(price.custom_unit_amount)
       self.livemode = price.livemode
       self.lookup_key = price.lookup_key

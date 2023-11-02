@@ -16,6 +16,10 @@ module Fabric
 
       def persist_model(stripe_coupon)
         coupon = Fabric::Coupon.new
+        stripe_coupon = Stripe::Coupon.retrieve(
+          id: stripe_coupon.id,
+          expand: %w(currency_options)
+        )
         coupon.sync_with(stripe_coupon)
         saved = coupon.save
         Fabric.config.logger.info "CouponCreated: Created coupon: "\

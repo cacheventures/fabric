@@ -18,6 +18,10 @@ module Fabric
         coupon = retrieve_local(:coupon, stripe_coupon.id)
         return unless coupon
 
+        stripe_coupon = Stripe::Coupon.retrieve(
+          id: stripe_coupon.id,
+          expand: %w(currency_options)
+        )
         coupon.sync_with(stripe_coupon)
         saved = coupon.save
         Fabric.config.logger.info "CouponUpdated: Updated coupon: "\

@@ -9,6 +9,7 @@ module Fabric
     field :amount_off, type: Integer
     field :created, type: Time
     field :currency, type: String
+    field :currency_options, type: Hash
     field :duration, type: String
     enumerize :duration, in: %w(forever once repeating)
     field :duration_in_months, type: Integer
@@ -31,6 +32,7 @@ module Fabric
       self.amount_off = coupon.amount_off
       self.created = coupon.created
       self.currency = coupon.currency
+      self.currency_options = handle_hash(coupon.try(:currency_options))
       self.duration = coupon.duration
       self.duration_in_months = coupon.duration_in_months
       self.livemode = coupon.livemode

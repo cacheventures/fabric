@@ -61,7 +61,7 @@ module Fabric
     # Stripe has multiple currency support for Prices. To make sure we expand
     # all of the tiers, we check the configured currencies for Fabric and expand
     # every currency's tiers.
-    def expand_attributes
+    def self.expand_attributes
       return %w(tiers) if Fabric.config.currencies.count == 1
 
       %w(tiers currency_options) + Fabric.config.currencies.map do |currency|

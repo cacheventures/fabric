@@ -6,7 +6,9 @@ module Fabric
       def call(event)
         check_idempotence(event) or return if Fabric.config.store_events
         stripe_price = retrieve_resource(
-          'price', { id: event['data']['object']['id'], expand: ['tiers'] }
+          'price',
+          event['data']['object']['id'],
+          expand: Fabric::Price.expand_attributes
         )
         return if stripe_price.nil?
 
@@ -18,10 +20,6 @@ module Fabric
         price = retrieve_local(:price, stripe_price.id)
         return unless price
 
-        stripe_price = Stripe::Price.retrieve(
-          id: stripe_price.id,
-          expand: price.expand_attributes
-        )
         price.sync_with(stripe_price)
         saved = price.save
         Fabric.config.logger.json_info 'updated price',

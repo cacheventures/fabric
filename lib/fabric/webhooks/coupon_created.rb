@@ -6,7 +6,7 @@ module Fabric
       def call(event)
         check_idempotence(event) or return if Fabric.config.store_events
         stripe_coupon = retrieve_resource(
-          'coupon', event['data']['object']['id']
+          'coupon', event['data']['object']['id'], expand: %w(currency_options)
         )
         return if stripe_coupon.nil?
 
@@ -16,10 +16,6 @@ module Fabric
 
       def persist_model(stripe_coupon)
         coupon = Fabric::Coupon.new
-        stripe_coupon = Stripe::Coupon.retrieve(
-          id: stripe_coupon.id,
-          expand: %w(currency_options)
-        )
         coupon.sync_with(stripe_coupon)
         saved = coupon.save
         Fabric.config.logger.info "CouponCreated: Created coupon: "\

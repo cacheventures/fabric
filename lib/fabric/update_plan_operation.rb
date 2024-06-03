@@ -2,12 +2,11 @@ module Fabric
   class UpdatePlanOperation
     include Fabric
 
-    def initialize(customer, plan_id, prorate = false)
+    def initialize(customer, plan_id)
       Fabric.config.logger.info "UpdatePlanOperation: Started with "\
-        "#{customer} #{plan_id} #{prorate}"
+        "#{customer} #{plan_id}"
       @customer = get_document(Fabric::Customer, customer)
       @plan_id = plan_id
-      @prorate = prorate
     end
 
     def call
@@ -16,8 +15,7 @@ module Fabric
         subscriptions.each do |subscription|
           UpdateSubscriptionOperation.new(
             subscription,
-            plan: @plan_id,
-            prorate: @prorate
+            plan: @plan_id
           ).call
         end
       end

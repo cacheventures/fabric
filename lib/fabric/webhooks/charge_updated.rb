@@ -6,7 +6,7 @@ module Fabric
       def call(event)
         check_idempotence(event) or return if Fabric.config.store_events
         stripe_charge = retrieve_resource(
-          'charge', event['data']['object']['id']
+          'charge', event['data']['object']['id'], expand: ['refunds']
         )
         return if stripe_charge.nil?
 

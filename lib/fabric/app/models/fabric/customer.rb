@@ -31,7 +31,6 @@ module Fabric
 
     field :stripe_id, type: String
     field :object, type: String
-    field :account_balance, type: Integer, default: 0 # deprecated
     field :address, type: Hash
     field :balance, type: Integer, default: 0
     field :created, type: Time
@@ -64,7 +63,6 @@ module Fabric
       self.object = cust.object
       self.deleted = cust.deleted?
       if cust.deleted?
-        self.account_balance = nil
         self.address = nil
         self.balance = nil
         self.created = nil
@@ -84,7 +82,6 @@ module Fabric
         self.shipping = nil
         self.tax_exempt = nil
       else
-        self.account_balance = cust.account_balance
         self.address = handle_hash(cust.address)
         self.balance = cust.balance
         self.created = cust.created

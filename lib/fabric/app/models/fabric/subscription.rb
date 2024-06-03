@@ -51,7 +51,6 @@ module Fabric
       active canceled incomplete incomplete_expired past_due paused trialing
       unpaid
     ]
-    field :tax_percent, type: Float
     field :trial_end, type: Time
     field :trial_settings, type: Hash
     field :trial_start, type: Time
@@ -104,7 +103,6 @@ module Fabric
       self.pending_update = handle_hash(sub.pending_update)
       self.start_date = sub.start_date
       self.status = sub.status
-      self.tax_percent = sub.tax_percent
       self.trial_end = sub.trial_end
       self.trial_settings = handle_hash(sub.trial_settings)
       self.trial_start = sub.trial_start

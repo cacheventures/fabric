@@ -5,14 +5,6 @@ class TestBillingPolicy < Minitest::Test
 
   def setup
     Mongoid.load!("test/config/mongoid.yml", :test)
-    Fabric::Plan.create(
-      stripe_id: '100',
-      amount: 10000,
-      currency: 'usd',
-      interval: 'month',
-      created: Time.now,
-      product: 'prod_0'
-    )
   end
 
   def teardown
@@ -20,7 +12,7 @@ class TestBillingPolicy < Minitest::Test
     Fabric::Subscription.destroy_all
     Fabric::Customer.destroy_all
     Fabric::PaymentMethod.destroy_all
-    Fabric::Plan.destroy_all
+    Fabric::Price.destroy_all
   end
 
   def test_billing_present

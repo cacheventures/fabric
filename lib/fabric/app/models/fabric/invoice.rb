@@ -36,7 +36,6 @@ module Fabric
     field :customer_tax_exempt, type: String
     field :customer_tax_ids, type: Array
     field :default_payment_method, type: String
-    field :default_source, type: String
     field :default_tax_rates, type: Array
     field :description, type: String
     field :discount, type: Hash
@@ -102,7 +101,6 @@ module Fabric
         handle_hash(e)
       end
       self.default_payment_method = invoice.default_payment_method
-      self.default_source = invoice.default_source
       self.default_tax_rates = invoice.default_tax_rates
       self.description = invoice.description
       self.discount = handle_hash(invoice.discount)

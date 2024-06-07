@@ -10,7 +10,6 @@ class TestCustomerModel < Minitest::Test
   def teardown
     Fabric::Customer.destroy_all
     Fabric::PaymentMethod.destroy_all
-    Fabric::Plan.destroy_all
   end
 
   def test_customer_default_payment_method

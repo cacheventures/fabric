@@ -1,8 +1,7 @@
 def customer
   @customer ||= Fabric::Customer.create!(
     stripe_id: 'cust_xxx',
-    created: Time.now,
-    default_source: 'src_xxx'
+    created: Time.now
   )
 end
 
@@ -74,22 +73,10 @@ def subscription
   )
 end
 
-def plan
-  @plan ||= Fabric::Plan.create!(
-    stripe_id: 'plan_xxx',
-    amount: 100,
-    currency: 'usd',
-    interval: 'month',
-    created: Time.now,
-    product_id: 'prod_xxx'
-  )
-end
-
 def subscription_item
   @subscription_item ||= Fabric::SubscriptionItem.create!(
     stripe_id: 'subi_xxx',
     subscription_id: 'sub_xxx',
-    plan_id: 'plan_xxx',
     price_id: 'price_xxx'
   )
 end
@@ -113,14 +100,6 @@ def setup_intent
   @setup_intent ||= Fabric::SetupIntent.create!(
     stripe_id: 'si_xxx',
     customer_id: 'cust_xxx'
-  )
-end
-
-def source
-  @source ||= Fabric::Source.create!(
-    stripe_id: 'src_xxx',
-    customer_id: 'cust_xxx',
-    type: 'card'
   )
 end
 

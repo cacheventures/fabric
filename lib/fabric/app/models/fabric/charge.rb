@@ -102,18 +102,6 @@ module Fabric
         fbt = Fabric::BalanceTransaction.find_or_initialize_by(stripe_id: sbt.id)
         fbt.sync_with(sbt).save
       end
-
-      # refunds are no longer included by default. don't want this to break
-      # if we get here from somewhere that didn't expand refunds.
-      if charge.respond_to?(:refunds)
-        refunds = charge.refunds.data
-        if refunds.size.positive? && self.refunds.size != refunds.size
-          refunds.each do |sr|
-            fr = Fabric::Refund.find_or_initialize_by(stripe_id: sr.id)
-            fr.sync_with(sr).save
-          end
-        end
-      end
     end
 
   end

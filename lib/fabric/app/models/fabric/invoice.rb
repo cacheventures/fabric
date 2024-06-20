@@ -19,12 +19,11 @@ module Fabric
     field :amount_due, type: Integer
     field :amount_paid, type: Integer
     field :amount_remaining, type: Integer
-    field :application_fee, type: Integer
+    field :application_fee_amount, type: Integer
     field :attempt_count, type: Integer
     field :attempted, type: Boolean
     field :auto_advance, type: Boolean
     field :billing_reason, type: String
-    field :closed, type: Boolean # Deprecated
     field :collection_method, type: String
     field :created, type: Time
     field :currency, type: String
@@ -36,16 +35,13 @@ module Fabric
     field :customer_shipping, type: Hash
     field :customer_tax_exempt, type: String
     field :customer_tax_ids, type: Array
-    field :date, type: Time
     field :default_payment_method, type: String
-    field :default_source, type: String
     field :default_tax_rates, type: Array
     field :description, type: String
     field :discount, type: Hash
     field :due_date, type: Time
     field :ending_balance, type: Integer
     field :footer, type: String
-    field :forgiven, type: Boolean
     field :hosted_invoice_url, type: String
     field :invoice_pdf, type: String
     field :lines, type: Array
@@ -83,13 +79,12 @@ module Fabric
       self.amount_due = invoice.amount_due
       self.amount_paid = invoice.amount_paid
       self.amount_remaining = invoice.amount_remaining
-      self.application_fee = invoice.application_fee
+      self.application_fee_amount = invoice.application_fee_amount
       self.attempt_count = invoice.attempt_count
       self.attempted = invoice.attempted
       self.auto_advance = invoice.auto_advance
       self.billing_reason = invoice.billing_reason
       self.charge_id = handle_expanded(invoice.charge)
-      self.closed = invoice.closed
       self.collection_method = invoice.collection_method
       self.created = invoice.created
       self.currency = invoice.currency
@@ -105,16 +100,13 @@ module Fabric
       self.customer_tax_ids = invoice.customer_tax_ids&.map do |e|
         handle_hash(e)
       end
-      self.date = invoice.date
       self.default_payment_method = invoice.default_payment_method
-      self.default_source = invoice.default_source
       self.default_tax_rates = invoice.default_tax_rates
       self.description = invoice.description
       self.discount = handle_hash(invoice.discount)
       self.due_date = invoice.due_date
       self.ending_balance = invoice.ending_balance
       self.footer = invoice.footer
-      self.forgiven = invoice.forgiven
       self.hosted_invoice_url = invoice.hosted_invoice_url
       self.invoice_pdf = invoice.invoice_pdf
       self.lines = handle_hash(invoice.lines).dig(:data)

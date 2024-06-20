@@ -4,8 +4,6 @@ module Fabric
     include Mongoid::Document
     include Mongoid::Timestamps
 
-    has_many :plans, class_name: 'Fabric::Plan',
-      primary_key: :stripe_id, dependent: :nullify
     has_many :prices, class_name: 'Fabric::Price',
       primary_key: :stripe_id, dependent: :nullify
 

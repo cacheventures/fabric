@@ -18,19 +18,16 @@ class TestRelationships < Minitest::Test
     Fabric::InvoiceItem.destroy_all
     Fabric::PaymentMethod.destroy_all
     Fabric::Subscription.destroy_all
-    Fabric::Plan.destroy_all
     Fabric::SubscriptionItem.destroy_all
     Fabric::Price.destroy_all
     Fabric::Product.destroy_all
     Fabric::SetupIntent.destroy_all
-    Fabric::Source.destroy_all
     Fabric::UsageRecord.destroy_all
   end
 
   def test_customer
     customer.reload
     subscription.reload
-    source.reload
     invoice.reload
     event.reload
     charge.reload
@@ -41,7 +38,6 @@ class TestRelationships < Minitest::Test
     payment_intent.reload
 
     assert_equal customer.subscriptions, [subscription]
-    assert_equal customer.sources, [source]
     assert_equal customer.invoices, [invoice]
     assert_equal customer.events, [event]
     assert_equal customer.charges, [charge]
@@ -117,15 +113,6 @@ class TestRelationships < Minitest::Test
     assert_equal payment_method.subscriptions, [subscription]
   end
 
-  def test_plan
-    plan.reload
-    product.reload
-    subscription_item.reload
-
-    assert_equal plan.product, product
-    assert_equal plan.subscription_items, [subscription_item]
-  end
-
   def test_price
     price.reload
     product.reload
@@ -138,10 +125,8 @@ class TestRelationships < Minitest::Test
   def test_product
     product.reload
     price.reload
-    plan.reload
 
     assert_equal product.prices, [price]
-    assert_equal product.plans, [plan]
   end
 
   def test_setup_intent
@@ -149,13 +134,6 @@ class TestRelationships < Minitest::Test
     customer.reload
 
     assert_equal setup_intent.customer, customer
-  end
-
-  def test_source
-    source.reload
-    customer.reload
-
-    assert_equal source.customer, customer
   end
 
   def test_subscription
@@ -172,12 +150,10 @@ class TestRelationships < Minitest::Test
   def test_subscription_item
     subscription_item.reload
     subscription.reload
-    plan.reload
     price.reload
     usage_record.reload
 
     assert_equal subscription_item.subscription, subscription
-    assert_equal subscription_item.plan, plan
     assert_equal subscription_item.price, price
     assert_equal subscription_item.usage_records, [usage_record]
   end

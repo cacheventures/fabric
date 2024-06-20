@@ -41,7 +41,6 @@ module Fabric
     field :receipt_url, type: String
     field :refunded, type: Boolean
     field :shipping, type: Hash
-    field :source, type: Hash
     field :source_transfer, type: String
     field :statement_descriptor, type: String
     field :status, type: String
@@ -88,7 +87,6 @@ module Fabric
       self.receipt_url = charge.receipt_url
       self.refunded = charge.refunded
       self.shipping = handle_hash(charge.shipping)
-      self.source = handle_hash(charge.source)
       self.source_transfer = charge.source_transfer
       self.statement_descriptor = charge.statement_descriptor
       self.status = charge.status
@@ -103,14 +101,6 @@ module Fabric
         sbt = Stripe::BalanceTransaction.retrieve(charge.balance_transaction)
         fbt = Fabric::BalanceTransaction.find_or_initialize_by(stripe_id: sbt.id)
         fbt.sync_with(sbt).save
-      end
-
-      refunds = charge.refunds.data
-      if refunds.size.positive? && self.refunds.size != refunds.size
-        refunds.each do |sr|
-          fr = Fabric::Refund.find_or_initialize_by(stripe_id: sr.id)
-          fr.sync_with(sr).save
-        end
       end
     end
 

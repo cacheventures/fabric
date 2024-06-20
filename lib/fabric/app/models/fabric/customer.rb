@@ -6,8 +6,6 @@ module Fabric
 
     has_many :subscriptions, class_name: 'Fabric::Subscription',
       primary_key: :stripe_id, dependent: :destroy
-    has_many :sources, class_name: 'Fabric::Source',
-      primary_key: :stripe_id, dependent: :destroy
     has_many :invoices, class_name: 'Fabric::Invoice',
       primary_key: :stripe_id, dependent: :destroy
     has_many :events, class_name: 'Fabric::Event',
@@ -31,12 +29,10 @@ module Fabric
 
     field :stripe_id, type: String
     field :object, type: String
-    field :account_balance, type: Integer, default: 0 # deprecated
     field :address, type: Hash
     field :balance, type: Integer, default: 0
     field :created, type: Time
     field :currency, type: String, default: 'usd'
-    field :default_source, type: String
     field :deleted, type: Boolean
     field :delinquent, type: Boolean, default: false
     field :description, type: String
@@ -54,8 +50,6 @@ module Fabric
 
     validates_uniqueness_of :stripe_id
     validates :stripe_id, presence: true
-    validates :default_source, presence: true,
-      if: proc { |c| c.sources.present? }
 
     index({ stripe_id: 1 }, { background: true, unique: true })
 
@@ -64,12 +58,10 @@ module Fabric
       self.object = cust.object
       self.deleted = cust.deleted?
       if cust.deleted?
-        self.account_balance = nil
         self.address = nil
         self.balance = nil
         self.created = nil
         self.currency = nil
-        self.default_source = nil
         self.delinquent = nil
         self.description = nil
         self.discount = nil
@@ -84,12 +76,10 @@ module Fabric
         self.shipping = nil
         self.tax_exempt = nil
       else
-        self.account_balance = cust.account_balance
         self.address = handle_hash(cust.address)
         self.balance = cust.balance
         self.created = cust.created
         self.currency = cust.currency
-        self.default_source = cust.default_source
         self.delinquent = cust.delinquent
         self.description = cust.description
         self.discount = handle_hash(cust.discount)
@@ -106,10 +96,6 @@ module Fabric
         self.tax_exempt = cust.tax_exempt
       end
       self
-    end
-
-    def source
-      sources.find_by(stripe_id: default_source)
     end
 
   end

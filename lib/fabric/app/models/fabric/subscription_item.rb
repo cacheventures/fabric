@@ -6,8 +6,6 @@ module Fabric
 
     belongs_to :subscription, class_name: 'Fabric::Subscription',
       primary_key: :stripe_id
-    belongs_to :plan, class_name: 'Fabric::Plan',
-      primary_key: :stripe_id, inverse_of: :subscription_items
     belongs_to :price, class_name: 'Fabric::Price',
       primary_key: :stripe_id, inverse_of: :subscription_items
     has_many :usage_records, class_name: 'Fabric::UsageRecord',
@@ -25,7 +23,6 @@ module Fabric
     def sync_with(sub_item)
       self.stripe_id = sub_item.id
       self.metadata = convert_metadata(sub_item.metadata)
-      self.plan_id = handle_expanded(sub_item.plan)
       self.price_id = handle_expanded(sub_item.price)
       self.quantity = sub_item.quantity if sub_item.try(:quantity).present?
       self

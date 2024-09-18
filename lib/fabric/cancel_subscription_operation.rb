@@ -11,7 +11,7 @@ module Fabric
 
     def call
       stripe_subscription = Stripe::Subscription.cancel(
-        @subscription.stripe_id, attributes
+        @subscription.stripe_id, @attributes
       )
 
       @subscription.sync_with(stripe_subscription)

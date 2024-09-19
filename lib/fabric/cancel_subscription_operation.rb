@@ -2,7 +2,7 @@ module Fabric
   class CancelSubscriptionOperation
     include Fabric
 
-    def initialize(subscription, attributes)
+    def initialize(subscription, attributes = {})
       Fabric.config.logger.info "CancelSubscriptionOperation: Started with "\
         "#{subscription} #{attributes}"
       @subscription = get_document(Fabric::Subscription, subscription)

@@ -94,9 +94,8 @@ require 'fabric/webhooks/subscription_updated'
 require 'fabric/webhooks/subscription_deleted'
 require 'fabric/webhooks/review_opened'
 require 'fabric/webhooks/review_closed'
-require 'fabric/app/workers/worker.rb'
-require 'fabric/app/workers/webhook_worker.rb'
-require 'fabric/app/models/fabric/base.rb'
+require 'fabric/app/workers/worker'
+require 'fabric/app/models/fabric/base'
 
 module Fabric
   autoload :BalanceTransaction, 'fabric/app/models/fabric/balance_transaction'
@@ -143,6 +142,7 @@ module Fabric
     attr_accessor :store_events
     attr_accessor :store_event_data
     attr_accessor :logger
+    attr_accessor :worker_queue
     attr_accessor :worker_callback
     attr_accessor :persist_models
     attr_accessor :currencies
@@ -151,6 +151,7 @@ module Fabric
       @store_events = true
       @store_event_data = false
       @logger = ActiveSupport::Logger.new($stdout)
+      @worker_queue = 'critical'
       @worker_callback = Proc.new {}
       @persist_models = :all
       @currencies = %w(usd)

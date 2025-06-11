@@ -123,16 +123,6 @@ StripeEvent.configure do |events|
 end
 ```
 
-#### Asynchronous usage
-
-In order to make this asynchronous, you can use a Fabric::WebhookWorker to accomplish the same thing. For example:
-
-```ruby
-events.subscribe 'customer.created' do |event|
-  Fabric::WebhookWorker.perform(event.to_hash, 'plan_deleted')
-end
-```
-
 #### Events
 
 When a webhook is received, Fabric optionally supports storing a Fabric::Event model (corresponding with Stripe's Event) which can be stored. This is a minimal version of the event which does not contain the full contents of the webhook. Instead, it only stores the event id, webhook type, customer id, and api version, with the first 3 fields defining a unique event. This uniqueness is then used to check idempotence of events coming in from Stripe, ensuring you don't run your webhook code twice for the same event, even if Stripe sends it twice. If `Fabric.config.store_events` is set to `true` (the default), Fabric will perform these checks. This is implemented in all webhooks in the project using the `check_idempotence` method.
@@ -159,6 +149,7 @@ You can set global configuration options with `Fabric.configure`:
 
 ```ruby
 Fabric.configure do |c|
+  c.worker_queue = 'critical'
   c.store_events = false
   c.persist_models = :all
   c.logger = Rails.logger

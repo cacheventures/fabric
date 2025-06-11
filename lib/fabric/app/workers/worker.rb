@@ -3,7 +3,7 @@ module Fabric
     include Fabric
     include Sidekiq::Worker
 
-    sidekiq_options queue: 'fabric', retry: false
+    sidekiq_options retry: false
 
     def perform(operation, *args)
       @log_data = { class: self.class.name, operation: operation, args: args }
@@ -33,5 +33,20 @@ module Fabric
       Fabric.config.worker_callback.call(*args)
     end
 
+    class << self
+
+      def perform_async(...)
+        set(queue: Fabric.config.worker_queue).perform_async(...)
+      end
+
+      def perform_in(interval, ...)
+        set(queue: Fabric.config.worker_queue).perform_in(interval, ...)
+      end
+
+      def perform_at(timestamp, ...)
+        set(queue: Fabric.config.worker_queue).perform_at(timestamp, ...)
+      end
+
+    end
   end
 end

@@ -28,3 +28,7 @@
 ### Fabric::BillingPolicy#plan
 
 * removed
+
+### CreateUsageRecordOperation
+
+* removed

@@ -54,7 +54,7 @@ module Fabric
       self.transform_quantity = handle_hash(price.transform_quantity)
       self.type = price.type
       self.unit_amount = price.unit_amount
-      self.unit_amount_decimal = price.unit_amount_decimal
+      self.unit_amount_decimal = handle_decimal(price.unit_amount_decimal)
       self
     end
 

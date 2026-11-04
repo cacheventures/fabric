@@ -21,7 +21,22 @@ module Fabric
 
     # make sure all hashes are stored with_indifferent_access
     def handle_hash(hash)
-      hash&.to_hash&.with_indifferent_access
+      stringify_decimals(hash&.to_hash)&.with_indifferent_access
+    end
+
+    def handle_decimal(value)
+      return value unless value.is_a?(BigDecimal)
+
+      value.frac.zero? ? value.to_i.to_s : value.to_s('F')
+    end
+
+    def stringify_decimals(value)
+      case value
+      when BigDecimal then handle_decimal(value)
+      when Hash then value.transform_values { |v| stringify_decimals(v) }
+      when Array then value.map { |v| stringify_decimals(v) }
+      else value
+      end
     end
 
     def convert_metadata(stripe_metadata)

@@ -52,7 +52,7 @@ module Fabric
         handle_hash(tr)
       end
       self.unit_amount = invoice_item.unit_amount
-      self.unit_amount_decimal = invoice_item.unit_amount_decimal
+      self.unit_amount_decimal = handle_decimal(invoice_item.unit_amount_decimal)
     end
   end
 end
